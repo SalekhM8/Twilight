@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params
+    const { id } = await ctx.params
     const body = await req.json()
     const { status, comment } = body as { status?: string; comment?: string }
 
