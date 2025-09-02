@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Location {
+  id            String    @id @default(cuid())
+  name          String
+  code          String    @unique
+  address       String
+  phone         String
+  openingHours  Json
+  mapUrl        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  pharmacistLinks PharmacistLocation[]
+  treatmentLinks  TreatmentLocation[]
+  bookings        Booking[]
+}
+
+model Pharmacist {
+  id         String   @id @default(cuid())
+  name       String
+  email      String   @unique
+  phone      String?
+  bio        String?
+  imageUrl   String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  locations  PharmacistLocation[]
+  treatments PharmacistTreatment[]
+  schedules  PharmacistSchedule[]
+  bookings   Booking[]
+}
+
+model Treatment {
+  id         String   @id @default(cuid())
+  name       String
+  description String?
+  category   String
+  price      Float
+  duration   Int
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  pharmacists PharmacistTreatment[]
+  locations   TreatmentLocation[]
+  bookings    Booking[]
+}
+
+model PharmacistLocation {
+  id            String      @id @default(cuid())
+  pharmacistId  String
+  locationId    String
+  pharmacist    Pharmacist  @relation(fields: [pharmacistId], references: [id], onDelete: Cascade)
+  location      Location    @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([pharmacistId, locationId])
+}
+
+model TreatmentLocation {
+  id          String    @id @default(cuid())
+  treatmentId String
+  locationId  String
+  treatment   Treatment @relation(fields: [treatmentId], references: [id], onDelete: Cascade)
+  location    Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([treatmentId, locationId])
+}
+
+model PharmacistTreatment {
+  id           String      @id @default(cuid())
+  pharmacistId String
+  treatmentId  String
+  pharmacist   Pharmacist  @relation(fields: [pharmacistId], references: [id], onDelete: Cascade)
+  treatment    Treatment   @relation(fields: [treatmentId], references: [id], onDelete: Cascade)
+
+  @@unique([pharmacistId, treatmentId])
+}
+
+model PharmacistSchedule {
+  id            String      @id @default(cuid())
+  pharmacistId  String
+  locationId    String?
+  dayOfWeek     Int
+  startTime     String
+  endTime       String
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  pharmacist    Pharmacist  @relation(fields: [pharmacistId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id             String     @id @default(cuid())
+  customerName   String
+  customerEmail  String
+  customerPhone  String
+  treatmentId    String
+  pharmacistId   String?
+  locationId     String
+  preferredDate  DateTime
+  preferredTime  String
+  notes          String?
+  status         String     @default("pending")
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  treatment      Treatment  @relation(fields: [treatmentId], references: [id], onDelete: Restrict)
+  pharmacist     Pharmacist? @relation(fields: [pharmacistId], references: [id], onDelete: SetNull)
+  location       Location   @relation(fields: [locationId], references: [id], onDelete: Restrict)
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
