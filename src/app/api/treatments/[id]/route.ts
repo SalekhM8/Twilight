@@ -1,22 +1,23 @@
-import { NextResponse } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  ctx: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await ctx.params
     const treatment = await prisma.treatment.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
     if (!treatment) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
     const locations = await prisma.treatmentLocation.findMany({
-      where: { treatmentId: params.id },
+      where: { treatmentId: id },
       include: { location: true },
     })
     const pharmacists = await prisma.pharmacistTreatment.findMany({
-      where: { treatmentId: params.id },
+      where: { treatmentId: id },
       include: { pharmacist: true },
     })
 
