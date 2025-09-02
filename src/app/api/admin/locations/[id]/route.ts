@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params
+    const { id } = await ctx.params
     const body = await req.json()
     const updated = await prisma.location.update({
       where: { id },
@@ -22,9 +22,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params
+    const { id } = await ctx.params
     await prisma.location.delete({ where: { id } })
     return NextResponse.json({ ok: true })
   } catch (e) {
