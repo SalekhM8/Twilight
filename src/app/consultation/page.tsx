@@ -1,6 +1,7 @@
 "use client"
 
 export const dynamic = "force-dynamic"
+import { Suspense } from "react"
 
 import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
@@ -31,7 +32,7 @@ interface Pharmacist {
 	bio: string
 }
 
-export default function ConsultationWizard() {
+export function ConsultationWizard() {
 	const searchParams = useSearchParams()
 	const preselectedTreatment = searchParams?.get("treatment") || ""
 
@@ -414,4 +415,12 @@ export default function ConsultationWizard() {
 			</main>
 		</div>
 	)
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="min-h-screen grid place-items-center">Loading…</div>}>
+      <ConsultationWizard />
+    </Suspense>
+  )
 }
