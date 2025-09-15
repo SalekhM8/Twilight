@@ -7,7 +7,7 @@ export default function WhatsAppFab() {
   const isAdmin = pathname?.startsWith("/admin")
   if (isAdmin) return null
 
-  const phone = "447383547801" // UK number for 07383547801
+  const phone = "447791581674" // UK number for +44 7791 581674
   const href = `https://wa.me/${phone}`
 
   return (
