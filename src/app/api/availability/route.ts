@@ -32,12 +32,6 @@ export async function GET(request: Request) {
     const jsDate = new Date(date + "T00:00:00")
     const dow = jsDate.getUTCDay() // 0-6
 
-    // Respect administrative blocks for the location
-    const blocks = await prisma.locationBlock.findMany({ where: { locationId, date: jsDate } })
-    if (blocks.some(b => b.isClosedDay)) {
-      return NextResponse.json({ slots: [] })
-    }
-
     // Find eligible pharmacists (by treatment + location)
     const eligible = await prisma.pharmacistTreatment.findMany({
       where: { treatmentId },
@@ -79,22 +73,11 @@ export async function GET(request: Request) {
     const slotMinutes = treatment.duration
     const results: { time: string; pharmacistId: string }[] = []
 
-    // helper to check if a time is blocked
-    const toMin = (t: string) => { const [h,m]=t.split(":").map(Number); return h*60+m }
-    const isBlocked = (t: string) => {
-      const tm = toMin(t)
-      return blocks.some(b => {
-        const start = toMin(b.startTime)
-        const end = toMin(b.endTime)
-        return tm >= start && tm < end
-      })
-    }
-
     for (const p of pharmacists) {
       for (const s of p.schedules) {
         for (const time of generateSlots(s.startTime, s.endTime, slotMinutes)) {
           const taken = bookedByPharm.get(p.id)?.has(time)
-          if (!taken && !isBlocked(time)) results.push({ time, pharmacistId: p.id })
+          if (!taken) results.push({ time, pharmacistId: p.id })
         }
       }
     }

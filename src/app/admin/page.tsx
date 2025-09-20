@@ -60,7 +60,6 @@ export default function AdminDashboard() {
   const [treatments, setTreatments] = useState<any[]>([])
   const [pharmacists, setPharmacists] = useState<any[]>([])
   const [locations, setLocations] = useState<any[]>([])
-  const [calendarLocationId, setCalendarLocationId] = useState<string>("")
   const [loadingMgmt, setLoadingMgmt] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -812,19 +811,6 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
     saturday: { open: '10:00', close: '16:00' },
     sunday: { open: 'closed', close: 'closed' },
   } })
-  const [calendarFor, setCalendarFor] = useState<any | null>(null)
-  const [blocks, setBlocks] = useState<any[]>([])
-  const [events, setEvents] = useState<any[]>([])
-  const [newBlock, setNewBlock] = useState({ date: '', startTime: '09:00', endTime: '17:00', isClosedDay: false, reason: '' })
-  const [editBlock, setEditBlock] = useState<any | null>(null)
-  const [viewMode, setViewMode] = useState<'month'|'day'>('month')
-  const [dayViewDate, setDayViewDate] = useState<string>('')
-  const [monthStart, setMonthStart] = useState<Date>(()=>{ const t=new Date(); return new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), 1)) })
-  const [showBlocks, setShowBlocks] = useState(true)
-  const [showBookings, setShowBookings] = useState(true)
-  const [addBookingOpen, setAddBookingOpen] = useState(false)
-  const [addBooking, setAddBooking] = useState<any>({ treatmentId: '', date: '', time: '', name: '', email: '', phone: '' })
-  const [treatmentsForCalendar, setTreatmentsForCalendar] = useState<any[]>([])
 
   const startNew = () => { setEditing(null); setOpen(true) }
   const startEdit = (l:any) => { setEditing(l); setForm({ name: l.name, code: l.code, address: l.address, phone: l.phone, openingHours: l.openingHours }); setOpen(true) }
@@ -856,23 +842,6 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
             </CardHeader>
             <CardContent className="flex gap-2">
               <Button variant="outline" className="rounded-full" onClick={()=>startEdit(l)}>Edit</Button>
-              <Button variant="outline" className="rounded-full" onClick={async()=>{ 
-                setCalendarFor(l);
-                const start = monthStart
-                const end = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth()+1, 0))
-                const qs = `?start=${start.toISOString()}&end=${end.toISOString()}`
-                const res = await fetch(`/api/admin/locations/${l.id}/calendar${qs}`)
-                const data = await res.json()
-                setBlocks(data.blocks || [])
-                setEvents((data.bookings||[]).map((b:any)=> ({
-                  id: b.id,
-                  type: 'booking',
-                  date: b.preferredDate,
-                  label: `${b.preferredTime} ${b.treatment.name}${b.pharmacist? ' — '+b.pharmacist.name:''}`,
-                  status: b.status,
-                })))
-                setViewMode('month')
-              }}>Calendar</Button>
             </CardContent>
           </Card>
         ))}
@@ -938,130 +907,6 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
             <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={save}>Save</Button>
           </div>
         </div>
-      </Modal>
-
-      <Modal open={!!calendarFor} onClose={()=>setCalendarFor(null)} title={calendarFor ? `Calendar — ${calendarFor.name}` : ''} panelClassName="max-w-5xl">
-        {calendarFor && (
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-end gap-2">
-              <div>
-                <label className="block text-sm text-gray-700">Date</label>
-                <input type="date" className="h-9 rounded-md border px-2 text-sm" value={newBlock.date} onChange={e=>setNewBlock({...newBlock,date:e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-700">Start</label>
-                <input type="time" className="h-9 rounded-md border px-2 text-sm" value={newBlock.startTime} onChange={e=>setNewBlock({...newBlock,startTime:e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-700">End</label>
-                <input type="time" className="h-9 rounded-md border px-2 text-sm" value={newBlock.endTime} onChange={e=>setNewBlock({...newBlock,endTime:e.target.value})} />
-              </div>
-              <label className="flex items-center gap-2 text-sm mt-6"><input type="checkbox" checked={newBlock.isClosedDay} onChange={e=>setNewBlock({...newBlock,isClosedDay:e.target.checked})} /> Closed day</label>
-              <input placeholder="Reason" className="h-9 rounded-md border px-2 text-sm flex-1" value={newBlock.reason} onChange={e=>setNewBlock({...newBlock,reason:e.target.value})} />
-              <Button className="rounded-full" onClick={async()=>{
-                const res = await fetch(`/api/admin/locations/${calendarFor.id}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newBlock) })
-                if (res.ok) {
-                  const b = await res.json()
-                  setBlocks(prev=>[...prev,b])
-                }
-              }}>Add</Button>
-              <div className="ml-auto flex items-center gap-2">
-                <label className="flex items-center gap-1 text-xs text-gray-600"><input type="checkbox" checked={showBookings} onChange={e=>setShowBookings(e.target.checked)} />Bookings</label>
-                <label className="flex items-center gap-1 text-xs text-gray-600"><input type="checkbox" checked={showBlocks} onChange={e=>setShowBlocks(e.target.checked)} />Blocks</label>
-                <Button className="rounded-full" onClick={()=>{ setAddBooking({ treatmentId:'', date: new Date().toISOString().slice(0,10), time:'', name:'', email:'', phone:'' }); setAddBookingOpen(true) }}>Add booking</Button>
-                <Button variant="outline" className="rounded-full" onClick={async()=>{
-                  const base = monthStart
-                  const start = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth()-1, 1))
-                  const end = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), 0))
-                  const qs = `?start=${start.toISOString()}&end=${end.toISOString()}`
-                  const data = await fetch(`/api/admin/locations/${calendarFor.id}/calendar${qs}`).then(r=>r.json())
-                  setBlocks(data.blocks||[]); setEvents((data.bookings||[]).map((b:any)=>({ id:b.id,type:'booking',date:b.preferredDate,label:`${b.preferredTime} ${b.treatment.name}${b.pharmacist?' — '+b.pharmacist.name:''}`,status:b.status })))
-                  setMonthStart(start)
-                }}>Prev</Button>
-                <Button variant="outline" className="rounded-full" onClick={async()=>{
-                  const base = monthStart
-                  const start = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth()+1, 1))
-                  const end = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth()+2, 0))
-                  const qs = `?start=${start.toISOString()}&end=${end.toISOString()}`
-                  const data = await fetch(`/api/admin/locations/${calendarFor.id}/calendar${qs}`).then(r=>r.json())
-                  setBlocks(data.blocks||[]); setEvents((data.bookings||[]).map((b:any)=>({ id:b.id,type:'booking',date:b.preferredDate,label:`${b.preferredTime} ${b.treatment.name}${b.pharmacist?' — '+b.pharmacist.name:''}`,status:b.status })))
-                  setMonthStart(start)
-                }}>Next</Button>
-                <Button variant="outline" className="rounded-full" onClick={()=>{ setViewMode(viewMode==='month'?'day':'month'); if(viewMode==='month'){ setDayViewDate(new Date().toISOString().slice(0,10)) } }}>Switch to {viewMode==='month'?'Day':'Month'} view</Button>
-              </div>
-            </div>
-            {viewMode==='month' && (
-            <div className="border rounded-md">
-              <div className="grid grid-cols-7 text-xs font-medium border-b">
-                {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=> (<div key={d} className="p-2 text-center">{d}</div>))}
-              </div>
-              <div className="grid grid-cols-7 gap-px bg-gray-200">
-                {Array.from({ length: 42 }).map((_,i)=> {
-                  const firstDow = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth(), 1)).getUTCDay()
-                  const dayNum = i - firstDow + 1
-                  if (dayNum < 1 || dayNum > new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth()+1, 0)).getUTCDate()) {
-                    return <div key={i} className="bg-gray-50 min-h-[110px] p-1" />
-                  }
-                  return (
-                  <div key={i} className="bg-white min-h-[96px] p-1">
-                    {showBlocks && (blocks||[]).map(b=> {
-                      const dt = new Date(b.date)
-                      if (dt.getUTCFullYear()!==monthStart.getUTCFullYear() || dt.getUTCMonth()!==monthStart.getUTCMonth() || dt.getUTCDate() !== dayNum) return null
-                      return (
-                        <div key={b.id} className={`mb-1 rounded px-1 py-0.5 text-[10px] flex items-center justify-between ${b.isClosedDay ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
-                          <button className="text-left flex-1" onClick={()=> setEditBlock(b)}>
-                            <span>{b.isClosedDay ? 'Closed' : `${b.startTime}-${b.endTime}`} {b.reason ? `— ${b.reason}`: ''}</span>
-                          </button>
-                          <button className="text-[10px] underline" onClick={async()=>{
-                            await fetch(`/api/admin/locations/${calendarFor.id}?blockId=${b.id}`, { method: 'DELETE' })
-                            setBlocks(prev=> prev.filter(x=>x.id!==b.id))
-                          }}>Delete</button>
-                        </div>
-                      )
-                    })}
-                    {showBookings && (events||[]).map(ev=> {
-                      const dt = new Date(ev.date)
-                      if (dt.getUTCFullYear()!==monthStart.getUTCFullYear() || dt.getUTCMonth()!==monthStart.getUTCMonth() || dt.getUTCDate() !== dayNum) return null
-                      return (
-                        <div key={ev.id} className={`mb-1 rounded px-1 py-0.5 text-[10px] ${ev.status==='confirmed'?'bg-emerald-100 text-emerald-700':'bg-blue-100 text-blue-700'}`}>
-                          {ev.label}
-                        </div>
-                      )
-                    })}
-                  </div>
-                  )
-                })}
-              </div>
-            </div>)}
-            {viewMode==='day' && (
-              <div className="border rounded-md p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-sm text-gray-600">{dayViewDate || new Date().toISOString().slice(0,10)}</div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" className="rounded-full" onClick={()=>setDayViewDate(prev=>{ const d=new Date(prev||new Date()); d.setUTCDate(d.getUTCDate()-1); return d.toISOString().slice(0,10) })}>Prev</Button>
-                    <Button variant="outline" className="rounded-full" onClick={()=>setDayViewDate(prev=>{ const d=new Date(prev||new Date()); d.setUTCDate(d.getUTCDate()+1); return d.toISOString().slice(0,10) })}>Next</Button>
-                  </div>
-                </div>
-                <div className="relative h-[600px] bg-white">
-                  {Array.from({ length: 12 }).map((_,i)=> (
-                    <div key={i} className="absolute left-0 right-0 border-t top-[calc(100%/12*var(--i))]" style={{ ['--i' as any]: i }} />
-                  ))}
-                  {showBlocks && (blocks||[]).filter(b=> new Date(b.date).toISOString().slice(0,10)===(dayViewDate||new Date().toISOString().slice(0,10))).map(b=>{
-                    const y = (t:string)=>{ const [h,m]=t.split(':').map(Number); return ((h*60+m)/ (24*60))*100 }
-                    const top = y(b.startTime)
-                    const height = Math.max(2, y(b.endTime)-y(b.startTime))
-                    return <div key={b.id} className="absolute left-2 right-2 rounded bg-amber-200 text-amber-800 text-xs p-1" style={{ top: `${top}%`, height: `${height}%` }}>{b.isClosedDay? 'Closed' : `${b.startTime}-${b.endTime}`} {b.reason? `— ${b.reason}`: ''}</div>
-                  })}
-                  {showBookings && (events||[]).filter(ev=> new Date(ev.date).toISOString().slice(0,10)===(dayViewDate||new Date().toISOString().slice(0,10))).map(ev=>{
-                    const y = (t:string)=>{ const [h,m]=t.split(':').map(Number); return ((h*60+m)/ (24*60))*100 }
-                    const top = y(ev.label.slice(0,5))
-                    return <div key={ev.id} className={`absolute left-8 right-8 rounded ${ev.status==='confirmed'?'bg-emerald-200 text-emerald-800':'bg-blue-200 text-blue-800'} text-xs p-1`} style={{ top: `${top}%` }}>{ev.label}</div>
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
       </Modal>
     </div>
   )
