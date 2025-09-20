@@ -71,13 +71,27 @@ export async function GET(request: Request) {
     }
 
     const slotMinutes = treatment.duration
+
+    // Exclude location blocks for that date
+    const dayStart = new Date(jsDate)
+    const dayEnd = new Date(jsDate)
+    dayEnd.setDate(dayEnd.getDate() + 1)
+    const blocks = await prisma.locationBlock.findMany({ where: { locationId, NOT: [{ end: { lte: dayStart } }, { start: { gte: dayEnd } }] } })
     const results: { time: string; pharmacistId: string }[] = []
 
     for (const p of pharmacists) {
       for (const s of p.schedules) {
         for (const time of generateSlots(s.startTime, s.endTime, slotMinutes)) {
           const taken = bookedByPharm.get(p.id)?.has(time)
-          if (!taken) results.push({ time, pharmacistId: p.id })
+          if (taken) continue
+          // Exclude times that fall within any block interval
+          const [hh, mm] = time.split(":").map(Number)
+          const slotStart = new Date(jsDate)
+          slotStart.setHours(hh, mm, 0, 0)
+          const slotEnd = new Date(slotStart)
+          slotEnd.setMinutes(slotEnd.getMinutes() + slotMinutes)
+          const blocked = blocks.some(b => !(slotEnd <= b.start || slotStart >= b.end))
+          if (!blocked) results.push({ time, pharmacistId: p.id })
         }
       }
     }

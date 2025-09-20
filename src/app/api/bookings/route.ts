@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+const db = prisma as any
 
 export async function POST(request: Request) {
   try {
@@ -75,6 +76,18 @@ export async function POST(request: Request) {
         const free = withinSchedule.find((p) => !busy.has(p.id))
         assignedPharmacistId = free ? free.id : withinSchedule[0].id
       }
+    }
+
+    // Prevent booking inside a blocked interval
+    const day = new Date(preferredDate + "T00:00:00")
+    const [hh, mm] = String(preferredTime).split(":").map(Number)
+    const slotStart = new Date(day)
+    slotStart.setHours(hh, mm, 0, 0)
+    const slotEnd = new Date(slotStart)
+    slotEnd.setMinutes(slotEnd.getMinutes() + (typeof treatmentId === 'string' ? (await prisma.treatment.findUnique({ where: { id: treatmentId } }))?.duration || 30 : 30))
+    const overlappingBlock = await db.locationBlock.findFirst({ where: { locationId, NOT: [{ end: { lte: slotStart } }, { start: { gte: slotEnd } }] } })
+    if (overlappingBlock) {
+      return NextResponse.json({ error: 'Selected time is blocked for this location' }, { status: 409 })
     }
 
     // Create the booking

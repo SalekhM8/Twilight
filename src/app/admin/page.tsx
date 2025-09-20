@@ -830,22 +830,23 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
         <h3 className="text-xl font-semibold">Locations</h3>
         <Button className="rounded-full" onClick={startNew}><Plus className="w-4 h-4 mr-2"/>Add Location</Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {locations.map((l)=> (
-          <Card key={l.id} className="bg-white/80 backdrop-blur ring-1 ring-black/5">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>{l.name}</span>
-                <span className="text-sm text-gray-500">{l.code}</span>
-              </CardTitle>
-              <CardDescription>{l.address}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex gap-2">
-              <Button variant="outline" className="rounded-full" onClick={()=>startEdit(l)}>Edit</Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {locations.map((l)=> (
+                <Card key={l.id} className="bg-white/80 backdrop-blur ring-1 ring-black/5">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <span>{l.name}</span>
+                      <span className="text-sm text-gray-500">{l.code}</span>
+                    </CardTitle>
+                    <CardDescription>{l.address}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex gap-2">
+                    <Button variant="outline" className="rounded-full" onClick={()=>startEdit(l)}>Edit</Button>
+                    <Button className="rounded-full" onClick={()=>window.location.assign(`/admin/locations/${l.id}`)}>Open Timetable</Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
 
       <Modal open={open} onClose={()=>setOpen(false)} title={editing? 'Edit Location':'Add Location'}>
         <div className="space-y-3">
