@@ -29,6 +29,7 @@ export default function LocationTimetablePage() {
   const [filters, setFilters] = useState<{ treatmentId: string; pharmacistId: string }>({ treatmentId: '', pharmacistId: '' })
   const [openAdd, setOpenAdd] = useState(false)
   const [openBlock, setOpenBlock] = useState(false)
+  const [openDetail, setOpenDetail] = useState<any | null>(null)
   const [addForm, setAddForm] = useState({ treatmentId: '', pharmacistId: '', customerName: '', customerEmail: '', customerPhone: '', date: '', time: '', notes: '' })
   const [blockForm, setBlockForm] = useState({ start: '', end: '', reason: '' })
 
@@ -167,6 +168,7 @@ export default function LocationTimetablePage() {
           {days.map((d)=>{
             const key = formatDate(d)
             const dayBookings = groupedBookings.get(key) || []
+            const sortedBookings = [...dayBookings].sort((a,b)=> String(a.preferredTime).localeCompare(String(b.preferredTime)))
             const dayBlocks = groupedBlocks.get(key) || []
             const isToday = key === formatDate(new Date())
             return (
@@ -182,14 +184,25 @@ export default function LocationTimetablePage() {
                     {dayBlocks.map(b=> (
                       <div key={b.id} className="px-3 py-2 bg-rose-50 text-rose-700 text-sm">Blocked: {new Date(b.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(b.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} {b.reason ? `· ${b.reason}`:''}</div>
                     ))}
-                    {dayBookings.map((b)=> (
-                      <div key={b.id} className="px-3 py-2 text-sm flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">{b.treatment.name}</p>
-                          <p className="text-gray-500 text-xs">{b.preferredTime} · {b.treatment.duration}m {b.pharmacist ? `· ${b.pharmacist.name}` : ''}</p>
-                        </div>
-                      </div>
-                    ))}
+                    {sortedBookings.map((b)=> {
+                      const status = (b as any).status || 'pending'
+                      const cls = status === 'pending'
+                        ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                        : status === 'confirmed'
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        : 'bg-gray-50 text-gray-800 border border-gray-200'
+                      return (
+                        <button key={b.id} onClick={()=> setOpenDetail(b)} className={`w-full px-3 py-2 text-left text-sm ${cls}`}>
+                          <div className="flex items-center justify-between">
+                            <p className="font-medium truncate mr-2">{b.treatment?.name || 'Booking'}</p>
+                            <span className="text-xs opacity-70 capitalize">{status}</span>
+                          </div>
+                          <p className="text-gray-600 text-xs">
+                            {b.preferredTime} · {b.treatment?.duration ?? ''}m {b.pharmacist ? `· ${b.pharmacist.name}` : ''}
+                          </p>
+                        </button>
+                      )
+                    })}
                     {dayBlocks.length === 0 && dayBookings.length === 0 && (
                       <div className="px-3 py-6 text-center text-sm text-gray-400">No entries</div>
                     )}
@@ -200,6 +213,22 @@ export default function LocationTimetablePage() {
           })}
         </div>
       </div>
+
+      <Modal open={!!openDetail} onClose={()=> setOpenDetail(null)} title="Booking Details">
+        {openDetail && (
+          <div className="space-y-2 text-sm">
+            <p><span className="font-medium">Status:</span> <span className="capitalize">{(openDetail as any).status}</span></p>
+            <p><span className="font-medium">Treatment:</span> {openDetail.treatment?.name}</p>
+            <p><span className="font-medium">Pharmacist:</span> {openDetail.pharmacist?.name || 'Auto-assign'}</p>
+            <p><span className="font-medium">Date:</span> {new Date(openDetail.preferredDate).toLocaleDateString()} {openDetail.preferredTime}</p>
+            <p><span className="font-medium">Customer:</span> {openDetail.customerName}</p>
+            <p><span className="font-medium">Email:</span> {openDetail.customerEmail}</p>
+            <p><span className="font-medium">Phone:</span> {openDetail.customerPhone}</p>
+            {openDetail.notes && (<p><span className="font-medium">Notes:</span> {openDetail.notes}</p>)}
+            <div className="pt-2 text-xs text-gray-500">ID: {openDetail.id}</div>
+          </div>
+        )}
+      </Modal>
 
       <Modal open={openAdd} onClose={()=> setOpenAdd(false)} title="Add Booking">
         <div className="space-y-3">
