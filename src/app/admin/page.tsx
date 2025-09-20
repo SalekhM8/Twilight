@@ -457,68 +457,6 @@ function QuickAdd({ onSelect }: { onSelect: (tab: string)=>void }) {
           ))}
         </div>
       </Modal>
-      {/* Add Booking Modal */}
-      <Modal open={addBookingOpen} onClose={()=>setAddBookingOpen(false)} title="Add Booking">
-        <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm text-gray-700">Treatment</label>
-              <select className="h-9 rounded-md border px-2 text-sm w-full" value={addBooking.treatmentId} onChange={e=>setAddBooking({...addBooking,treatmentId:e.target.value})}>
-                <option value="">Select…</option>
-                {treatmentsForCalendar.map((t:any)=> (<option key={t.id} value={t.id}>{t.name}</option>))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-700">Date</label>
-              <input type="date" className="h-9 rounded-md border px-2 text-sm w-full" value={addBooking.date} onChange={e=>setAddBooking({...addBooking,date:e.target.value})} />
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="block text-sm text-gray-700">Time</label>
-              <input type="time" className="h-9 rounded-md border px-2 text-sm w-full" value={addBooking.time} onChange={e=>setAddBooking({...addBooking,time:e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-700">Name</label>
-              <Input value={addBooking.name} onChange={e=>setAddBooking({...addBooking,name:e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-700">Phone</label>
-              <Input value={addBooking.phone} onChange={e=>setAddBooking({...addBooking,phone:e.target.value})} />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm text-gray-700">Email</label>
-            <Input value={addBooking.email} onChange={e=>setAddBooking({...addBooking,email:e.target.value})} />
-          </div>
-          <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=>setAddBookingOpen(false)}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={async()=>{
-              if (!calendarFor) return
-              const payload = {
-                treatmentId: addBooking.treatmentId,
-                locationId: calendarFor.id,
-                pharmacistId: '',
-                customerName: addBooking.name,
-                customerEmail: addBooking.email,
-                customerPhone: addBooking.phone,
-                preferredDate: addBooking.date,
-                preferredTime: addBooking.time,
-                notes: 'Added by admin from calendar',
-              }
-              const res = await fetch('/api/bookings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-              if (res.ok) {
-                const b = await res.json()
-                setEvents(prev=> [...prev, { id: b.id, type:'booking', date: b.preferredDate, label: `${b.preferredTime} ${b.treatment.name}${b.pharmacist? ' — '+b.pharmacist.name:''}`, status: b.status }])
-                setAddBookingOpen(false)
-              } else {
-                const err = await res.json().catch(()=>({ error: 'Failed to create' }))
-                alert(err.error || 'Failed to create')
-              }
-            }}>Save</Button>
-          </div>
-        </div>
-      </Modal>
       {/* Edit Block Modal */}
       <Modal open={!!editBlock} onClose={()=>setEditBlock(null)} title="Edit Block">
         {editBlock && (
