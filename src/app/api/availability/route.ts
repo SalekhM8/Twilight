@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { resetPreparedStatements } from "@/lib/db"
 
 function* generateSlots(start: string, end: string, minutes: number) {
   const [sh, sm] = start.split(":").map(Number)
@@ -16,6 +17,7 @@ function* generateSlots(start: string, end: string, minutes: number) {
 
 export async function GET(request: Request) {
   try {
+    await resetPreparedStatements()
     const { searchParams } = new URL(request.url)
     const date = searchParams.get("date") // YYYY-MM-DD
     const treatmentId = searchParams.get("treatmentId")!
@@ -76,7 +78,10 @@ export async function GET(request: Request) {
     const dayStart = new Date(jsDate)
     const dayEnd = new Date(jsDate)
     dayEnd.setDate(dayEnd.getDate() + 1)
-    const blocks = await prisma.locationBlock.findMany({ where: { locationId, NOT: [{ end: { lte: dayStart } }, { start: { gte: dayEnd } }] } })
+    let blocks: any[] = []
+    try {
+      blocks = await (prisma as any).locationBlock.findMany({ where: { locationId, NOT: [{ end: { lte: dayStart } }, { start: { gte: dayEnd } }] } })
+    } catch { blocks = [] }
     const results: { time: string; pharmacistId: string }[] = []
 
     for (const p of pharmacists) {

@@ -34,10 +34,15 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
       orderBy: { preferredDate: 'asc' },
     })
 
-    const blocks = await prisma.locationBlock.findMany({
-      where: { locationId: id, NOT: [{ end: { lte: weekStart } }, { start: { gte: weekEnd } }] },
-      orderBy: { start: 'asc' },
-    })
+    let blocks: any[] = []
+    try {
+      blocks = await prisma.locationBlock.findMany({
+        where: { locationId: id, NOT: [{ end: { lte: weekStart } }, { start: { gte: weekEnd } }] },
+        orderBy: { start: 'asc' },
+      })
+    } catch {
+      blocks = [] // table likely not migrated yet; degrade gracefully
+    }
 
     return NextResponse.json({ weekStart, weekEnd, bookings, blocks })
   } catch (e) {

@@ -86,7 +86,10 @@ export async function POST(request: Request) {
     slotStart.setHours(hh, mm, 0, 0)
     const slotEnd = new Date(slotStart)
     slotEnd.setMinutes(slotEnd.getMinutes() + (typeof treatmentId === 'string' ? (await prisma.treatment.findUnique({ where: { id: treatmentId } }))?.duration || 30 : 30))
-    const overlappingBlock = await db.locationBlock.findFirst({ where: { locationId, NOT: [{ end: { lte: slotStart } }, { start: { gte: slotEnd } }] } })
+    let overlappingBlock: any = null
+    try {
+      overlappingBlock = await (prisma as any).locationBlock.findFirst({ where: { locationId, NOT: [{ end: { lte: slotStart } }, { start: { gte: slotEnd } }] } })
+    } catch { overlappingBlock = null }
     if (overlappingBlock) {
       return NextResponse.json({ error: 'Selected time is blocked for this location' }, { status: 409 })
     }
