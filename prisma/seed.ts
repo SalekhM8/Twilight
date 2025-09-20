@@ -4,6 +4,10 @@ import bcrypt from "bcryptjs"
 const prisma = new PrismaClient()
 
 async function main() {
+  try {
+    // Clear any lingering prepared statements in local Postgres (prevents 42P05 during rapid dev cycles)
+    await prisma.$executeRawUnsafe('DEALLOCATE ALL')
+  } catch {}
   await prisma.booking.deleteMany()
   await prisma.pharmacistSchedule.deleteMany()
   await prisma.pharmacistTreatment.deleteMany()

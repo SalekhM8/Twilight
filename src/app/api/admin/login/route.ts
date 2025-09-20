@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs'
 
 export async function POST(request: Request) {
   try {
+    // Workaround for local prisma-dev Postgres prepared statement conflicts
+    try { await prisma.$executeRawUnsafe('DEALLOCATE ALL') } catch {}
     const { email, password } = await request.json()
     
     // Find admin user

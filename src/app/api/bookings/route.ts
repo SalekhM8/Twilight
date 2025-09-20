@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { resetPreparedStatements } from '@/lib/db'
 const db = prisma as any
 
 export async function POST(request: Request) {
@@ -123,6 +124,7 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
+    await resetPreparedStatements()
     const bookings = await prisma.booking.findMany({
       include: {
         treatment: true,
