@@ -931,10 +931,10 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
         </div>
       </Modal>
 
-      <Modal open={!!calendarFor} onClose={()=>setCalendarFor(null)} title={calendarFor ? `Calendar — ${calendarFor.name}` : ''}>
+      <Modal open={!!calendarFor} onClose={()=>setCalendarFor(null)} title={calendarFor ? `Calendar — ${calendarFor.name}` : ''} panelClassName="max-w-5xl">
         {calendarFor && (
           <div className="space-y-4">
-            <div className="flex items-end gap-2">
+            <div className="flex flex-wrap items-end gap-2">
               <div>
                 <label className="block text-sm text-gray-700">Date</label>
                 <input type="date" className="h-9 rounded-md border px-2 text-sm" value={newBlock.date} onChange={e=>setNewBlock({...newBlock,date:e.target.value})} />
@@ -956,6 +956,27 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
                   setBlocks(prev=>[...prev,b])
                 }
               }}>Add</Button>
+              <div className="ml-auto flex items-center gap-2">
+                <Button variant="outline" className="rounded-full" onClick={async()=>{
+                  // prev month
+                  // (MVP) refetch window by subtracting one month from current now
+                  const base = new Date(newBlock.date || new Date().toISOString().slice(0,10))
+                  const start = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth()-1, 1))
+                  const end = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), 0))
+                  const qs = `?start=${start.toISOString()}&end=${end.toISOString()}`
+                  const data = await fetch(`/api/admin/locations/${calendarFor.id}/calendar${qs}`).then(r=>r.json())
+                  setBlocks(data.blocks||[]); setEvents((data.bookings||[]).map((b:any)=>({ id:b.id,type:'booking',date:b.preferredDate,label:`${b.preferredTime} ${b.treatment.name}${b.pharmacist?' — '+b.pharmacist.name:''}`,status:b.status })))
+                }}>Prev</Button>
+                <Button variant="outline" className="rounded-full" onClick={async()=>{
+                  // next month
+                  const base = new Date(newBlock.date || new Date().toISOString().slice(0,10))
+                  const start = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth()+1, 1))
+                  const end = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth()+2, 0))
+                  const qs = `?start=${start.toISOString()}&end=${end.toISOString()}`
+                  const data = await fetch(`/api/admin/locations/${calendarFor.id}/calendar${qs}`).then(r=>r.json())
+                  setBlocks(data.blocks||[]); setEvents((data.bookings||[]).map((b:any)=>({ id:b.id,type:'booking',date:b.preferredDate,label:`${b.preferredTime} ${b.treatment.name}${b.pharmacist?' — '+b.pharmacist.name:''}`,status:b.status })))
+                }}>Next</Button>
+              </div>
             </div>
             <div className="border rounded-md">
               <div className="grid grid-cols-7 text-xs font-medium border-b">

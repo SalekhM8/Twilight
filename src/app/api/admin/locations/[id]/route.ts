@@ -10,6 +10,27 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
 
     if (blockId) {
       // Update a block
+      // Guardrail: prevent overlap on same date
+      const candidate = {
+        startTime: (body as any).startTime as string,
+        endTime: (body as any).endTime as string,
+        date: (body as any).date ? new Date((body as any).date + 'T00:00:00') : undefined,
+      }
+      if (candidate.date && candidate.startTime && candidate.endTime) {
+        const overlaps = await prisma.locationBlock.findFirst({
+          where: {
+            id: { not: String(blockId) },
+            locationId: id,
+            date: candidate.date,
+            OR: [
+              { AND: [{ startTime: { lte: candidate.startTime } }, { endTime: { gt: candidate.startTime } }] },
+              { AND: [{ startTime: { lt: candidate.endTime } }, { endTime: { gte: candidate.endTime } }] },
+              { AND: [{ startTime: { gte: candidate.startTime } }, { endTime: { lte: candidate.endTime } }] },
+            ],
+          },
+        })
+        if (overlaps) return NextResponse.json({ error: 'Overlaps existing block' }, { status: 409 })
+      }
       const updated = await prisma.locationBlock.update({ where: { id: String(blockId) }, data: {
         date: (body as any).date ? new Date((body as any).date + 'T00:00:00') : undefined,
         startTime: (body as any).startTime,
@@ -62,6 +83,28 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     const body = await req.json()
     // body: { date: 'YYYY-MM-DD', startTime: 'HH:MM', endTime: 'HH:MM', isClosedDay?: boolean, reason?: string }
     const date = new Date(body.date + 'T00:00:00')
+
+    // Guardrail: closed day cannot be created if bookings exist
+    if (body.isClosedDay) {
+      const count = await prisma.booking.count({ where: { locationId: id, preferredDate: date, status: { in: ['pending','confirmed'] } } })
+      if (count > 0) return NextResponse.json({ error: 'Closed day conflicts with existing bookings', count }, { status: 409 })
+    }
+
+    // Guardrail: overlap detection with existing blocks
+    if (!body.isClosedDay) {
+      const overlap = await prisma.locationBlock.findFirst({
+        where: {
+          locationId: id,
+          date,
+          OR: [
+            { AND: [{ startTime: { lte: body.startTime } }, { endTime: { gt: body.startTime } }] },
+            { AND: [{ startTime: { lt: body.endTime } }, { endTime: { gte: body.endTime } }] },
+            { AND: [{ startTime: { gte: body.startTime } }, { endTime: { lte: body.endTime } }] },
+          ],
+        },
+      })
+      if (overlap) return NextResponse.json({ error: 'Overlaps existing block' }, { status: 409 })
+    }
     const block = await prisma.locationBlock.create({
       data: {
         locationId: id,

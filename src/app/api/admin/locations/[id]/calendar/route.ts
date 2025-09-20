@@ -31,7 +31,23 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
       orderBy: [{ preferredDate: "asc" }, { preferredTime: "asc" }],
     })
 
-    return NextResponse.json({ blocks, bookings })
+    // pharmacist schedules overlay (day-of-week based)
+    const dayIndexes = Array.from({ length: 7 }).map((_, i) => i)
+    const schedules = await prisma.pharmacistSchedule.findMany({
+      where: {
+        dayOfWeek: { in: dayIndexes },
+        pharmacist: { locations: { some: { locationId: id } } },
+        isActive: true,
+      },
+      select: {
+        dayOfWeek: true,
+        startTime: true,
+        endTime: true,
+        pharmacist: { select: { id: true, name: true } },
+      },
+    })
+
+    return NextResponse.json({ blocks, bookings, schedules })
   } catch (e) {
     console.error(e)
     return NextResponse.json({ error: "Failed to load calendar" }, { status: 500 })
