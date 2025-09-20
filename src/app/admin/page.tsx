@@ -814,6 +814,7 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
   } })
   const [calendarFor, setCalendarFor] = useState<any | null>(null)
   const [blocks, setBlocks] = useState<any[]>([])
+  const [events, setEvents] = useState<any[]>([])
   const [newBlock, setNewBlock] = useState({ date: '', startTime: '09:00', endTime: '17:00', isClosedDay: false, reason: '' })
 
   const startNew = () => { setEditing(null); setOpen(true) }
@@ -846,7 +847,23 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
             </CardHeader>
             <CardContent className="flex gap-2">
               <Button variant="outline" className="rounded-full" onClick={()=>startEdit(l)}>Edit</Button>
-              <Button variant="outline" className="rounded-full" onClick={()=>{ setCalendarFor(l); setBlocks(l.blocks || []) }}>Calendar</Button>
+              <Button variant="outline" className="rounded-full" onClick={async()=>{ 
+                setCalendarFor(l);
+                const today = new Date()
+                const start = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1))
+                const end = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth()+1, 0))
+                const qs = `?start=${start.toISOString()}&end=${end.toISOString()}`
+                const res = await fetch(`/api/admin/locations/${l.id}/calendar${qs}`)
+                const data = await res.json()
+                setBlocks(data.blocks || [])
+                setEvents((data.bookings||[]).map((b:any)=> ({
+                  id: b.id,
+                  type: 'booking',
+                  date: b.preferredDate,
+                  label: `${b.preferredTime} ${b.treatment.name}${b.pharmacist? ' — '+b.pharmacist.name:''}`,
+                  status: b.status,
+                })))
+              }}>Calendar</Button>
             </CardContent>
           </Card>
         ))}
@@ -958,6 +975,15 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
                             await fetch(`/api/admin/locations/${calendarFor.id}?blockId=${b.id}`, { method: 'DELETE' })
                             setBlocks(prev=> prev.filter(x=>x.id!==b.id))
                           }}>Delete</button>
+                        </div>
+                      )
+                    })}
+                    {(events||[]).map(ev=> {
+                      const dt = new Date(ev.date)
+                      if (dt.getUTCDate() !== ((i%35)+1)) return null
+                      return (
+                        <div key={ev.id} className={`mb-1 rounded px-1 py-0.5 text-[10px] ${ev.status==='confirmed'?'bg-emerald-100 text-emerald-700':'bg-blue-100 text-blue-700'}`}>
+                          {ev.label}
                         </div>
                       )
                     })}
