@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+const db = prisma as any
 import { resetPreparedStatements } from "@/lib/db"
 
 function* generateSlots(start: string, end: string, minutes: number) {
@@ -80,7 +81,7 @@ export async function GET(request: Request) {
     dayEnd.setDate(dayEnd.getDate() + 1)
     let blocks: any[] = []
     try {
-      blocks = await (prisma as any).locationBlock.findMany({ where: { locationId, NOT: [{ end: { lte: dayStart } }, { start: { gte: dayEnd } }] } })
+      blocks = await db.locationBlock.findMany({ where: { locationId, NOT: [{ end: { lte: dayStart } }, { start: { gte: dayEnd } }] } })
     } catch { blocks = [] }
     const results: { time: string; pharmacistId: string }[] = []
 

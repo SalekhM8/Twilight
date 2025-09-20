@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
+const db = prisma as any
 
 function startOfWeek(date: Date): Date {
   const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
 
     let blocks: any[] = []
     try {
-      blocks = await prisma.locationBlock.findMany({
+      blocks = await db.locationBlock.findMany({
         where: { locationId: id, NOT: [{ end: { lte: weekStart } }, { start: { gte: weekEnd } }] },
         orderBy: { start: 'asc' },
       })
