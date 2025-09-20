@@ -457,54 +457,6 @@ function QuickAdd({ onSelect }: { onSelect: (tab: string)=>void }) {
           ))}
         </div>
       </Modal>
-      {/* Edit Block Modal */}
-      <Modal open={!!editBlock} onClose={()=>setEditBlock(null)} title="Edit Block">
-        {editBlock && (
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm text-gray-700">Date</label>
-                <input type="date" className="h-9 rounded-md border px-2 text-sm" defaultValue={new Date(editBlock.date).toISOString().slice(0,10)} onChange={e=> editBlock._date = e.target.value} />
-              </div>
-              <div className="flex items-center gap-2 mt-6">
-                <label className="flex items-center gap-2 text-sm"><input type="checkbox" defaultChecked={!!editBlock.isClosedDay} onChange={e=> editBlock._isClosedDay = e.target.checked} /> Closed day</label>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm text-gray-700">Start</label>
-                <input type="time" className="h-9 rounded-md border px-2 text-sm" defaultValue={editBlock.startTime} onChange={e=> editBlock._startTime = e.target.value} />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-700">End</label>
-                <input type="time" className="h-9 rounded-md border px-2 text-sm" defaultValue={editBlock.endTime} onChange={e=> editBlock._endTime = e.target.value} />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-700">Reason</label>
-              <Input defaultValue={editBlock.reason || ''} onChange={e=> editBlock._reason = e.target.value} />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" className="rounded-full" onClick={()=>setEditBlock(null)}>Cancel</Button>
-              <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={async()=>{
-                const payload:any = { blockId: editBlock.id }
-                if (editBlock._date) payload.date = editBlock._date
-                if (editBlock._startTime) payload.startTime = editBlock._startTime
-                if (editBlock._endTime) payload.endTime = editBlock._endTime
-                if (typeof editBlock._isClosedDay === 'boolean') payload.isClosedDay = editBlock._isClosedDay
-                if (editBlock._reason !== undefined) payload.reason = editBlock._reason
-                const res = await fetch(`/api/admin/locations/${calendarFor.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-                if (res.status===409) { alert('Block overlaps or conflicts with bookings.'); return }
-                if (res.ok) {
-                  const updated = await res.json()
-                  setBlocks(prev=> prev.map((b)=> b.id===updated.id ? updated : b))
-                  setEditBlock(null)
-                }
-              }}>Save</Button>
-            </div>
-          </div>
-        )}
-      </Modal>
     </>
   )
 }
