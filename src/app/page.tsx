@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
+import { resetPreparedStatements } from '@/lib/db'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
@@ -32,6 +33,7 @@ const treatmentIcons = {
 }
 
 export default async function HomePage() {
+  await resetPreparedStatements()
   const treatments = await prisma.treatment.findMany({
     where: { isActive: true },
     orderBy: { name: 'asc' }

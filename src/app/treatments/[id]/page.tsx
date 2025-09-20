@@ -1,8 +1,10 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
+import { resetPreparedStatements } from "@/lib/db"
 import { MapPin } from "lucide-react"
 
 export default async function TreatmentPage({ params }: { params: Promise<{ id: string }> }) {
+  await resetPreparedStatements()
   const { id } = await params
   const treatment = await prisma.treatment.findUnique({ where: { id } })
   if (!treatment) {
