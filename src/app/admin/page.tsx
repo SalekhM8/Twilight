@@ -60,6 +60,7 @@ export default function AdminDashboard() {
   const [treatments, setTreatments] = useState<any[]>([])
   const [pharmacists, setPharmacists] = useState<any[]>([])
   const [locations, setLocations] = useState<any[]>([])
+  const [calendarLocationId, setCalendarLocationId] = useState<string>("")
   const [loadingMgmt, setLoadingMgmt] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -811,6 +812,9 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
     saturday: { open: '10:00', close: '16:00' },
     sunday: { open: 'closed', close: 'closed' },
   } })
+  const [calendarFor, setCalendarFor] = useState<any | null>(null)
+  const [blocks, setBlocks] = useState<any[]>([])
+  const [newBlock, setNewBlock] = useState({ date: '', startTime: '09:00', endTime: '17:00', isClosedDay: false, reason: '' })
 
   const startNew = () => { setEditing(null); setOpen(true) }
   const startEdit = (l:any) => { setEditing(l); setForm({ name: l.name, code: l.code, address: l.address, phone: l.phone, openingHours: l.openingHours }); setOpen(true) }
@@ -842,6 +846,7 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
             </CardHeader>
             <CardContent className="flex gap-2">
               <Button variant="outline" className="rounded-full" onClick={()=>startEdit(l)}>Edit</Button>
+              <Button variant="outline" className="rounded-full" onClick={()=>{ setCalendarFor(l); setBlocks(l.blocks || []) }}>Calendar</Button>
             </CardContent>
           </Card>
         ))}
@@ -907,6 +912,61 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
             <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={save}>Save</Button>
           </div>
         </div>
+      </Modal>
+
+      <Modal open={!!calendarFor} onClose={()=>setCalendarFor(null)} title={calendarFor ? `Calendar — ${calendarFor.name}` : ''}>
+        {calendarFor && (
+          <div className="space-y-4">
+            <div className="flex items-end gap-2">
+              <div>
+                <label className="block text-sm text-gray-700">Date</label>
+                <input type="date" className="h-9 rounded-md border px-2 text-sm" value={newBlock.date} onChange={e=>setNewBlock({...newBlock,date:e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700">Start</label>
+                <input type="time" className="h-9 rounded-md border px-2 text-sm" value={newBlock.startTime} onChange={e=>setNewBlock({...newBlock,startTime:e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700">End</label>
+                <input type="time" className="h-9 rounded-md border px-2 text-sm" value={newBlock.endTime} onChange={e=>setNewBlock({...newBlock,endTime:e.target.value})} />
+              </div>
+              <label className="flex items-center gap-2 text-sm mt-6"><input type="checkbox" checked={newBlock.isClosedDay} onChange={e=>setNewBlock({...newBlock,isClosedDay:e.target.checked})} /> Closed day</label>
+              <input placeholder="Reason" className="h-9 rounded-md border px-2 text-sm flex-1" value={newBlock.reason} onChange={e=>setNewBlock({...newBlock,reason:e.target.value})} />
+              <Button className="rounded-full" onClick={async()=>{
+                const res = await fetch(`/api/admin/locations/${calendarFor.id}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newBlock) })
+                if (res.ok) {
+                  const b = await res.json()
+                  setBlocks(prev=>[...prev,b])
+                }
+              }}>Add</Button>
+            </div>
+            <div className="border rounded-md">
+              <div className="grid grid-cols-7 text-xs font-medium border-b">
+                {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=> (<div key={d} className="p-2 text-center">{d}</div>))}
+              </div>
+              <div className="grid grid-cols-7 gap-px bg-gray-200">
+                {Array.from({ length: 35 }).map((_,i)=> (
+                  <div key={i} className="bg-white min-h-[96px] p-1">
+                    {(blocks||[]).map(b=> {
+                      const dt = new Date(b.date)
+                      // Not a perfect calendar; shows by date number only for MVP
+                      if (dt.getUTCDate() !== ((i%35)+1)) return null
+                      return (
+                        <div key={b.id} className={`mb-1 rounded px-1 py-0.5 text-[10px] flex items-center justify-between ${b.isClosedDay ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
+                          <span>{b.isClosedDay ? 'Closed' : `${b.startTime}-${b.endTime}`} {b.reason ? `— ${b.reason}`: ''}</span>
+                          <button className="text-[10px] underline" onClick={async()=>{
+                            await fetch(`/api/admin/locations/${calendarFor.id}?blockId=${b.id}`, { method: 'DELETE' })
+                            setBlocks(prev=> prev.filter(x=>x.id!==b.id))
+                          }}>Delete</button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   )
