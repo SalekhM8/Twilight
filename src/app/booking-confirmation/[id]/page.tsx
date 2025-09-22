@@ -81,15 +81,24 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
                   <Calendar className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">
-                    {new Date(booking.preferredDate).toLocaleDateString('en-GB', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                  <p className="text-sm text-gray-600">at {booking.preferredTime}</p>
+                  {booking.preferredTime === 'TBD' ? (
+                    <>
+                      <p className="font-semibold text-gray-900">Scheduling To Be Arranged</p>
+                      <p className="text-sm text-gray-600">You will be contacted to book a slot.</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="font-semibold text-gray-900">
+                        {new Date(booking.preferredDate).toLocaleDateString('en-GB', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                      <p className="text-sm text-gray-600">at {booking.preferredTime}</p>
+                    </>
+                  )}
                 </div>
               </div>
 

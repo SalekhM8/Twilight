@@ -7,8 +7,8 @@ CREATE TABLE "Location" (
     "phone" TEXT NOT NULL,
     "openingHours" JSONB NOT NULL,
     "mapUrl" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -20,8 +20,8 @@ CREATE TABLE "Pharmacist" (
     "bio" TEXT,
     "imageUrl" TEXT,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -33,8 +33,8 @@ CREATE TABLE "Treatment" (
     "price" REAL NOT NULL,
     "duration" INTEGER NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -73,8 +73,8 @@ CREATE TABLE "PharmacistSchedule" (
     "startTime" TEXT NOT NULL,
     "endTime" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "PharmacistSchedule_pharmacistId_fkey" FOREIGN KEY ("pharmacistId") REFERENCES "Pharmacist" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -87,12 +87,12 @@ CREATE TABLE "Booking" (
     "treatmentId" TEXT NOT NULL,
     "pharmacistId" TEXT,
     "locationId" TEXT NOT NULL,
-    "preferredDate" DATETIME NOT NULL,
+    "preferredDate" TIMESTAMP NOT NULL,
     "preferredTime" TEXT NOT NULL,
     "notes" TEXT,
     "status" TEXT NOT NULL DEFAULT 'pending',
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "Booking_treatmentId_fkey" FOREIGN KEY ("treatmentId") REFERENCES "Treatment" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Booking_pharmacistId_fkey" FOREIGN KEY ("pharmacistId") REFERENCES "Pharmacist" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Booking_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "Location" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -106,8 +106,8 @@ CREATE TABLE "Admin" (
     "name" TEXT NOT NULL,
     "role" TEXT NOT NULL DEFAULT 'admin',
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateIndex

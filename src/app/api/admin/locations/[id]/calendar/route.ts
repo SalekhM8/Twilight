@@ -27,6 +27,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
       where: {
         locationId: id,
         preferredDate: { gte: weekStart, lt: weekEnd },
+        preferredTime: { not: 'TBD' },
         ...(treatmentId ? { treatmentId } : {}),
         ...(pharmacistId ? { pharmacistId } : {}),
         status: { in: ['pending','confirmed'] },

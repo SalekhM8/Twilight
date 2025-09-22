@@ -17,6 +17,7 @@ interface Treatment {
 	description: string
 	price: number
 	duration: number
+  showSlots?: boolean
 }
 
 interface Location {
@@ -56,22 +57,21 @@ export function ConsultationWizard() {
 	const [submitting, setSubmitting] = useState(false)
 	const [step, setStep] = useState(0)
 	const [availableSlots, setAvailableSlots] = useState<string[]>([])
+  const selectedTreatment = useMemo(()=> treatments.find(t=> t.id === form.treatmentId), [treatments, form.treatmentId])
+  const requiresSlots = !!selectedTreatment?.showSlots || selectedTreatment?.showSlots === undefined
 
-	const steps = useMemo(
-		() => [
-			"treatment",
-			"location",
-			"pharmacist",
-			"name",
-			"email",
-			"phone",
-			"date",
-			"time",
-			"notes",
-			"review",
-		],
-		[]
-	)
+  const steps = useMemo(() => {
+    const base = [
+      "treatment",
+      "location",
+      "pharmacist",
+      "name",
+      "email",
+      "phone",
+    ]
+    const scheduling = requiresSlots ? ["date","time"] : []
+    return [...base, ...scheduling, "notes", "review"]
+  }, [requiresSlots])
 
 	const totalSteps = steps.length
 	const progress = Math.round((step / (totalSteps - 1)) * 100)
@@ -127,9 +127,9 @@ export function ConsultationWizard() {
 	}, [form.treatmentId, form.locationId])
 
 	// Load available time slots when inputs change
-	useEffect(() => {
+  useEffect(() => {
 		const fetchSlots = async () => {
-			if (!form.treatmentId || !form.locationId || !form.preferredDate) {
+      if (!requiresSlots || !form.treatmentId || !form.locationId || !form.preferredDate) {
 				setAvailableSlots([])
 				return
 			}
@@ -160,10 +160,10 @@ export function ConsultationWizard() {
 				return /.+@.+\..+/.test(form.customerEmail)
 			case "phone":
 				return form.customerPhone.trim().length >= 7
-			case "date":
-				return !!form.preferredDate
-			case "time":
-				return !!form.preferredTime
+      case "date":
+        return requiresSlots ? !!form.preferredDate : true
+      case "time":
+        return requiresSlots ? !!form.preferredTime : true
 			default:
 				return true
 		}
@@ -178,7 +178,11 @@ export function ConsultationWizard() {
 			const res = await fetch("/api/bookings", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          // if no slots required, omit preferredTime and allow missing preferredDate
+          ...(requiresSlots ? {} : { preferredTime: undefined, preferredDate: form.preferredDate || undefined })
+        }),
 			})
 			if (!res.ok) throw new Error("Failed to create booking")
 			const booking = await res.json()
@@ -231,7 +235,7 @@ export function ConsultationWizard() {
 							style={{ width: `${totalSteps * 100}%`, transform: `translateX(-${step * (100 / totalSteps)}%)` }}
 						>
 							{/* Step 0: Treatment */}
-							<section className="w-full px-6 py-10" style={{ width: `${100 / totalSteps}%` }}>
+                            <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
 								<h2 className="text-2xl font-bold">Which treatment do you need?</h2>
 								<p className="text-gray-600 mt-1">Choose one to continue</p>
 								<div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -252,7 +256,7 @@ export function ConsultationWizard() {
 							</section>
 
 							{/* Step 1: Location */}
-							<section className="w-full px-6 py-10" style={{ width: `${100 / totalSteps}%` }}>
+                            <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
 								<h2 className="text-2xl font-bold">Where would you like to visit?</h2>
 								<p className="text-gray-600 mt-1">Only locations offering your treatment are shown</p>
 								<div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -273,7 +277,7 @@ export function ConsultationWizard() {
 							</section>
 
 							{/* Step 2: Pharmacist */}
-							<section className="w-full px-6 py-10" style={{ width: `${100 / totalSteps}%` }}>
+                            <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
 								<h2 className="text-2xl font-bold">Do you have a preferred pharmacist?</h2>
 								<p className="text-gray-600 mt-1">Choose one or select "Don’t mind"</p>
 								<div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -304,7 +308,7 @@ export function ConsultationWizard() {
 							</section>
 
 							{/* Step 3-5: Name, Email, Phone */}
-							<section className="w-full px-6 py-10" style={{ width: `${100 / totalSteps}%` }}>
+                            <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
 								<h2 className="text-2xl font-bold">What’s your full name?</h2>
 								<div className="mt-6 max-w-md">
 									<Input
@@ -315,7 +319,7 @@ export function ConsultationWizard() {
 								</div>
 							</section>
 
-							<section className="w-full px-6 py-10" style={{ width: `${100 / totalSteps}%` }}>
+                            <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
 								<h2 className="text-2xl font-bold">What’s your email?</h2>
 								<div className="mt-6 max-w-md">
 									<Input
@@ -327,7 +331,7 @@ export function ConsultationWizard() {
 								</div>
 							</section>
 
-							<section className="w-full px-6 py-10" style={{ width: `${100 / totalSteps}%` }}>
+                            <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
 								<h2 className="text-2xl font-bold">Best phone number?</h2>
 								<div className="mt-6 max-w-md">
 									<Input
@@ -339,37 +343,41 @@ export function ConsultationWizard() {
 								</div>
 							</section>
 
-							{/* Step 6-7: Date/Time */}
-							<section className="w-full px-6 py-10" style={{ width: `${100 / totalSteps}%` }}>
-								<h2 className="text-2xl font-bold">Preferred date?</h2>
-								<div className="mt-6 max-w-md">
-									<Input
-										type="date"
-										min={new Date().toISOString().split("T")[0]}
-										value={form.preferredDate}
-										onChange={(e) => setForm({ ...form, preferredDate: e.target.value })}
-									/>
-								</div>
-							</section>
+                            {/* Step 6-7: Date/Time (only when scheduling is required) */}
+                            {requiresSlots && (
+                              <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
+                                  <h2 className="text-2xl font-bold">Preferred date?</h2>
+                                  <div className="mt-6 max-w-md">
+                                      <Input
+                                          type="date"
+                                          min={new Date().toISOString().split("T")[0]}
+                                          value={form.preferredDate}
+                                          onChange={(e) => setForm({ ...form, preferredDate: e.target.value })}
+                                      />
+                                  </div>
+                              </section>
+                            )}
 
-							<section className="w-full px-6 py-10" style={{ width: `${100 / totalSteps}%` }}>
-								<h2 className="text-2xl font-bold">Preferred time?</h2>
-								<div className="mt-6 max-w-md">
-									<select
-										className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm"
-										value={form.preferredTime}
-										onChange={(e) => setForm({ ...form, preferredTime: e.target.value })}
-									>
-										<option value="">Select time</option>
-										{availableSlots.map((t)=> (
-											<option key={t} value={t}>{t}</option>
-										))}
-									</select>
-								</div>
-							</section>
+                            {requiresSlots && (
+                              <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
+                                  <h2 className="text-2xl font-bold">Preferred time?</h2>
+                                  <div className="mt-6 max-w-md">
+                                    <select
+                                      className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm"
+                                      value={form.preferredTime}
+                                      onChange={(e) => setForm({ ...form, preferredTime: e.target.value })}
+                                    >
+                                      <option value="">Select time</option>
+                                      {availableSlots.map((t)=> (
+                                        <option key={t} value={t}>{t}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                              </section>
+                            )}
 
 							{/* Step 8: Notes */}
-							<section className="w-full px-6 py-10" style={{ width: `${100 / totalSteps}%` }}>
+                            <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
 								<h2 className="text-2xl font-bold">Any additional notes?</h2>
 								<div className="mt-6 max-w-xl">
 									<Textarea

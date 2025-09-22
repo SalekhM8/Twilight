@@ -19,17 +19,25 @@ export async function POST(request: Request) {
       notes
     } = body
     
-    // Validate required fields
-    if (!treatmentId || !locationId || !customerName || !customerEmail || !customerPhone || !preferredDate || !preferredTime) {
+    // Validate required fields (allow slotless bookings when treatment.showSlots=false)
+    if (!treatmentId || !locationId || !customerName || !customerEmail || !customerPhone) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       )
     }
+    const treatment = await prisma.treatment.findUnique({ where: { id: treatmentId } })
+    if (!treatment) return NextResponse.json({ error: 'Treatment not found' }, { status: 404 })
+    const requiresSlots = !!treatment.showSlots
+    if (requiresSlots) {
+      if (!preferredDate || !preferredTime) {
+        return NextResponse.json({ error: 'Date and time are required for this treatment' }, { status: 400 })
+      }
+    }
     
-    // If no pharmacistId provided, auto-assign based on availability at the selected time
+    // If no pharmacistId provided, auto-assign based on availability (only when a concrete time exists)
     let assignedPharmacistId: string | null = pharmacistId || null
-    if (!assignedPharmacistId) {
+    if (!assignedPharmacistId && requiresSlots) {
       // find eligible pharmacists for treatment at location who are scheduled that day
       const jsDate = new Date(preferredDate + "T00:00:00")
       const dow = jsDate.getUTCDay()
@@ -79,19 +87,21 @@ export async function POST(request: Request) {
       }
     }
 
-    // Prevent booking inside a blocked interval
-    const day = new Date(preferredDate + "T00:00:00")
-    const [hh, mm] = String(preferredTime).split(":").map(Number)
-    const slotStart = new Date(day)
-    slotStart.setHours(hh, mm, 0, 0)
-    const slotEnd = new Date(slotStart)
-    slotEnd.setMinutes(slotEnd.getMinutes() + (typeof treatmentId === 'string' ? (await prisma.treatment.findUnique({ where: { id: treatmentId } }))?.duration || 30 : 30))
-    let overlappingBlock: any = null
-    try {
-      overlappingBlock = await (prisma as any).locationBlock.findFirst({ where: { locationId, NOT: [{ end: { lte: slotStart } }, { start: { gte: slotEnd } }] } })
-    } catch { overlappingBlock = null }
-    if (overlappingBlock) {
-      return NextResponse.json({ error: 'Selected time is blocked for this location' }, { status: 409 })
+    // Prevent booking inside a blocked interval (only when a time is provided)
+    if (requiresSlots) {
+      const day = new Date(preferredDate + "T00:00:00")
+      const [hh, mm] = String(preferredTime).split(":").map(Number)
+      const slotStart = new Date(day)
+      slotStart.setHours(hh, mm, 0, 0)
+      const slotEnd = new Date(slotStart)
+      slotEnd.setMinutes(slotEnd.getMinutes() + (typeof treatmentId === 'string' ? (await prisma.treatment.findUnique({ where: { id: treatmentId } }))?.duration || 30 : 30))
+      let overlappingBlock: any = null
+      try {
+        overlappingBlock = await (prisma as any).locationBlock.findFirst({ where: { locationId, NOT: [{ end: { lte: slotStart } }, { start: { gte: slotEnd } }] } })
+      } catch { overlappingBlock = null }
+      if (overlappingBlock) {
+        return NextResponse.json({ error: 'Selected time is blocked for this location' }, { status: 409 })
+      }
     }
 
     // Create the booking
@@ -103,8 +113,8 @@ export async function POST(request: Request) {
         customerName,
         customerEmail,
         customerPhone,
-        preferredDate: new Date(preferredDate),
-        preferredTime,
+        preferredDate: requiresSlots ? new Date(preferredDate) : new Date(),
+        preferredTime: requiresSlots ? preferredTime : 'TBD',
         notes: notes || null,
         status: 'pending'
       },

@@ -562,11 +562,11 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
 function TreatmentsManager({ treatments, locations, onReload }: { treatments: any[]; locations: any[]; onReload: ()=>void }) {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<any | null>(null)
-  const [form, setForm] = useState<any>({ name: '', description: '', category: '', price: '', duration: '', isActive: true, locationIds: [] as string[] })
+  const [form, setForm] = useState<any>({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, locationIds: [] as string[] })
 
   const startNew = () => {
     setEditing(null)
-    setForm({ name: '', description: '', category: '', price: '', duration: '', isActive: true, locationIds: [] })
+    setForm({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, locationIds: [] })
     setOpen(true)
   }
   const startEdit = async (t: any) => {
@@ -574,9 +574,9 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
     try {
       const detail = await fetch(`/api/treatments/${t.id}`).then(r=>r.json())
       const locIds = Array.isArray(detail.locations) ? detail.locations.map((l:any)=> l.id) : []
-      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, locationIds: locIds })
+      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), locationIds: locIds })
     } catch {
-      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, locationIds: [] })
+      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), locationIds: [] })
     }
     setOpen(true)
   }
@@ -632,6 +632,10 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
               <label className="block text-sm text-gray-700">Duration (mins)</label>
               <Input value={form.duration} onChange={e=>setForm({ ...form, duration: e.target.value })} />
             </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <input id="showSlots" type="checkbox" checked={!!form.showSlots} onChange={(e)=> setForm({ ...form, showSlots: e.target.checked })} />
+            <label htmlFor="showSlots" className="text-sm text-gray-700">Show slots to customers</label>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Available at locations</label>
