@@ -220,9 +220,9 @@ export default async function HomePage() {
             <div>
               <h3 className="font-semibold mb-4">Locations</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>Small Health</li>
-                <li>Kings Heath</li>
-                <li>Billesley</li>
+                {locations.map((l) => (
+                  <li key={l.id}>{l.name}</li>
+                ))}
               </ul>
             </div>
             <div>

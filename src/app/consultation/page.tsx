@@ -8,7 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { MapPin, User, Calendar, ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 
 interface Treatment {
@@ -27,11 +27,7 @@ interface Location {
 	phone: string
 }
 
-interface Pharmacist {
-	id: string
-	name: string
-	bio: string
-}
+// Pharmacist selection removed; assignment handled server-side
 
 export function ConsultationWizard() {
 	const searchParams = useSearchParams()
@@ -39,7 +35,6 @@ export function ConsultationWizard() {
 
 	const [treatments, setTreatments] = useState<Treatment[]>([])
 	const [availableLocations, setAvailableLocations] = useState<Location[]>([])
-	const [availablePharmacists, setAvailablePharmacists] = useState<Pharmacist[]>([])
 
 	const [form, setForm] = useState({
 		treatmentId: preselectedTreatment,
@@ -60,18 +55,17 @@ export function ConsultationWizard() {
   const selectedTreatment = useMemo(()=> treatments.find(t=> t.id === form.treatmentId), [treatments, form.treatmentId])
   const requiresSlots = !!selectedTreatment?.showSlots || selectedTreatment?.showSlots === undefined
 
-  const steps = useMemo(() => {
-    const base = [
-      "treatment",
-      "location",
-      "pharmacist",
-      "name",
-      "email",
-      "phone",
-    ]
-    const scheduling = requiresSlots ? ["date","time"] : []
-    return [...base, ...scheduling, "notes", "review"]
-  }, [requiresSlots])
+	const steps = useMemo(() => {
+		const base = [
+			"treatment",
+			"location",
+			"name",
+			"email",
+			"phone",
+		]
+		const scheduling = requiresSlots ? ["date","time"] : []
+		return [...base, ...scheduling, "notes", "review"]
+	}, [requiresSlots])
 
 	const totalSteps = steps.length
 	const progress = Math.round((step / (totalSteps - 1)) * 100)
@@ -93,7 +87,6 @@ export function ConsultationWizard() {
 	useEffect(() => {
 		if (!form.treatmentId) {
 			setAvailableLocations([])
-			setAvailablePharmacists([])
 			return
 		}
 		const run = async () => {
@@ -107,29 +100,12 @@ export function ConsultationWizard() {
 		run()
 	}, [form.treatmentId])
 
-	// Load pharmacists for treatment + location
-	useEffect(() => {
-		if (!form.treatmentId || !form.locationId) {
-			setAvailablePharmacists([])
-			return
-		}
-		const run = async () => {
-			const res = await fetch(
-				`/api/treatments/${form.treatmentId}/pharmacists?locationId=${form.locationId}`
-			)
-			const data = await res.json()
-			setAvailablePharmacists(data)
-			if (!data.find((p: Pharmacist) => p.id === form.pharmacistId)) {
-				setForm((pr) => ({ ...pr, pharmacistId: "" }))
-			}
-		}
-		run()
-	}, [form.treatmentId, form.locationId])
+	// (Pharmacist selection removed) Always auto-assign server-side
 
 	// Load available time slots when inputs change
-  useEffect(() => {
+	useEffect(() => {
 		const fetchSlots = async () => {
-      if (!requiresSlots || !form.treatmentId || !form.locationId || !form.preferredDate) {
+	      if (!requiresSlots || !form.treatmentId || !form.locationId || !form.preferredDate) {
 				setAvailableSlots([])
 				return
 			}
@@ -137,23 +113,20 @@ export function ConsultationWizard() {
 			url.searchParams.set('date', form.preferredDate)
 			url.searchParams.set('treatmentId', form.treatmentId)
 			url.searchParams.set('locationId', form.locationId)
-			if (form.pharmacistId) url.searchParams.set('pharmacistId', form.pharmacistId)
 			const res = await fetch(url.toString())
 			const data = await res.json()
 			const slots = Array.isArray(data.slots) ? data.slots.map((s:any)=>(typeof s==='string'?s:s.time)) : []
 			setAvailableSlots(slots)
 		}
 		fetchSlots()
-	}, [form.treatmentId, form.locationId, form.pharmacistId, form.preferredDate])
+	}, [form.treatmentId, form.locationId, form.preferredDate])
 
 	const canNext = () => {
-		switch (steps[step]) {
+			switch (steps[step]) {
 			case "treatment":
 				return !!form.treatmentId
 			case "location":
 				return !!form.locationId
-			case "pharmacist":
-				return true // optional ("Don't mind")
 			case "name":
 				return form.customerName.trim().length > 1
 			case "email":
@@ -276,36 +249,7 @@ export function ConsultationWizard() {
 								</div>
 							</section>
 
-							{/* Step 2: Pharmacist */}
-                            <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
-								<h2 className="text-2xl font-bold">Do you have a preferred pharmacist?</h2>
-								<p className="text-gray-600 mt-1">Choose one or select "Don’t mind"</p>
-								<div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
-									<button
-										className={`text-left rounded-xl border p-4 hover:border-blue-500 hover:shadow ${form.pharmacistId === "" ? "border-blue-600 ring-2 ring-blue-100" : "border-gray-200"}`}
-										onClick={() => {
-											setForm((p) => ({ ...p, pharmacistId: "" }))
-											setTimeout(next, 100)
-										}}
-									>
-										<p className="font-medium">Don’t mind</p>
-										<p className="text-sm text-gray-500">Assign the next available expert</p>
-									</button>
-									{availablePharmacists.map((p) => (
-										<button
-											key={p.id}
-											className={`text-left rounded-xl border p-4 hover:border-blue-500 hover:shadow ${form.pharmacistId === p.id ? "border-blue-600 ring-2 ring-blue-100" : "border-gray-200"}`}
-											onClick={() => {
-												setForm((pr) => ({ ...pr, pharmacistId: p.id }))
-												setTimeout(next, 100)
-											}}
-										>
-											<p className="font-medium">{p.name}</p>
-											<p className="text-sm text-gray-500">{p.bio}</p>
-										</button>
-									))}
-								</div>
-							</section>
+                            {/* Pharmacist step removed: auto-assigned by pharmacy */}
 
 							{/* Step 3-5: Name, Email, Phone */}
                             <section className="w-full px-6 py-10 shrink-0" style={{ width: `${100 / totalSteps}%` }}>
@@ -394,7 +338,7 @@ export function ConsultationWizard() {
 								<ul className="mt-6 space-y-2 text-sm text-gray-700">
 									<li className="flex justify-between"><span>Treatment</span><span className="font-medium">{treatments.find((t) => t.id === form.treatmentId)?.name}</span></li>
 									<li className="flex justify-between"><span>Location</span><span className="font-medium">{availableLocations.find((l) => l.id === form.locationId)?.name}</span></li>
-									<li className="flex justify-between"><span>Pharmacist</span><span className="font-medium">{availablePharmacists.find((p) => p.id === form.pharmacistId)?.name || "Don’t mind"}</span></li>
+						<li className="flex justify-between"><span>Pharmacist</span><span className="font-medium">Assigned by pharmacy</span></li>
 									<li className="flex justify-between"><span>Name</span><span className="font-medium">{form.customerName}</span></li>
 									<li className="flex justify-between"><span>Email</span><span className="font-medium">{form.customerEmail}</span></li>
 									<li className="flex justify-between"><span>Phone</span><span className="font-medium">{form.customerPhone}</span></li>
