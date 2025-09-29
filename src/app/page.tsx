@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatOpeningHours } from '@/lib/utils'
+import MobileScrollFX from '@/components/MobileScrollFX'
 
 const treatmentIcons = {
   'Weight Loss': Scale,
@@ -45,71 +46,69 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* HERO (unchanged from prior step) */}
-      <section id="home" className="relative min-h-[90vh] flex items-center overflow-hidden">
-        <div
-          className="absolute inset-0 -z-10 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(0,0,0,0.65), rgba(0,0,0,0.4), rgba(0,0,0,0)), url('https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=2400&q=80')",
-          }}
-        />
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/55 via-black/35 to-transparent" />
+      <MobileScrollFX />
+      {/* HEADER moved onto hero (desktop only) */}
 
-        <div className="absolute top-0 inset-x-0 z-20">
-          <div className="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
-            <Link href="#" className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-full bg-white/90 text-emerald-600 flex items-center justify-center font-bold">T</div>
-              <div className="leading-tight text-white">
-                <span className="block text-sm font-semibold">TWILIGHT</span>
-                <span className="block text-[11px] text-white/80">More than just a Pharmacy</span>
-              </div>
-            </Link>
+      {/* HERO */}
+      <section id="hero" className="relative mx-2 sm:mx-3 md:mx-6 mt-0 md:mt-0 rounded-3xl overflow-hidden min-h-[85vh]">
+        <div className="absolute inset-0 z-0">
+          <video
+            id="heroVideo"
+            src="/main.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/60 via-black/40 to-black/10" />
+        </div>
 
-            <nav className="hidden md:flex items-center gap-6 text-sm text-white/90">
-              <a href="#home" className="hover:text-white">Home</a>
+        {/* Desktop nav over video */}
+        <div className="hidden md:block absolute top-0 inset-x-0 z-30">
+          <div className="mx-auto max-w-7xl px-6 py-3 grid grid-cols-3 items-center">
+            <div className="justify-self-start">
+              <Link href="/" className="inline-flex items-center">
+                <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={360} height={110} className="h-16 w-auto drop-shadow-[0_3px_14px_rgba(0,0,0,0.55)]" />
+              </Link>
+            </div>
+            <nav className="flex items-center justify-center gap-6 text-sm text-white/90">
               <a href="#services" className="hover:text-white">Services</a>
               <a href="#locations" className="hover:text-white">Locations</a>
               <a href="#contact" className="hover:text-white">Contact</a>
               <Link href="/admin" className="hover:text-white">Sign in</Link>
-              <Link href="/consultation" className="ml-2 inline-flex items-center rounded-full bg-white text-gray-900 px-5 py-2 font-medium hover:bg-gray-100">Start Consultation</Link>
             </nav>
+            <div className="justify-self-end">
+              <Link href="/consultation" className="inline-flex items-center rounded-full bg-emerald-600 text-white px-5 py-2 font-semibold hover:bg-emerald-500">Start Consultation</Link>
+            </div>
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-28 pb-16 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="text-white">
-              <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1]">
-                Tune out the noise.
-                <br />
-                Tune into your health.
+        {/* Mobile-only large logo overlay */}
+        <div id="heroLogo" className="md:hidden absolute top-3 left-0 right-0 z-30 flex justify-center">
+          <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={640} height={200} className="h-28 sm:h-32 w-auto drop-shadow-[0_3px_14px_rgba(0,0,0,0.55)] will-change-transform" />
+        </div>
+
+        
+
+        <div className="relative z-20 mx-auto max-w-7xl px-6 w-full h-full">
+          <div className="min-h-[85vh] grid place-items-center">
+            <div className="max-w-3xl text-center">
+              <h1 id="heroTitle" className="text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1] text-white will-change-transform">
+              Tune out the noise.
+              <br />
+              Tune into your health.
               </h1>
-              <p className="mt-6 text-lg text-white/85 max-w-xl">
+              <p id="heroSub" className="mt-6 mx-auto text-lg text-white/85 max-w-xl will-change-transform">
                 Evidence-based treatments and pharmacist-led care across our Birmingham branches.
               </p>
-              <div className="mt-8 flex items-center gap-3">
-                <a href="#services" className="inline-flex items-center rounded-full border border-white/30 text-white px-5 py-2 text-sm font-medium hover:bg-white/10">View Services</a>
-                <Link href="/consultation" className="inline-flex items-center rounded-full bg-emerald-500 text-white px-5 py-2 text-sm font-semibold hover:bg-emerald-400">Get Started →</Link>
-              </div>
-            </div>
-
-            <div className="hidden lg:block">
-              <div className="bg-white rounded-2xl shadow-2xl p-6 rotate-3 w-[520px]">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-emerald-600" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Travel Health</p>
-                    <p className="text-sm text-gray-500">Professional consultation</p>
-                  </div>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span className="text-gray-600">Vaccinations</span><span className="text-emerald-600 font-semibold">Available</span></div>
-                  <div className="flex justify-between"><span className="text-gray-600">Malaria Prevention</span><span className="text-emerald-600 font-semibold">Available</span></div>
-                  <div className="flex justify-between"><span className="text-gray-600">Health Advice</span><span className="text-emerald-600 font-semibold">Included</span></div>
-                </div>
+              <div id="heroCtas" className="mt-8 flex items-center justify-center gap-3 will-change-transform">
+                <a href="#services" className="inline-flex items-center rounded-full border border-emerald-600 bg-white text-emerald-700 hover:bg-emerald-50 px-5 py-2 text-sm font-medium">
+                  View Services
+                </a>
+                <Link href="/consultation" className="inline-flex items-center rounded-full bg-emerald-600 text-white px-5 py-2 text-sm font-semibold hover:bg-emerald-500">
+                  Get Started →
+                </Link>
               </div>
             </div>
           </div>
@@ -121,7 +120,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_60%_at_50%_0%,#eef2ff,transparent_60%)]" />
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900">Our Services</h2>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-emerald-700">Our Services</h2>
             <p className="text-lg text-gray-600 mt-3">Professional healthcare services tailored to your needs</p>
           </div>
 
@@ -131,7 +130,7 @@ export default async function HomePage() {
               return (
                 <Card
                   key={treatment.id}
-                  className="border border-white/70 bg-white/80 backdrop-blur-md ring-1 ring-black/5 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition rounded-2xl"
+                  className="reveal border border-white/70 bg-white/80 backdrop-blur-md ring-1 ring-black/5 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition rounded-2xl"
                 >
                   <CardHeader className="pb-3 text-center">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-600 ring-1 ring-emerald-100 flex items-center justify-center mx-auto mb-4">
@@ -147,10 +146,10 @@ export default async function HomePage() {
                     </div>
                     <div className="flex gap-2">
                       <Link href={`/treatments/${treatment.id}`} className="w-1/2">
-                        <Button className="w-full rounded-full bg-gray-900 hover:bg-gray-800 text-white h-11 text-[15px]">Learn More</Button>
+                        <Button className="w-full rounded-full border border-emerald-600 text-emerald-700 bg-white hover:bg-emerald-50 h-11 text-[15px]">Learn More</Button>
                       </Link>
                       <Link href={`/consultation?treatment=${treatment.id}`} className="w-1/2">
-                        <Button className="w-full rounded-full bg-emerald-600 hover:bg-emerald-700 h-11 text-[15px]">Book</Button>
+                        <Button className="w-full rounded-full bg-emerald-600 hover:bg-emerald-700 text-white h-11 text-[15px]">Book</Button>
                       </Link>
                     </div>
                   </CardContent>
@@ -162,11 +161,11 @@ export default async function HomePage() {
       </section>
 
       {/* LOCATIONS */}
-      <section id="locations" className="relative py-28 bg-gray-50">
+      <section id="locations" className="relative py-28 bg-white">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_60%_at_50%_0%,#f2f7ff,transparent_60%)]" />
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-bold text-gray-900 mb-2">Our Locations</h2>
+            <h2 className="text-4xl font-bold text-emerald-700 mb-2">Our Locations</h2>
             <p className="text-lg text-gray-600">Visit us at any of our convenient Birmingham locations</p>
           </div>
 

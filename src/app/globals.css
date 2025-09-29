@@ -27,3 +27,7 @@ body {
 	background-color: #ffffff;
 	color: #111827;
 }
+
+/* Mobile reveal animation classes (CSS-only, GPU friendly) */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity 500ms ease, transform 500ms ease; will-change: opacity, transform; }
+.reveal.in-view { opacity: 1; transform: translateY(0); }
