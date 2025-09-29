@@ -19,7 +19,6 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatOpeningHours } from '@/lib/utils'
-import MobileScrollFX from '@/components/MobileScrollFX'
 
 const treatmentIcons = {
   'Weight Loss': Scale,
@@ -46,14 +45,12 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <MobileScrollFX />
       {/* HEADER moved onto hero (desktop only) */}
 
       {/* HERO */}
-      <section id="hero" className="relative mx-2 sm:mx-3 md:mx-6 mt-0 md:mt-0 rounded-3xl overflow-hidden min-h-[85vh]">
+      <section id="home" className="relative mx-2 sm:mx-3 md:mx-6 mt-0 md:mt-0 rounded-3xl overflow-hidden min-h-[85vh]">
         <div className="absolute inset-0 z-0">
           <video
-            id="heroVideo"
             src="/main.mp4"
             autoPlay
             muted
@@ -69,7 +66,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-7xl px-6 py-3 grid grid-cols-3 items-center">
             <div className="justify-self-start">
               <Link href="/" className="inline-flex items-center">
-                <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={360} height={110} className="h-16 w-auto drop-shadow-[0_3px_14px_rgba(0,0,0,0.55)]" />
+                <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={360} height={110} className="h-32 w-auto drop-shadow-[0_3px_14px_rgba(0,0,0,0.55)]" />
               </Link>
             </div>
             <nav className="flex items-center justify-center gap-6 text-sm text-white/90">
@@ -85,8 +82,8 @@ export default async function HomePage() {
         </div>
 
         {/* Mobile-only large logo overlay */}
-        <div id="heroLogo" className="md:hidden absolute top-3 left-0 right-0 z-30 flex justify-center">
-          <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={640} height={200} className="h-28 sm:h-32 w-auto drop-shadow-[0_3px_14px_rgba(0,0,0,0.55)] will-change-transform" />
+        <div className="md:hidden absolute top-3 left-0 right-0 z-30 flex justify-center">
+          <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={640} height={200} className="h-28 sm:h-32 w-auto drop-shadow-[0_3px_14px_rgba(0,0,0,0.55)]" />
         </div>
 
         
@@ -94,15 +91,15 @@ export default async function HomePage() {
         <div className="relative z-20 mx-auto max-w-7xl px-6 w-full h-full">
           <div className="min-h-[85vh] grid place-items-center">
             <div className="max-w-3xl text-center">
-              <h1 id="heroTitle" className="text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1] text-white will-change-transform">
+              <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1] text-white">
               Tune out the noise.
               <br />
               Tune into your health.
               </h1>
-              <p id="heroSub" className="mt-6 mx-auto text-lg text-white/85 max-w-xl will-change-transform">
+              <p className="mt-6 mx-auto text-lg text-white/85 max-w-xl">
                 Evidence-based treatments and pharmacist-led care across our Birmingham branches.
               </p>
-              <div id="heroCtas" className="mt-8 flex items-center justify-center gap-3 will-change-transform">
+              <div className="mt-8 flex items-center justify-center gap-3">
                 <a href="#services" className="inline-flex items-center rounded-full border border-emerald-600 bg-white text-emerald-700 hover:bg-emerald-50 px-5 py-2 text-sm font-medium">
                   View Services
                 </a>
@@ -130,7 +127,7 @@ export default async function HomePage() {
               return (
                 <Card
                   key={treatment.id}
-                  className="reveal border border-white/70 bg-white/80 backdrop-blur-md ring-1 ring-black/5 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition rounded-2xl"
+                  className="border border-white/70 bg-white/80 backdrop-blur-md ring-1 ring-black/5 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition rounded-2xl"
                 >
                   <CardHeader className="pb-3 text-center">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-600 ring-1 ring-emerald-100 flex items-center justify-center mx-auto mb-4">
