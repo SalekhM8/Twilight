@@ -71,6 +71,7 @@ export default async function HomePage() {
             </div>
             <nav className="flex items-center justify-center gap-6 text-sm text-white/90">
               <a href="#services" className="hover:text-white">Services</a>
+              <Link href="/travel" className="hover:text-white">Travel Services</Link>
               <a href="#locations" className="hover:text-white">Locations</a>
               <a href="#contact" className="hover:text-white">Contact</a>
               <Link href="/admin" className="hover:text-white">Sign in</Link>

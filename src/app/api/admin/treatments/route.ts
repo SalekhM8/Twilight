@@ -20,6 +20,7 @@ export async function POST(req: Request) {
         category: body.category || body.name,
         price: Number(body.price),
         duration: Number(body.duration) || 30,
+        isTravel: body.isTravel ? true : false,
         showSlots: body.showSlots !== undefined ? Boolean(body.showSlots) : true,
         isActive: body.isActive ?? true,
       },

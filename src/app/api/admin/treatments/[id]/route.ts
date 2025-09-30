@@ -5,17 +5,19 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   try {
     const { id } = await ctx.params
     const body = await req.json()
+    const updateData: any = {
+      name: body.name,
+      description: body.description,
+      category: body.category,
+      price: body.price !== undefined ? Number(body.price) : undefined,
+      duration: body.duration !== undefined ? Number(body.duration) : undefined,
+      isTravel: body.isTravel !== undefined ? Boolean(body.isTravel) : undefined,
+      showSlots: body.showSlots !== undefined ? Boolean(body.showSlots) : undefined,
+      isActive: body.isActive,
+    }
     const updated = await prisma.treatment.update({
       where: { id },
-      data: {
-        name: body.name,
-        description: body.description,
-        category: body.category,
-        price: body.price !== undefined ? Number(body.price) : undefined,
-        duration: body.duration !== undefined ? Number(body.duration) : undefined,
-        showSlots: body.showSlots !== undefined ? Boolean(body.showSlots) : undefined,
-        isActive: body.isActive,
-      },
+      data: updateData,
     })
 
     if (Array.isArray(body.locationIds)) {

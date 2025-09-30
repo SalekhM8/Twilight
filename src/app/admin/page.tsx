@@ -81,12 +81,17 @@ export default function AdminDashboard() {
           fetch('/api/locations')
         ])
 
-        const [bookings, pharmacists, treatments, locations] = await Promise.all([
+        const [bookingsJson, pharmacistsJson, treatmentsJson, locationsJson] = await Promise.all([
           bookingsRes.json(),
           pharmacistsRes.json(),
           treatmentsRes.json(),
           locationsRes.json()
         ])
+
+        const bookings = Array.isArray(bookingsJson) ? bookingsJson : []
+        const pharmacists = Array.isArray(pharmacistsJson) ? pharmacistsJson : []
+        const treatments = Array.isArray(treatmentsJson) ? treatmentsJson : []
+        const locations = Array.isArray(locationsJson) ? locationsJson : []
 
         setStats({
           totalBookings: bookings.length,
@@ -130,16 +135,16 @@ export default function AdminDashboard() {
         const res = await Promise.all(reqs)
         const json = await Promise.all(res.map(r=>r.json()))
         if (activeTab === 'treatments') {
-          setTreatments(json[0] || [])
-          setLocations(json[1] || [])
+          setTreatments(Array.isArray(json[0]) ? json[0] : [])
+          setLocations(Array.isArray(json[1]) ? json[1] : [])
         }
         if (activeTab === 'pharmacists') {
-          setPharmacists(json[0] || [])
-          setTreatments(json[1] || [])
-          setLocations(json[2] || [])
+          setPharmacists(Array.isArray(json[0]) ? json[0] : [])
+          setTreatments(Array.isArray(json[1]) ? json[1] : [])
+          setLocations(Array.isArray(json[2]) ? json[2] : [])
         }
         if (activeTab === 'locations') {
-          setLocations(json[0] || [])
+          setLocations(Array.isArray(json[0]) ? json[0] : [])
         }
       } catch (e) {
         setErrorMsg('Failed to load data')
@@ -474,7 +479,7 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
       try {
         const res = await fetch('/api/bookings')
         const data = await res.json()
-        setItems(data)
+        setItems(Array.isArray(data) ? data : [])
       } catch (e) { setError('Failed to load bookings') }
       finally { setLoading(false) }
     }
@@ -562,11 +567,11 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
 function TreatmentsManager({ treatments, locations, onReload }: { treatments: any[]; locations: any[]; onReload: ()=>void }) {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<any | null>(null)
-  const [form, setForm] = useState<any>({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, locationIds: [] as string[] })
+  const [form, setForm] = useState<any>({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, locationIds: [] as string[] })
 
   const startNew = () => {
     setEditing(null)
-    setForm({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, locationIds: [] })
+    setForm({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, locationIds: [] })
     setOpen(true)
   }
   const startEdit = async (t: any) => {
@@ -574,9 +579,9 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
     try {
       const detail = await fetch(`/api/treatments/${t.id}`).then(r=>r.json())
       const locIds = Array.isArray(detail.locations) ? detail.locations.map((l:any)=> l.id) : []
-      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), locationIds: locIds })
+      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), isTravel: (detail.treatment?.isTravel ?? t.isTravel ?? false), locationIds: locIds })
     } catch {
-      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), locationIds: [] })
+      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), isTravel: (t.isTravel ?? false), locationIds: [] })
     }
     setOpen(true)
   }
@@ -636,6 +641,10 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
           <div className="flex items-center gap-2">
             <input id="showSlots" type="checkbox" checked={!!form.showSlots} onChange={(e)=> setForm({ ...form, showSlots: e.target.checked })} />
             <label htmlFor="showSlots" className="text-sm text-gray-700">Show slots to customers</label>
+          </div>
+          <div className="flex items-center gap-2">
+            <input id="isTravel" type="checkbox" checked={!!form.isTravel} onChange={(e)=> setForm({ ...form, isTravel: e.target.checked })} />
+            <label htmlFor="isTravel" className="text-sm text-gray-700">Travel service</label>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Available at locations</label>

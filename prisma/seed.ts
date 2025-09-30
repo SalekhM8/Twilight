@@ -75,15 +75,15 @@ async function main() {
 
   // Treatments
   const treatments = await prisma.$transaction([
-    prisma.treatment.create({ data: { name: "Weight Loss", description: "Professional weight management consultation and treatment", category: "Weight Loss", price: 50, duration: 30 } }),
-    prisma.treatment.create({ data: { name: "Women's Health", description: "Comprehensive women's health consultations", category: "Women's Health", price: 45, duration: 25 } }),
-    prisma.treatment.create({ data: { name: "Digestion", description: "Digestive health assessment and treatment", category: "Digestion", price: 40, duration: 20 } }),
-    prisma.treatment.create({ data: { name: "Erectile Dysfunction", description: "Confidential consultation and treatment for ED", category: "Erectile Dysfunction", price: 55, duration: 30 } }),
-    prisma.treatment.create({ data: { name: "Facial Hair Removal", description: "Professional facial hair removal services", category: "Facial Hair Removal", price: 35, duration: 45 } }),
-    prisma.treatment.create({ data: { name: "Hair Loss", description: "Hair loss assessment and treatment options", category: "Hair Loss", price: 60, duration: 30 } }),
-    prisma.treatment.create({ data: { name: "Hay Fever and Allergy", description: "Allergy testing and hay fever treatment", category: "Hay Fever and Allergy", price: 30, duration: 20 } }),
-    prisma.treatment.create({ data: { name: "Ear Wax Removal", description: "Professional ear wax removal service", category: "Ear Wax Removal", price: 25, duration: 15 } }),
-    prisma.treatment.create({ data: { name: "HGV, PCV & Taxi Medicals", description: "Medical examinations for professional drivers", category: "HGV, PCV & Taxi Medicals", price: 80, duration: 45 } }),
+    prisma.treatment.create({ data: { name: "Weight Loss", description: "Professional weight management consultation and treatment", category: "Weight Loss", price: 50, duration: 30, isTravel: false } }),
+    prisma.treatment.create({ data: { name: "Women's Health", description: "Comprehensive women's health consultations", category: "Women's Health", price: 45, duration: 25, isTravel: false } }),
+    prisma.treatment.create({ data: { name: "Digestion", description: "Digestive health assessment and treatment", category: "Digestion", price: 40, duration: 20, isTravel: false } }),
+    prisma.treatment.create({ data: { name: "Erectile Dysfunction", description: "Confidential consultation and treatment for ED", category: "Erectile Dysfunction", price: 55, duration: 30, isTravel: false } }),
+    prisma.treatment.create({ data: { name: "Facial Hair Removal", description: "Professional facial hair removal services", category: "Facial Hair Removal", price: 35, duration: 45, isTravel: false } }),
+    prisma.treatment.create({ data: { name: "Hair Loss", description: "Hair loss assessment and treatment options", category: "Hair Loss", price: 60, duration: 30, isTravel: false } }),
+    prisma.treatment.create({ data: { name: "Hay Fever and Allergy", description: "Allergy testing and hay fever treatment", category: "Hay Fever and Allergy", price: 30, duration: 20, isTravel: false } }),
+    prisma.treatment.create({ data: { name: "Ear Wax Removal", description: "Professional ear wax removal service", category: "Ear Wax Removal", price: 25, duration: 15, isTravel: false } }),
+    prisma.treatment.create({ data: { name: "HGV, PCV & Taxi Medicals", description: "Medical examinations for professional drivers", category: "HGV, PCV & Taxi Medicals", price: 80, duration: 45, isTravel: true } }),
   ])
 
   // Pharmacists (full availability; all locations; all treatments)
