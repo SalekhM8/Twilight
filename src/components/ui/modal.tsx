@@ -37,7 +37,7 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all max-h-[85vh] overflow-y-auto">
                 {title ? (
                   <Dialog.Title as="h3" className="text-lg font-semibold text-gray-900 mb-4">
                     {title}

@@ -7,7 +7,8 @@
 	--card-foreground: 222.2 84% 4.9%;
 	--popover: 0 0% 100%;
 	--popover-foreground: 222.2 84% 4.9%;
-	--primary: 221.2 83.2% 53.3%;
+	/* Primary brand mapped to #36c3f0 */
+	--primary: 196 86% 57%;
 	--primary-foreground: 210 40% 98%;
 	--secondary: 210 40% 96%;
 	--secondary-foreground: 222.2 84% 4.9%;
@@ -19,7 +20,7 @@
 	--destructive-foreground: 210 40% 98%;
 	--border: 214.3 31.8% 91.4%;
 	--input: 214.3 31.8% 91.4%;
-	--ring: 221.2 83.2% 53.3%;
+	--ring: 196 86% 57%;
 	--radius: 0.5rem;
 }
 
@@ -27,3 +28,15 @@ body {
 	background-color: #ffffff;
 	color: #111827;
 }
+
+/* Global brand overrides to replace emerald greens with brand blue */
+:root { --brand-blue: #36c3f0; --brand-blue-hover: #2eb5e8; --brand-blue-50: #f3fbff; --brand-blue-100: #e9f7fe; --brand-blue-200: #bfeafc; }
+
+.bg-emerald-600 { background-color: var(--brand-blue) !important; }
+.hover\:bg-emerald-700:hover { background-color: var(--brand-blue-hover) !important; }
+.text-emerald-600, .text-emerald-700, .text-emerald-900 { color: var(--brand-blue) !important; }
+.border-emerald-200 { border-color: var(--brand-blue-200) !important; }
+.ring-emerald-100 { --tw-ring-color: var(--brand-blue-100) !important; }
+.from-emerald-50 { --tw-gradient-from: var(--brand-blue-50) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(243 251 255 / 0) var(--tw-gradient-to-position) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.to-emerald-100 { --tw-gradient-to: var(--brand-blue-100) var(--tw-gradient-to-position) !important; }
+.bg-emerald-50 { background-color: var(--brand-blue-50) !important; }

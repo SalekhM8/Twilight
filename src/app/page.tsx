@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import NavServicesDropdown from '@/components/NavServicesDropdown'
 import { prisma } from '@/lib/prisma'
 import { resetPreparedStatements } from '@/lib/db'
 import { Button } from '@/components/ui/button'
@@ -69,15 +70,14 @@ export default async function HomePage() {
                 <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={360} height={110} className="h-32 w-auto drop-shadow-[0_3px_14px_rgba(0,0,0,0.55)]" />
               </Link>
             </div>
-            <nav className="flex items-center justify-center gap-6 text-sm text-white/90">
-              <a href="#services" className="hover:text-white">Services</a>
-              <Link href="/travel" className="hover:text-white">Travel Services</Link>
-              <a href="#locations" className="hover:text-white">Locations</a>
-              <a href="#contact" className="hover:text-white">Contact</a>
-              <Link href="/admin" className="hover:text-white">Sign in</Link>
+            <nav className="flex items-center justify-center gap-8 text-base text-white font-semibold">
+              <NavServicesDropdown />
+              <a href="#locations" className="hover:text-white/90">Locations</a>
+              <a href="#contact" className="hover:text-white/90">Contact</a>
+              <Link href="/admin" className="hover:text-white/90">Sign in</Link>
             </nav>
             <div className="justify-self-end">
-              <Link href="/consultation" className="inline-flex items-center rounded-full bg-emerald-600 text-white px-5 py-2 font-semibold hover:bg-emerald-500">Start Consultation</Link>
+              <Link href="/consultation" className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-5 py-2 font-semibold hover:bg-[#2eb5e8]">Start Consultation</Link>
             </div>
           </div>
         </div>
@@ -101,10 +101,10 @@ export default async function HomePage() {
                 Evidence-based treatments and pharmacist-led care across our Birmingham branches.
               </p>
               <div className="mt-8 flex items-center justify-center gap-3">
-                <a href="#services" className="inline-flex items-center rounded-full border border-emerald-600 bg-white text-emerald-700 hover:bg-emerald-50 px-5 py-2 text-sm font-medium">
+                <a href="#services" className="inline-flex items-center rounded-full border border-[#36c3f0] bg-white text-[#36c3f0] hover:bg-[#e9f7fe] px-5 py-2 text-sm font-medium">
                   View Services
                 </a>
-                <Link href="/consultation" className="inline-flex items-center rounded-full bg-emerald-600 text-white px-5 py-2 text-sm font-semibold hover:bg-emerald-500">
+                <Link href="/consultation" className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-5 py-2 text-sm font-semibold hover:bg-[#2eb5e8]">
                   Get Started →
                 </Link>
               </div>
@@ -118,7 +118,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_60%_at_50%_0%,#eef2ff,transparent_60%)]" />
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-emerald-700">Our Services</h2>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#36c3f0]">Our Services</h2>
             <p className="text-lg text-gray-600 mt-3">Professional healthcare services tailored to your needs</p>
           </div>
 
@@ -131,7 +131,7 @@ export default async function HomePage() {
                   className="border border-white/70 bg-white/80 backdrop-blur-md ring-1 ring-black/5 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition rounded-2xl"
                 >
                   <CardHeader className="pb-3 text-center">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-600 ring-1 ring-emerald-100 flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#e9f7fe] to-[#dff3fd] text-[#36c3f0] ring-1 ring-[#e9f7fe] flex items-center justify-center mx-auto mb-4">
                       <IconComponent className="w-7 h-7" />
                     </div>
                     <CardTitle className="text-xl font-semibold text-gray-900">{treatment.name}</CardTitle>
@@ -139,15 +139,15 @@ export default async function HomePage() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between mb-5">
-                      <span className="text-2xl font-bold text-emerald-600">£{treatment.price}</span>
+                      <span className="text-2xl font-bold text-[#36c3f0]">£{treatment.price}</span>
                       <span className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-600">{treatment.duration} mins</span>
                     </div>
                     <div className="flex gap-2">
                       <Link href={`/treatments/${treatment.id}`} className="w-1/2">
-                        <Button className="w-full rounded-full border border-emerald-600 text-emerald-700 bg-white hover:bg-emerald-50 h-11 text-[15px]">Learn More</Button>
+                        <Button className="w-full rounded-full border border-[#36c3f0] text-[#36c3f0] bg-white hover:bg-[#e9f7fe] h-11 text-[15px]">Learn More</Button>
                       </Link>
                       <Link href={`/consultation?treatment=${treatment.id}`} className="w-1/2">
-                        <Button className="w-full rounded-full bg-emerald-600 hover:bg-emerald-700 text-white h-11 text-[15px]">Book</Button>
+                        <Button className="w-full rounded-full bg-[#36c3f0] hover:bg-[#2eb5e8] text-white h-11 text-[15px]">Book</Button>
                       </Link>
                     </div>
                   </CardContent>
@@ -163,7 +163,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_60%_at_50%_0%,#f2f7ff,transparent_60%)]" />
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-bold text-emerald-700 mb-2">Our Locations</h2>
+            <h2 className="text-4xl font-bold text-[#36c3f0] mb-2">Our Locations</h2>
             <p className="text-lg text-gray-600">Visit us at any of our convenient Birmingham locations</p>
           </div>
 
@@ -171,7 +171,7 @@ export default async function HomePage() {
             {locations.map((location) => (
               <Card key={location.id} className="bg-white/90 backdrop-blur ring-1 ring-black/5 shadow-lg hover:shadow-xl transition rounded-2xl">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-emerald-600"><MapPin className="w-5 h-5" /><span>{location.name}</span></CardTitle>
+                  <CardTitle className="flex items-center gap-2 text-[#36c3f0]"><MapPin className="w-5 h-5" /><span>{location.name}</span></CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 text-sm">
                   <div className="flex items-start gap-2"><MapPin className="w-4 h-4 text-gray-400 mt-1" /><p className="text-gray-600">{location.address}</p></div>
@@ -200,8 +200,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">T</div>
-                <span className="text-xl font-bold">TWILIGHT</span>
+                <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={160} height={48} className="h-8 w-auto" />
               </div>
               <p className="text-gray-400 text-sm">More than just a Pharmacy</p>
             </div>

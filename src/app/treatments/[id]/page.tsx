@@ -20,24 +20,25 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
     include: { location: true },
   })
 
+  const heroImages = [
+    "/twilight1.png",
+    "/twilight2.png",
+    "/twilight3.png",
+    "/twilight4.png",
+  ]
+  const hash = Array.from(id).reduce((acc, ch) => acc + ch.charCodeAt(0), 0)
+  const heroUrl = heroImages[hash % heroImages.length]
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <section className="relative min-h-[50vh] flex items-end overflow-hidden">
-        <div
-          className="absolute inset-0 -z-10 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(0,0,0,0.65), rgba(0,0,0,0.4), rgba(0,0,0,0)), url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=2400&q=80')",
-          }}
-        />
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/55 via-black/35 to-transparent" />
-        <div className="relative z-10 mx-auto max-w-6xl px-6 py-16 w-full">
+      <section className="relative min-h-[45vh] flex items-end overflow-hidden mx-2 sm:mx-3 md:mx-6 mt-6 rounded-3xl shadow-[0_8px_40px_rgba(54,195,240,0.12)]">
+        <img src={heroUrl} alt="" aria-hidden className="absolute inset-0 z-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-r from-white/70 via-white/50 to-white/20" />
+        <div className="relative z-20 mx-auto max-w-6xl px-6 py-16 w-full">
           <h1 className="text-4xl md:text-5xl font-extrabold text-white">{treatment.name}</h1>
-          <p className="mt-3 text-white/85 max-w-2xl">{treatment.description}</p>
-          <div className="mt-5 inline-flex items-center rounded-full bg-emerald-500 text-white px-5 py-2 text-sm font-semibold hover:bg-emerald-400">
-            £{treatment.price} · {treatment.duration} mins
-          </div>
+          <p className="mt-3 text-gray-700 max-w-2xl">{treatment.description}</p>
+          <div className="mt-5 inline-flex items-center rounded-full bg-[#36c3f0] text-white px-5 py-2 text-sm font-semibold hover:bg-[#2eb5e8]">£{treatment.price} · {treatment.duration} mins</div>
         </div>
       </section>
 
@@ -51,7 +52,7 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
                 {treatment.description || "This treatment is provided by our experienced pharmacists with a focus on safety and results."}
               </p>
               <div className="mt-8">
-                <Link href={`/consultation?treatment=${treatment.id}`} className="inline-flex items-center rounded-full bg-emerald-600 text-white px-6 py-3 font-semibold hover:bg-emerald-700">
+                <Link href={`/consultation?treatment=${treatment.id}`} className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-6 py-3 font-semibold hover:bg-[#2eb5e8]">
                   Book this treatment →
                 </Link>
               </div>
@@ -62,7 +63,7 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
                 <ul className="mt-4 space-y-3 text-sm">
                   {locations.map((l) => (
                     <li key={l.location.id} className="flex items-start gap-2">
-                      <MapPin className="w-4 h-4 text-emerald-600 mt-1" />
+                      <MapPin className="w-4 h-4 text-[#36c3f0] mt-1" />
                       <span className="text-gray-700">{l.location.name}</span>
                     </li>
                   ))}

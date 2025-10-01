@@ -55,6 +55,7 @@ model Treatment {
   price      Float
   duration   Int
   isTravel   Boolean  @default(false)
+  isNhs      Boolean  @default(false)
   showSlots  Boolean  @default(true)
   isActive   Boolean  @default(true)
   createdAt  DateTime @default(now())

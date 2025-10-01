@@ -205,16 +205,10 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-sm border-r flex flex-col">
-        <div className="p-6 border-b">
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xl">T</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">TWILIGHT</h1>
-              <p className="text-sm text-gray-600">Admin Panel</p>
-            </div>
+      <div className="w-64 bg-white/90 backdrop-blur rounded-3xl shadow-[0_8px_40px_rgba(54,195,240,0.12)] m-4 flex flex-col">
+        <div className="py-8 px-6">
+          <div className="flex items-center justify-center">
+            <img src="/twilightnew.png" alt="Twilight Pharmacy" className="h-24 w-auto" />
           </div>
         </div>
         
@@ -254,48 +248,46 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b px-6 py-4">
-          <div className="flex justify-between items-center">
+      <div className="flex-1 flex flex-col m-4">
+        <div className="flex-1 rounded-3xl bg-white/70 backdrop-blur shadow-[0_8px_40px_rgba(54,195,240,0.12)] p-6">
+          <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 capitalize">{activeTab}</h2>
-              <p className="text-gray-600">Manage your pharmacy operations</p>
+              <h2 className="text-2xl font-bold text-[#155d7e] capitalize">{activeTab}</h2>
+              <p className="text-[#155d7e]">Manage your pharmacy operations</p>
             </div>
             <div className="flex items-center space-x-4">
               <QuickAdd onSelect={(tab)=> setActiveTab(tab)} />
             </div>
           </div>
-        </header>
 
-        {/* Dashboard Content */}
-        <main className="flex-1 p-6">
+          {/* Dashboard Content */}
+          <main className="flex-1">
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
+                <Card className="bg-gradient-to-br from-[#f3fbff] to-[#e9f7fe] ring-1 ring-[#e9f7fe]">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-emerald-700">Total Bookings</CardTitle>
-                    <Calendar className="h-4 w-4 text-emerald-600" />
+                    <CardTitle className="text-sm font-medium text-[#36c3f0]">Total Bookings</CardTitle>
+                    <Calendar className="h-4 w-4 text-[#36c3f0]" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-emerald-900">{stats.totalBookings}</div>
-                    <p className="text-xs text-emerald-600 mt-1">
+                    <div className="text-2xl font-bold text-[#1d9fd0]">{stats.totalBookings}</div>
+                    <p className="text-xs text-[#36c3f0] mt-1">
                       <TrendingUp className="inline w-3 h-3 mr-1" />
                       +12% from last month
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
+                <Card className="bg-gradient-to-br from-[#f3fbff] to-[#e9f7fe] ring-1 ring-[#e9f7fe]">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-emerald-700">Confirmed Today</CardTitle>
-                    <CheckCircle className="h-4 w-4 text-emerald-600" />
+                    <CardTitle className="text-sm font-medium text-[#36c3f0]">Confirmed Today</CardTitle>
+                    <CheckCircle className="h-4 w-4 text-[#36c3f0]" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-emerald-900">{stats.confirmedBookings}</div>
-                    <p className="text-xs text-emerald-600 mt-1">
+                    <div className="text-2xl font-bold text-[#1d9fd0]">{stats.confirmedBookings}</div>
+                    <p className="text-xs text-[#36c3f0] mt-1">
                       <TrendingUp className="inline w-3 h-3 mr-1" />
                       +8% from yesterday
                     </p>
@@ -335,14 +327,14 @@ export default function AdminDashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
+                <Card className="bg-gradient-to-br from-[#f3fbff] to-[#e9f7fe] ring-1 ring-[#e9f7fe]">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-emerald-700">Pharmacy Locations</CardTitle>
-                    <MapPin className="h-4 w-4 text-emerald-600" />
+                    <CardTitle className="text-sm font-medium text-[#36c3f0]">Pharmacy Locations</CardTitle>
+                    <MapPin className="h-4 w-4 text-[#36c3f0]" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-emerald-900">{stats.totalLocations}</div>
-                    <p className="text-xs text-emerald-600 mt-1">Birmingham area</p>
+                    <div className="text-2xl font-bold text-[#1d9fd0]">{stats.totalLocations}</div>
+                    <p className="text-xs text-[#36c3f0] mt-1">Birmingham area</p>
                   </CardContent>
                 </Card>
               </div>
@@ -350,8 +342,8 @@ export default function AdminDashboard() {
               {/* Recent Bookings */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Recent Bookings</CardTitle>
-                  <CardDescription>Latest consultation requests from customers</CardDescription>
+                  <CardTitle className="text-[#155d7e]">Recent Bookings</CardTitle>
+                  <CardDescription className="text-[#155d7e]">Latest consultation requests from customers</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -434,7 +426,8 @@ export default function AdminDashboard() {
               }}
             />
           )}
-        </main>
+          </main>
+        </div>
       </div>
     </div>
   )
@@ -445,7 +438,7 @@ function QuickAdd({ onSelect }: { onSelect: (tab: string)=>void }) {
   const [open, setOpen] = useState(false)
   return (
     <>
-      <Button className="bg-blue-600 hover:bg-blue-700" onClick={()=>setOpen(true)}>
+      <Button className="bg-[#36c3f0] hover:bg-[#2eb5e8] rounded-full shadow-sm text-[#155d7e]" onClick={()=>setOpen(true)}>
         <Plus className="w-4 h-4 mr-2" />
         Quick Add
       </Button>
@@ -457,7 +450,13 @@ function QuickAdd({ onSelect }: { onSelect: (tab: string)=>void }) {
             { id: 'pharmacists', label: 'New Pharmacist' },
             { id: 'locations', label: 'New Location' },
           ].map((item)=> (
-            <Button key={item.id} onClick={()=>{ setOpen(false); onSelect(item.id) }} className="justify-start">{item.label}</Button>
+            <button
+              key={item.id}
+              onClick={()=>{ setOpen(false); onSelect(item.id) }}
+              className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:border-[#36c3f0] hover:bg-[#f3fbff] transition-colors"
+            >
+              {item.label}
+            </button>
           ))}
         </div>
       </Modal>
@@ -567,11 +566,11 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
 function TreatmentsManager({ treatments, locations, onReload }: { treatments: any[]; locations: any[]; onReload: ()=>void }) {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<any | null>(null)
-  const [form, setForm] = useState<any>({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, locationIds: [] as string[] })
+  const [form, setForm] = useState<any>({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, locationIds: [] as string[] })
 
   const startNew = () => {
     setEditing(null)
-    setForm({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, locationIds: [] })
+    setForm({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, locationIds: [] })
     setOpen(true)
   }
   const startEdit = async (t: any) => {
@@ -579,9 +578,9 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
     try {
       const detail = await fetch(`/api/treatments/${t.id}`).then(r=>r.json())
       const locIds = Array.isArray(detail.locations) ? detail.locations.map((l:any)=> l.id) : []
-      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), isTravel: (detail.treatment?.isTravel ?? t.isTravel ?? false), locationIds: locIds })
+      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), isTravel: (detail.treatment?.isTravel ?? t.isTravel ?? false), isNhs: (detail.treatment?.isNhs ?? t.isNhs ?? false), locationIds: locIds })
     } catch {
-      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), isTravel: (t.isTravel ?? false), locationIds: [] })
+      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), isTravel: (t.isTravel ?? false), isNhs: (t.isNhs ?? false), locationIds: [] })
     }
     setOpen(true)
   }
@@ -645,6 +644,10 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
           <div className="flex items-center gap-2">
             <input id="isTravel" type="checkbox" checked={!!form.isTravel} onChange={(e)=> setForm({ ...form, isTravel: e.target.checked })} />
             <label htmlFor="isTravel" className="text-sm text-gray-700">Travel service</label>
+          </div>
+          <div className="flex items-center gap-2">
+            <input id="isNhs" type="checkbox" checked={!!form.isNhs} onChange={(e)=> setForm({ ...form, isNhs: e.target.checked })} />
+            <label htmlFor="isNhs" className="text-sm text-gray-700">NHS service</label>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Available at locations</label>

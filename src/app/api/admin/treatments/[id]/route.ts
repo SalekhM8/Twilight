@@ -12,6 +12,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
       price: body.price !== undefined ? Number(body.price) : undefined,
       duration: body.duration !== undefined ? Number(body.duration) : undefined,
       isTravel: body.isTravel !== undefined ? Boolean(body.isTravel) : undefined,
+      isNhs: body.isNhs !== undefined ? Boolean(body.isNhs) : undefined,
       showSlots: body.showSlots !== undefined ? Boolean(body.showSlots) : undefined,
       isActive: body.isActive,
     }
