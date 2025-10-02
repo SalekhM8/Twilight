@@ -1,4 +1,5 @@
 import Image from 'next/image'
+export const dynamic = 'force-dynamic'
 import NavServicesDropdown from '@/components/NavServicesDropdown'
 import { prisma } from '@/lib/prisma'
 import { resetPreparedStatements } from '@/lib/db'
