@@ -28,6 +28,7 @@ model Location {
   pharmacistLinks PharmacistLocation[]
   treatmentLinks  TreatmentLocation[]
   bookings        Booking[]
+  blocks          LocationBlock[]
 }
 
 model Pharmacist {
@@ -129,6 +130,42 @@ model Booking {
   treatment      Treatment  @relation(fields: [treatmentId], references: [id], onDelete: Restrict)
   pharmacist     Pharmacist? @relation(fields: [pharmacistId], references: [id], onDelete: SetNull)
   location       Location   @relation(fields: [locationId], references: [id], onDelete: Restrict)
+}
+
+model LocationBlock {
+  id         String   @id @default(cuid())
+  locationId String
+  start      DateTime
+  end        DateTime
+  reason     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+}
+
+model Certification {
+  id         String   @id @default(cuid())
+  title      String
+  subtitle   String?
+  description String?
+  icon       String?
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model TeamMember {
+  id         String   @id @default(cuid())
+  name       String
+  role       String
+  bio        String?
+  imageUrl   String?
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Admin {

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { resetPreparedStatements } from '@/lib/db'
-const db = prisma as any
 
 export async function POST(request: Request) {
   try {
@@ -95,10 +94,7 @@ export async function POST(request: Request) {
       slotStart.setHours(hh, mm, 0, 0)
       const slotEnd = new Date(slotStart)
       slotEnd.setMinutes(slotEnd.getMinutes() + (typeof treatmentId === 'string' ? (await prisma.treatment.findUnique({ where: { id: treatmentId } }))?.duration || 30 : 30))
-      let overlappingBlock: any = null
-      try {
-        overlappingBlock = await (prisma as any).locationBlock.findFirst({ where: { locationId, NOT: [{ end: { lte: slotStart } }, { start: { gte: slotEnd } }] } })
-      } catch { overlappingBlock = null }
+      const overlappingBlock = await prisma.locationBlock.findFirst({ where: { locationId, NOT: [{ end: { lte: slotStart } }, { start: { gte: slotEnd } }] } })
       if (overlappingBlock) {
         return NextResponse.json({ error: 'Selected time is blocked for this location' }, { status: 409 })
       }

@@ -17,6 +17,7 @@ async function main() {
   await prisma.treatment.deleteMany()
   await prisma.location.deleteMany()
   await prisma.admin.deleteMany()
+  // Skip About-related seeding; client will manage via Admin
 
   // Create locations
   const smallHealth = await prisma.location.create({
@@ -120,6 +121,48 @@ async function main() {
   await prisma.admin.create({ data: { email: "admin@twilightpharmacy.com", password: hashedPassword, name: "Admin User" } })
 
   console.log("Database seeded successfully with Usman, Yusuf, Hamza and full availability.")
+
+  // About Us: Certifications (from provided screenshot content)
+  await prisma.certification.createMany({
+    data: [
+      {
+        title: "MHRA",
+        subtitle: "UK registered pharmacy",
+        description: "The MHRA regulates medicines and medical devices in the UK.",
+        icon: "mhra",
+        order: 1,
+      },
+      {
+        title: "General Pharmaceutical Council",
+        subtitle: "GPhC regulated pharmacy",
+        description: "The GPhC regulates pharmacists, pharmacy technicians and pharmacies in Great Britain.",
+        icon: "gphc",
+        order: 2,
+      },
+      {
+        title: "PCI DSS Compliant",
+        subtitle: "PCI DSS Compliant",
+        description: "PCI DSS is an information security standard for organisations that handle credit card payments.",
+        icon: "pci",
+        order: 3,
+      },
+      {
+        title: "ICO registered website",
+        subtitle: "ICO registered website",
+        description: "The UK's independent authority set up to uphold information rights in the public interest.",
+        icon: "ico",
+        order: 4,
+      },
+    ],
+  })
+
+  await prisma.teamMember.createMany({
+    data: [
+      { name: "Usman Ali", role: "Lead Pharmacist", bio: "Experienced pharmacist across services", imageUrl: null, order: 1 },
+      { name: "Yusuf Ali", role: "Clinical Pharmacist", bio: "Clinical pharmacist with patient-first approach", imageUrl: null, order: 2 },
+      { name: "Hamza Ali", role: "Pharmacist", bio: "Skilled in consultations and minor ailments", imageUrl: null, order: 3 },
+    ],
+  })
 }
 
 main()

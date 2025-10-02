@@ -162,6 +162,7 @@ export default function AdminDashboard() {
     { id: 'treatments', label: 'Treatments', icon: Stethoscope },
     { id: 'locations', label: 'Locations', icon: MapPin },
     { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'about', label: 'About Us', icon: Users },
   ]
 
   const getStatusColor = (status: string) => {
@@ -426,12 +427,169 @@ export default function AdminDashboard() {
               }}
             />
           )}
+          {activeTab === 'about' && (
+            <AboutManager />
+          )}
           </main>
         </div>
       </div>
     </div>
   )
 }
+// About Manager
+function AboutManager() {
+  const [certs, setCerts] = useState<any[]>([])
+  const [people, setPeople] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [openCert, setOpenCert] = useState(false)
+  const [openPerson, setOpenPerson] = useState(false)
+  const [certForm, setCertForm] = useState<any>({ title: '', subtitle: '', description: '', order: 0, isActive: true })
+  const [personForm, setPersonForm] = useState<any>({ name: '', role: '', bio: '', order: 0, isActive: true })
+
+  const load = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const [c,p] = await Promise.all([
+        fetch('/api/admin/about/certifications').then(r=>r.json()),
+        fetch('/api/admin/about/people').then(r=>r.json()),
+      ])
+      setCerts(Array.isArray(c)?c:[])
+      setPeople(Array.isArray(p)?p:[])
+    } catch { setError('Failed to load About data') }
+    finally { setLoading(false) }
+  }
+
+  useEffect(()=>{ load() }, [])
+
+  const saveCert = async (editing?: any) => {
+    const method = editing ? 'PATCH' : 'POST'
+    const url = editing ? `/api/admin/about/certifications/${editing.id}` : '/api/admin/about/certifications'
+    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(certForm) })
+    if (res.ok) { setOpenCert(false); await load() }
+  }
+  const savePerson = async (editing?: any) => {
+    const method = editing ? 'PATCH' : 'POST'
+    const url = editing ? `/api/admin/about/people/${editing.id}` : '/api/admin/about/people'
+    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(personForm) })
+    if (res.ok) { setOpenPerson(false); await load() }
+  }
+
+  if (loading) return <div className="py-6">Loading…</div>
+  if (error) return <div className="py-6 text-red-600">{error}</div>
+
+  return (
+    <div className="space-y-8">
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold">Certifications</h3>
+          <Button className="rounded-full" onClick={()=>{ setCertForm({ title:'', subtitle:'', description:'', order:0, isActive:true }); setOpenCert(true) }}>Add Certification</Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {certs.map((c)=> (
+            <Card key={c.id} className="bg-white/80 backdrop-blur ring-1 ring-black/5">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>{c.title}</span>
+                  <span className="text-sm text-gray-500">#{c.order}</span>
+                </CardTitle>
+                <CardDescription>{c.subtitle}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex gap-2">
+                <Button variant="outline" className="rounded-full" onClick={()=>{ setCertForm({ title:c.title, subtitle:c.subtitle||'', description:c.description||'', order:c.order||0, isActive:c.isActive }); setOpenCert(true); (setCertForm as any)._editing=c }}>Edit</Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold">People</h3>
+          <Button className="rounded-full" onClick={()=>{ setPersonForm({ name:'', role:'', bio:'', order:0, isActive:true }); setOpenPerson(true) }}>Add Person</Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {people.map((p)=> (
+            <Card key={p.id} className="bg-white/80 backdrop-blur ring-1 ring-black/5">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between"><span>{p.name}</span><span className="text-sm text-gray-500">{p.role}</span></CardTitle>
+              </CardHeader>
+              <CardContent className="flex gap-2">
+                <Button variant="outline" className="rounded-full" onClick={()=>{ setPersonForm({ name:p.name, role:p.role, bio:p.bio||'', order:p.order||0, isActive:p.isActive }); setOpenPerson(true); (setPersonForm as any)._editing=p }}>Edit</Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <Modal open={openCert} onClose={()=>setOpenCert(false)} title={(certForm as any)._editing? 'Edit Certification':'Add Certification'}>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm text-gray-700">Title</label>
+            <Input value={certForm.title} onChange={e=>setCertForm({ ...certForm, title: e.target.value })} />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-700">Subtitle</label>
+            <Input value={certForm.subtitle} onChange={e=>setCertForm({ ...certForm, subtitle: e.target.value })} />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-700">Description</label>
+            <Textarea value={certForm.description} onChange={e=>setCertForm({ ...certForm, description: e.target.value })} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm text-gray-700">Order</label>
+              <Input value={certForm.order} onChange={e=>setCertForm({ ...certForm, order: Number(e.target.value)||0 })} />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <input id="cert-active" type="checkbox" checked={!!certForm.isActive} onChange={(e)=> setCertForm({ ...certForm, isActive: e.target.checked })} />
+            <label htmlFor="cert-active" className="text-sm text-gray-700">Active</label>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" className="rounded-full" onClick={()=>setOpenCert(false)}>Cancel</Button>
+            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={()=>saveCert((certForm as any)._editing)}>Save</Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal open={openPerson} onClose={()=>setOpenPerson(false)} title={(personForm as any)._editing? 'Edit Person':'Add Person'}>
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm text-gray-700">Name</label>
+              <Input value={personForm.name} onChange={e=>setPersonForm({ ...personForm, name: e.target.value })} />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700">Role</label>
+              <Input value={personForm.role} onChange={e=>setPersonForm({ ...personForm, role: e.target.value })} />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm text-gray-700">Bio</label>
+            <Textarea value={personForm.bio} onChange={e=>setPersonForm({ ...personForm, bio: e.target.value })} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm text-gray-700">Order</label>
+              <Input value={personForm.order} onChange={e=>setPersonForm({ ...personForm, order: Number(e.target.value)||0 })} />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <input id="person-active" type="checkbox" checked={!!personForm.isActive} onChange={(e)=> setPersonForm({ ...personForm, isActive: e.target.checked })} />
+            <label htmlFor="person-active" className="text-sm text-gray-700">Active</label>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" className="rounded-full" onClick={()=>setOpenPerson(false)}>Cancel</Button>
+            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={()=>savePerson((personForm as any)._editing)}>Save</Button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  )
+}
+
 
 // Quick Add button
 function QuickAdd({ onSelect }: { onSelect: (tab: string)=>void }) {

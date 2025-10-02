@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
-const db = prisma as any
 
 function startOfWeek(date: Date): Date {
   const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
@@ -36,15 +35,10 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
       orderBy: { preferredDate: 'asc' },
     })
 
-    let blocks: any[] = []
-    try {
-      blocks = await db.locationBlock.findMany({
-        where: { locationId: id, NOT: [{ end: { lte: weekStart } }, { start: { gte: weekEnd } }] },
-        orderBy: { start: 'asc' },
-      })
-    } catch {
-      blocks = [] // table likely not migrated yet; degrade gracefully
-    }
+    const blocks = await prisma.locationBlock.findMany({
+      where: { locationId: id, NOT: [{ end: { lte: weekStart } }, { start: { gte: weekEnd } }] },
+      orderBy: { start: 'asc' },
+    })
 
     return NextResponse.json({ weekStart, weekEnd, bookings, blocks })
   } catch (e) {

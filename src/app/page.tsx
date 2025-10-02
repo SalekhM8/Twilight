@@ -73,9 +73,9 @@ export default async function HomePage() {
             </div>
             <nav className="flex items-center justify-center gap-8 text-base text-white font-semibold">
               <NavServicesDropdown />
+              <Link href="/about" className="hover:text-white/90">About Us</Link>
               <a href="#locations" className="hover:text-white/90">Locations</a>
               <a href="#contact" className="hover:text-white/90">Contact</a>
-              <Link href="/admin" className="hover:text-white/90">Sign in</Link>
             </nav>
             <div className="justify-self-end">
               <Link href="/consultation" className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-5 py-2 font-semibold hover:bg-[#2eb5e8]">Start Consultation</Link>
@@ -228,6 +228,17 @@ export default async function HomePage() {
                 <li>Book Online</li>
                 <li>Call Us</li>
                 <li>Find Us</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-4">Company</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>
+                  <Link href="/about" className="hover:text-white">About Us</Link>
+                </li>
+                <li>
+                  <Link href="/admin" className="hover:text-white">Sign in</Link>
+                </li>
               </ul>
             </div>
           </div>

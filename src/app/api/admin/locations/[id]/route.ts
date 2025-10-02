@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
-const db = prisma as any
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
@@ -28,7 +27,7 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
     const { id } = await ctx.params
     const location = await prisma.location.findUnique({ where: { id } })
     if (!location) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-    const blocks = await db.locationBlock.findMany({ where: { locationId: id }, orderBy: { start: 'asc' } })
+    const blocks = await prisma.locationBlock.findMany({ where: { locationId: id }, orderBy: { start: 'asc' } })
     return NextResponse.json({ location, blocks })
   } catch (e) {
     console.error(e)
