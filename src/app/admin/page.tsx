@@ -444,6 +444,8 @@ function AboutManager() {
   const [error, setError] = useState('')
   const [openCert, setOpenCert] = useState(false)
   const [openPerson, setOpenPerson] = useState(false)
+  const [editingCert, setEditingCert] = useState<any | null>(null)
+  const [editingPerson, setEditingPerson] = useState<any | null>(null)
   const [certForm, setCertForm] = useState<any>({ title: '', subtitle: '', description: '', order: 0, isActive: true })
   const [personForm, setPersonForm] = useState<any>({ name: '', role: '', bio: '', order: 0, isActive: true })
 
@@ -463,17 +465,28 @@ function AboutManager() {
 
   useEffect(()=>{ load() }, [])
 
-  const saveCert = async (editing?: any) => {
-    const method = editing ? 'PATCH' : 'POST'
-    const url = editing ? `/api/admin/about/certifications/${editing.id}` : '/api/admin/about/certifications'
+  const saveCert = async () => {
+    const method = editingCert ? 'PATCH' : 'POST'
+    const url = editingCert ? `/api/admin/about/certifications/${editingCert.id}` : '/api/admin/about/certifications'
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(certForm) })
-    if (res.ok) { setOpenCert(false); await load() }
+    if (res.ok) { setOpenCert(false); setEditingCert(null); await load() }
   }
-  const savePerson = async (editing?: any) => {
-    const method = editing ? 'PATCH' : 'POST'
-    const url = editing ? `/api/admin/about/people/${editing.id}` : '/api/admin/about/people'
+  const savePerson = async () => {
+    const method = editingPerson ? 'PATCH' : 'POST'
+    const url = editingPerson ? `/api/admin/about/people/${editingPerson.id}` : '/api/admin/about/people'
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(personForm) })
-    if (res.ok) { setOpenPerson(false); await load() }
+    if (res.ok) { setOpenPerson(false); setEditingPerson(null); await load() }
+  }
+
+  const deleteCert = async (id: string) => {
+    if (!confirm('Delete this certification?')) return
+    const res = await fetch(`/api/admin/about/certifications/${id}`, { method: 'DELETE' })
+    if (res.ok) await load()
+  }
+  const deletePerson = async (id: string) => {
+    if (!confirm('Delete this person?')) return
+    const res = await fetch(`/api/admin/about/people/${id}`, { method: 'DELETE' })
+    if (res.ok) await load()
   }
 
   if (loading) return <div className="py-6">Loading…</div>
@@ -484,7 +497,7 @@ function AboutManager() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold">Certifications</h3>
-          <Button className="rounded-full" onClick={()=>{ setCertForm({ title:'', subtitle:'', description:'', order:0, isActive:true }); setOpenCert(true) }}>Add Certification</Button>
+          <Button className="rounded-full" onClick={()=>{ setEditingCert(null); setCertForm({ title:'', subtitle:'', description:'', order:0, isActive:true }); setOpenCert(true) }}>Add Certification</Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {certs.map((c)=> (
@@ -497,7 +510,8 @@ function AboutManager() {
                 <CardDescription>{c.subtitle}</CardDescription>
               </CardHeader>
               <CardContent className="flex gap-2">
-                <Button variant="outline" className="rounded-full" onClick={()=>{ setCertForm({ title:c.title, subtitle:c.subtitle||'', description:c.description||'', order:c.order||0, isActive:c.isActive }); setOpenCert(true); (setCertForm as any)._editing=c }}>Edit</Button>
+                <Button variant="outline" className="rounded-full" onClick={()=>{ setEditingCert(c); setCertForm({ title:c.title, subtitle:c.subtitle||'', description:c.description||'', order:c.order||0, isActive:c.isActive }); setOpenCert(true) }}>Edit</Button>
+                <Button variant="outline" className="rounded-full text-red-600" onClick={()=>deleteCert(c.id)}>Delete</Button>
               </CardContent>
             </Card>
           ))}
@@ -507,7 +521,7 @@ function AboutManager() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold">People</h3>
-          <Button className="rounded-full" onClick={()=>{ setPersonForm({ name:'', role:'', bio:'', order:0, isActive:true }); setOpenPerson(true) }}>Add Person</Button>
+          <Button className="rounded-full" onClick={()=>{ setEditingPerson(null); setPersonForm({ name:'', role:'', bio:'', order:0, isActive:true }); setOpenPerson(true) }}>Add Person</Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {people.map((p)=> (
@@ -516,14 +530,15 @@ function AboutManager() {
                 <CardTitle className="flex items-center justify-between"><span>{p.name}</span><span className="text-sm text-gray-500">{p.role}</span></CardTitle>
               </CardHeader>
               <CardContent className="flex gap-2">
-                <Button variant="outline" className="rounded-full" onClick={()=>{ setPersonForm({ name:p.name, role:p.role, bio:p.bio||'', order:p.order||0, isActive:p.isActive }); setOpenPerson(true); (setPersonForm as any)._editing=p }}>Edit</Button>
+                <Button variant="outline" className="rounded-full" onClick={()=>{ setEditingPerson(p); setPersonForm({ name:p.name, role:p.role, bio:p.bio||'', order:p.order||0, isActive:p.isActive }); setOpenPerson(true) }}>Edit</Button>
+                <Button variant="outline" className="rounded-full text-red-600" onClick={()=>deletePerson(p.id)}>Delete</Button>
               </CardContent>
             </Card>
           ))}
         </div>
       </section>
 
-      <Modal open={openCert} onClose={()=>setOpenCert(false)} title={(certForm as any)._editing? 'Edit Certification':'Add Certification'}>
+      <Modal open={openCert} onClose={()=>setOpenCert(false)} title={editingCert? 'Edit Certification':'Add Certification'}>
         <div className="space-y-3">
           <div>
             <label className="block text-sm text-gray-700">Title</label>
@@ -548,13 +563,13 @@ function AboutManager() {
             <label htmlFor="cert-active" className="text-sm text-gray-700">Active</label>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=>setOpenCert(false)}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={()=>saveCert((certForm as any)._editing)}>Save</Button>
+            <Button variant="outline" className="rounded-full" onClick={()=>{ setOpenCert(false); setEditingCert(null) }}>Cancel</Button>
+            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={saveCert}>Save</Button>
           </div>
         </div>
       </Modal>
 
-      <Modal open={openPerson} onClose={()=>setOpenPerson(false)} title={(personForm as any)._editing? 'Edit Person':'Add Person'}>
+      <Modal open={openPerson} onClose={()=>setOpenPerson(false)} title={editingPerson? 'Edit Person':'Add Person'}>
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -581,8 +596,8 @@ function AboutManager() {
             <label htmlFor="person-active" className="text-sm text-gray-700">Active</label>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=>setOpenPerson(false)}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={()=>savePerson((personForm as any)._editing)}>Save</Button>
+            <Button variant="outline" className="rounded-full" onClick={()=>{ setOpenPerson(false); setEditingPerson(null) }}>Cancel</Button>
+            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={savePerson}>Save</Button>
           </div>
         </div>
       </Modal>
