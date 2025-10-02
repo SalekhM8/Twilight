@@ -1,10 +1,11 @@
+export const dynamic = 'force-dynamic'
 import { prisma } from "@/lib/prisma"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default async function AboutPage() {
   const [certs, people] = await Promise.all([
-    prisma.certification.findMany({ where: { isActive: true }, orderBy: { order: "asc" } }),
-    prisma.teamMember.findMany({ where: { isActive: true }, orderBy: { order: "asc" } }),
+    prisma.certification.findMany({ where: { isActive: true }, orderBy: { order: "asc" } }).catch(()=>[] as any[]),
+    prisma.teamMember.findMany({ where: { isActive: true }, orderBy: { order: "asc" } }).catch(()=>[] as any[]),
   ])
 
   return (
