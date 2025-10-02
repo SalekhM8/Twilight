@@ -50,6 +50,7 @@ model Pharmacist {
 model Treatment {
   id         String   @id @default(cuid())
   name       String
+  summary    String?
   description String?
   category   String
   price      Float

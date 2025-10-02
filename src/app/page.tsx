@@ -135,7 +135,7 @@ export default async function HomePage() {
                       <IconComponent className="w-7 h-7" />
                     </div>
                     <CardTitle className="text-xl font-semibold text-gray-900">{treatment.name}</CardTitle>
-                    <CardDescription className="text-gray-600">{treatment.description}</CardDescription>
+                    <CardDescription className="text-gray-600">{treatment.summary || treatment.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between mb-5">

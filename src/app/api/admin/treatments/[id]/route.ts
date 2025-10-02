@@ -7,6 +7,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     const body = await req.json()
     const updateData: any = {
       name: body.name,
+      summary: body.summary,
       description: body.description,
       category: body.category,
       price: body.price !== undefined ? Number(body.price) : undefined,

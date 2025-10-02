@@ -16,6 +16,7 @@ export async function POST(req: Request) {
     const treatment = await prisma.treatment.create({
       data: {
         name: body.name,
+        summary: body.summary || null,
         description: body.description || null,
         category: body.category || body.name,
         price: Number(body.price),

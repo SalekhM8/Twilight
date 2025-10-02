@@ -566,11 +566,11 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
 function TreatmentsManager({ treatments, locations, onReload }: { treatments: any[]; locations: any[]; onReload: ()=>void }) {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<any | null>(null)
-  const [form, setForm] = useState<any>({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, locationIds: [] as string[] })
+  const [form, setForm] = useState<any>({ name: '', summary: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, locationIds: [] as string[] })
 
   const startNew = () => {
     setEditing(null)
-    setForm({ name: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, locationIds: [] })
+    setForm({ name: '', summary: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, locationIds: [] })
     setOpen(true)
   }
   const startEdit = async (t: any) => {
@@ -578,9 +578,9 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
     try {
       const detail = await fetch(`/api/treatments/${t.id}`).then(r=>r.json())
       const locIds = Array.isArray(detail.locations) ? detail.locations.map((l:any)=> l.id) : []
-      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), isTravel: (detail.treatment?.isTravel ?? t.isTravel ?? false), isNhs: (detail.treatment?.isNhs ?? t.isNhs ?? false), locationIds: locIds })
+      setForm({ name: t.name, summary: (detail.treatment?.summary ?? t.summary ?? ''), description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), isTravel: (detail.treatment?.isTravel ?? t.isTravel ?? false), isNhs: (detail.treatment?.isNhs ?? t.isNhs ?? false), locationIds: locIds })
     } catch {
-      setForm({ name: t.name, description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), isTravel: (t.isTravel ?? false), isNhs: (t.isNhs ?? false), locationIds: [] })
+      setForm({ name: t.name, summary: (t.summary ?? ''), description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), isTravel: (t.isTravel ?? false), isNhs: (t.isNhs ?? false), locationIds: [] })
     }
     setOpen(true)
   }
@@ -622,6 +622,10 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
           <div>
             <label className="block text-sm text-gray-700">Name</label>
             <Input value={form.name} onChange={e=>setForm({ ...form, name: e.target.value })} />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-700">Summary</label>
+            <Textarea value={form.summary} onChange={e=>setForm({ ...form, summary: e.target.value })} />
           </div>
           <div>
             <label className="block text-sm text-gray-700">Description</label>

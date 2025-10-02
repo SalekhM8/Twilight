@@ -6,7 +6,22 @@ import { MapPin } from "lucide-react"
 export default async function TreatmentPage({ params }: { params: Promise<{ id: string }> }) {
   await resetPreparedStatements()
   const { id } = await params
-  const treatment = await prisma.treatment.findUnique({ where: { id } })
+  const treatment = await prisma.treatment.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      // @ts-ignore prisma types may lag after migration
+      summary: true,
+      description: true,
+      category: true,
+      price: true,
+      duration: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  })
   if (!treatment) {
     return (
       <div className="min-h-screen grid place-items-center">
@@ -37,7 +52,9 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
         <div className="absolute inset-0 z-10 bg-gradient-to-r from-white/70 via-white/50 to-white/20" />
         <div className="relative z-20 mx-auto max-w-6xl px-6 py-16 w-full">
           <h1 className="text-4xl md:text-5xl font-extrabold text-white">{treatment.name}</h1>
-          <p className="mt-3 text-gray-700 max-w-2xl">{treatment.description}</p>
+          {(treatment as any).summary && (
+            <p className="mt-3 text-gray-700 max-w-2xl">{(treatment as any).summary}</p>
+          )}
           <div className="mt-5 inline-flex items-center rounded-full bg-[#36c3f0] text-white px-5 py-2 text-sm font-semibold hover:bg-[#2eb5e8]">£{treatment.price} · {treatment.duration} mins</div>
         </div>
       </section>
@@ -48,9 +65,9 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2">
               <h2 className="text-2xl font-bold text-gray-900">About this treatment</h2>
-              <p className="mt-3 text-gray-700 leading-7">
-                {treatment.description || "This treatment is provided by our experienced pharmacists with a focus on safety and results."}
-              </p>
+              {treatment.description && (
+                <p className="mt-3 text-gray-700 leading-7">{treatment.description}</p>
+              )}
               <div className="mt-8">
                 <Link href={`/consultation?treatment=${treatment.id}`} className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-6 py-3 font-semibold hover:bg-[#2eb5e8]">
                   Book this treatment →
