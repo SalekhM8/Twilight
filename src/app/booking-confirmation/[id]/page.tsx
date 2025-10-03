@@ -6,12 +6,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 interface BookingConfirmationPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function BookingConfirmationPage({ params }: BookingConfirmationPageProps) {
+  const { id } = await params
   const booking = await prisma.booking.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       treatment: true,
       location: true,

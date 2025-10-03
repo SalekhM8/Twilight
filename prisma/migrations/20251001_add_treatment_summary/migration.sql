@@ -3,3 +3,5 @@ ALTER TABLE "Treatment" ADD COLUMN "summary" TEXT;
 
 
 
+
+

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { resetPreparedStatements } from '@/lib/db'
+import { renderBookingEmail, sendMail } from '@/lib/email'
 
 export async function POST(request: Request) {
   try {
@@ -120,7 +121,30 @@ export async function POST(request: Request) {
         pharmacist: true
       }
     })
-    
+    // Fire-and-forget email send (never block response)
+    ;(async ()=>{
+      try {
+        const html = renderBookingEmail({
+          customerName,
+          treatmentName: booking.treatment.name,
+          locationName: booking.location.name,
+          preferredDate: booking.preferredDate,
+          preferredTime: booking.preferredTime,
+          durationMins: booking.treatment.duration,
+          price: booking.treatment.price,
+          notes: booking.notes,
+          bookingId: booking.id,
+        })
+        await sendMail({
+          to: booking.customerEmail,
+          subject: `Booking received: ${booking.treatment.name}`,
+          html,
+        })
+      } catch (e) {
+        console.error('email send failed', e)
+      }
+    })()
+
     return NextResponse.json(booking, { status: 201 })
   } catch (error) {
     console.error('Failed to create booking:', error)

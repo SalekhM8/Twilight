@@ -3,3 +3,5 @@ ALTER TABLE "Treatment" ADD COLUMN "showSlots" BOOLEAN NOT NULL DEFAULT true;
 
 
 
+
+
