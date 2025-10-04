@@ -45,7 +45,12 @@ export default async function HomePage() {
   const locations = await prisma.location.findMany({
     orderBy: { name: 'asc' }
   })
-  const reviews = await prisma.review.findMany({ where: { isApproved: true }, orderBy: { createdAt: 'desc' }, take: 12 })
+  let reviews: any[] = []
+  try {
+    reviews = await prisma.review.findMany({ where: { isApproved: true }, orderBy: { createdAt: 'desc' }, take: 12 })
+  } catch {
+    reviews = []
+  }
 
   return (
     <div className="min-h-screen bg-white">
