@@ -78,6 +78,7 @@ export default function ReviewsSection({ reviews: initial }: { reviews: Review[]
                 </div>
               </div>
             ) : (
+            <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm text-gray-700">Name</label>
@@ -104,6 +105,7 @@ export default function ReviewsSection({ reviews: initial }: { reviews: Review[]
               <Button variant="outline" className="rounded-full" onClick={()=> setOpen(false)}>Cancel</Button>
               <Button className="rounded-full bg-[#36c3f0] hover:bg-[#2eb5e8]" onClick={submit} disabled={submitting}>{submitting ? 'Submitting…' : 'Submit'}</Button>
             </div>
+            </>
             )}
           </div>
         </Modal>
