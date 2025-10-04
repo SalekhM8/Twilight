@@ -161,6 +161,7 @@ export default function AdminDashboard() {
     { id: 'pharmacists', label: 'Pharmacists', icon: Users },
     { id: 'treatments', label: 'Treatments', icon: Stethoscope },
     { id: 'locations', label: 'Locations', icon: MapPin },
+    { id: 'reviews', label: 'Reviews', icon: CheckCircle },
     { id: 'settings', label: 'Settings', icon: Settings },
     { id: 'about', label: 'About Us', icon: Users },
   ]
@@ -426,6 +427,9 @@ export default function AdminDashboard() {
                 setLocations(l)
               }}
             />
+          )}
+          {activeTab === 'reviews' && (
+            <ReviewsManager />
           )}
           {activeTab === 'about' && (
             <AboutManager />
@@ -1102,6 +1106,64 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
           </div>
         </div>
       </Modal>
+    </div>
+  )
+}
+
+// Reviews Manager
+function ReviewsManager() {
+  const [items, setItems] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const load = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/admin/reviews')
+      const data = await res.json()
+      setItems(Array.isArray(data) ? data : [])
+    } catch { setError('Failed to load reviews') }
+    finally { setLoading(false) }
+  }
+  useEffect(()=>{ load() }, [])
+
+  const setApproved = async (id: string, isApproved: boolean) => {
+    const res = await fetch(`/api/admin/reviews/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ isApproved }) })
+    if (res.ok) setItems((arr)=> arr.map((r)=> r.id===id? { ...r, isApproved }: r))
+  }
+  const del = async (id: string) => {
+    if (!confirm('Delete this review?')) return
+    const res = await fetch(`/api/admin/reviews/${id}`, { method: 'DELETE' })
+    if (res.ok) setItems((arr)=> arr.filter((r)=> r.id!==id))
+  }
+
+  if (loading) return <div className="py-6">Loading…</div>
+  if (error) return <div className="py-6 text-red-600">{error}</div>
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-xl font-semibold">Reviews</h3>
+      <div className="space-y-3">
+        {items.map((r)=> (
+          <Card key={r.id}>
+            <CardContent className="py-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-medium text-gray-900">{r.name} <span className="text-xs text-gray-500">({r.rating}/5)</span></p>
+                  <p className="text-sm text-gray-700 whitespace-pre-line">{r.comment}</p>
+                  <p className="text-xs text-gray-500 mt-1">{new Date(r.createdAt).toLocaleString()}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" className="rounded-full" onClick={()=> setApproved(r.id, !r.isApproved)}>{r.isApproved? 'Unapprove':'Approve'}</Button>
+                  <Button variant="outline" className="rounded-full text-red-600" onClick={()=> del(r.id)}>Delete</Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+        {items.length===0 && <div className="py-10 text-center text-gray-500">No reviews yet.</div>}
+      </div>
     </div>
   )
 }

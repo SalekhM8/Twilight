@@ -128,6 +128,7 @@ export async function POST(request: Request) {
           customerName,
           treatmentName: booking.treatment.name,
           locationName: booking.location.name,
+          locationPhone: booking.location.phone,
           preferredDate: booking.preferredDate,
           preferredTime: booking.preferredTime,
           durationMins: booking.treatment.duration,

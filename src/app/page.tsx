@@ -20,6 +20,7 @@ import {
   Clock
 } from 'lucide-react'
 import Link from 'next/link'
+import ReviewsSection from '@/components/ReviewsSection'
 import { formatOpeningHours } from '@/lib/utils'
 
 const treatmentIcons = {
@@ -37,13 +38,14 @@ const treatmentIcons = {
 export default async function HomePage() {
   await resetPreparedStatements()
   const treatments = await prisma.treatment.findMany({
-    where: { isActive: true },
+    where: { isActive: true, isTravel: false, isNhs: false },
     orderBy: { name: 'asc' }
   })
 
   const locations = await prisma.location.findMany({
     orderBy: { name: 'asc' }
   })
+  const reviews = await prisma.review.findMany({ where: { isApproved: true }, orderBy: { createdAt: 'desc' }, take: 12 })
 
   return (
     <div className="min-h-screen bg-white">
@@ -192,6 +194,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* REVIEWS */}
+      <ReviewsSection reviews={reviews as any} />
 
       {/* FOOTER */}
       <footer id="contact" className="relative text-white py-14">
