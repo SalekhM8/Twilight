@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import ReviewsSection from '@/components/ReviewsSection'
+import MobileHeroHeader from '@/components/MobileHeroHeader'
 import { formatOpeningHours } from '@/lib/utils'
 
 const treatmentIcons = {
@@ -58,6 +59,7 @@ export default async function HomePage() {
 
       {/* HERO */}
       <section id="home" className="relative mx-2 sm:mx-3 md:mx-6 mt-0 md:mt-0 rounded-3xl overflow-hidden min-h-[85vh]">
+        <MobileHeroHeader />
         <div className="absolute inset-0 z-0">
           <video
             src="/main.mp4"
@@ -90,10 +92,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Mobile-only large logo overlay */}
-        <div className="md:hidden absolute top-3 left-0 right-0 z-30 flex justify-center">
-          <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={640} height={200} className="h-28 sm:h-32 w-auto drop-shadow-[0_3px_14px_rgba(0,0,0,0.55)]" />
-        </div>
+        {/* Mobile header with hamburger inside hero is replaced by sticky header above */}
 
         
 
