@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="WhatsApp">
+  <defs>
+    <linearGradient id="g" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#25D366"/>
+      <stop offset="100%" stop-color="#20BD5A"/>
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity=".25"/>
+    </filter>
+  </defs>
+  <g transform="translate(2 2)" filter="url(#shadow)">
+    <circle cx="30" cy="30" r="30" fill="#fff"/>
+    <circle cx="30" cy="30" r="26" fill="url(#g)"/>
+    <path fill="#fff" d="M45.2 38.2c-.3.9-1.7 2-2.6 2.2-.7.2-1.7.3-3 .1-.6 0-1.6-.3-2.8-.7-5-.1-8.2-5.4-8.5-5.8-.3-.4-2-2.5-2-4.7 0-2.2 1.1-3.2 1.6-3.7.3-.3.7-.4 1-.4h.8c.3 0 .6 0 .7.6.3.7.9 2.6 1.1 3 .1.3.1.5 0 .7l-.5.8c-.2.3-.2.5 0 .8.3.5 1.1 2 2.7 3s2.4 1 2.8 1.2.6.1.8-.2l1.4-1.7c.2-.2.4-.3.7-.3s1.9.7 2.7 1c.8.3 1.2.6 1.3.9 0 .3-.1 1.2-.3 2Z"/>
+  </g>
+</svg>
+
+

@@ -4,12 +4,13 @@ export const dynamic = "force-dynamic"
 import { Suspense } from "react"
 
 import { useState, useEffect, useMemo } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 interface Treatment {
 	id: string
@@ -32,6 +33,8 @@ interface Location {
 export function ConsultationWizard() {
 	const searchParams = useSearchParams()
 	const preselectedTreatment = searchParams?.get("treatment") || ""
+  const stepParam = Number(searchParams?.get("step") || 0)
+  const router = useRouter()
 
 	const [treatments, setTreatments] = useState<Treatment[]>([])
 	const [availableLocations, setAvailableLocations] = useState<Location[]>([])
@@ -50,7 +53,7 @@ export function ConsultationWizard() {
 
 	const [loading, setLoading] = useState(true)
 	const [submitting, setSubmitting] = useState(false)
-	const [step, setStep] = useState(0)
+	const [step, setStep] = useState(Math.max(0, Math.min(stepParam || 0, 20)))
 	const [availableSlots, setAvailableSlots] = useState<string[]>([])
   const selectedTreatment = useMemo(()=> treatments.find(t=> t.id === form.treatmentId), [treatments, form.treatmentId])
   const requiresSlots = !!selectedTreatment?.showSlots || selectedTreatment?.showSlots === undefined
@@ -69,6 +72,21 @@ export function ConsultationWizard() {
 
 	const totalSteps = steps.length
 	const progress = Math.round((step / (totalSteps - 1)) * 100)
+
+	// Sync step in URL to support OS back/forward
+	useEffect(() => {
+		try {
+			const url = new URL(window.location.href)
+			url.searchParams.set('step', String(step))
+			router.push(url.pathname + '?' + url.searchParams.toString(), { scroll: false })
+		} catch {}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [step])
+
+	// Ensure viewport is at top when changing steps (mobile ergonomics)
+	useEffect(() => {
+		try { window.scrollTo({ top: 0, behavior: 'smooth' }) } catch { window.scrollTo(0,0) }
+	}, [step])
 
 	useEffect(() => {
 		const load = async () => {
@@ -181,11 +199,10 @@ export function ConsultationWizard() {
 			{/* Top bar with brand to match FOH */}
 			<header className="fixed inset-x-0 top-0 z-50">
 				<div className="mx-auto max-w-4xl px-6 py-4">
-					<div className="flex items-center justify-between rounded-full bg-white/80 backdrop-blur px-4 py-2 shadow-sm">
-						<Link href="/" className="flex items-center gap-2">
-							<div className="w-8 h-8 rounded-full bg-emerald-600 text-white grid place-items-center font-bold">T</div>
-							<span className="text-sm font-semibold text-gray-800">TWILIGHT</span>
-						</Link>
+                    <div className="flex items-center justify-between rounded-full bg-white/80 backdrop-blur px-4 py-2 shadow-sm">
+                        <Link href="/" className="flex items-center gap-2">
+                            <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={200} height={60} className="h-8 sm:h-10 w-auto" />
+                        </Link>
 						<Link href="/" className="text-xs text-gray-600 hover:text-gray-900">Back to home</Link>
 					</div>
 				</div>
@@ -215,7 +232,7 @@ export function ConsultationWizard() {
 									{treatments.map((t) => (
 										<button
 											key={t.id}
-											className={`text-left rounded-xl border p-4 hover:border-blue-500 hover:shadow ${form.treatmentId === t.id ? "border-blue-600 ring-2 ring-blue-100" : "border-gray-200"}`}
+                                        className={`text-left rounded-xl border p-4 hover:border-[#36c3f0] hover:shadow ${form.treatmentId === t.id ? "border-[#36c3f0] ring-2 ring-[#e9f7fe]" : "border-gray-200"}`}
 											onClick={() => {
 												setForm((p) => ({ ...p, treatmentId: t.id }))
 												setTimeout(next, 100)
@@ -236,7 +253,7 @@ export function ConsultationWizard() {
 									{availableLocations.map((loc) => (
 										<button
 											key={loc.id}
-											className={`text-left rounded-xl border p-4 hover:border-blue-500 hover:shadow ${form.locationId === loc.id ? "border-blue-600 ring-2 ring-blue-100" : "border-gray-200"}`}
+                                        className={`text-left rounded-xl border p-4 hover:border-[#36c3f0] hover:shadow ${form.locationId === loc.id ? "border-[#36c3f0] ring-2 ring-[#e9f7fe]" : "border-gray-200"}`}
 											onClick={() => {
 												setForm((p) => ({ ...p, locationId: loc.id }))
 												setTimeout(next, 100)
@@ -270,8 +287,12 @@ export function ConsultationWizard() {
 										type="email"
 										value={form.customerEmail}
 										onChange={(e) => setForm({ ...form, customerEmail: e.target.value })}
+										onKeyDown={(e)=>{ if (e.key === 'Enter') { if (!/.+@.+\..+/.test(form.customerEmail)) { e.preventDefault(); e.stopPropagation(); } else { next() } } }}
 										placeholder="you@example.com"
 									/>
+									{form.customerEmail && !/.+@.+\..+/.test(form.customerEmail) && (
+										<p className="mt-1 text-xs text-red-600">Please enter a valid email address.</p>
+									)}
 								</div>
 							</section>
 
@@ -294,7 +315,7 @@ export function ConsultationWizard() {
                                   <div className="mt-6 max-w-md">
                                       <Input
                                           type="date"
-                                          min={new Date().toISOString().split("T")[0]}
+                                          min={(() => { const d = new Date(); const tz = d.getTimezoneOffset()*60000; return new Date(d.getTime()-tz).toISOString().split('T')[0] })()}
                                           value={form.preferredDate}
                                           onChange={(e) => setForm({ ...form, preferredDate: e.target.value })}
                                       />
@@ -355,11 +376,11 @@ export function ConsultationWizard() {
 					</div>
 
 					{/* Controls */}
-					<div className="mt-6 flex items-center justify-between">
+					<div className="mt-6 sticky bottom-0 bg-white/95 backdrop-blur border-t border-gray-100 px-0 py-3 flex items-center justify-between">
 						<Button variant="outline" className="rounded-full" onClick={back} disabled={step === 0}>
 							<ChevronLeft className="w-4 h-4 mr-2" /> Back
 						</Button>
-						<Button className="rounded-full bg-blue-600 hover:bg-blue-700" onClick={next} disabled={!canNext() || step >= totalSteps - 1}>
+                        <Button className="rounded-full bg-[#36c3f0] hover:bg-[#2eb5e8]" onClick={next} disabled={!canNext() || step >= totalSteps - 1}>
 							Next <ChevronRight className="w-4 h-4 ml-2" />
 						</Button>
 					</div>

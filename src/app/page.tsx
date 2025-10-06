@@ -181,8 +181,8 @@ export default async function HomePage() {
                   <CardTitle className="flex items-center gap-2 text-[#36c3f0]"><MapPin className="w-5 h-5" /><span>{location.name}</span></CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 text-sm">
-                  <div className="flex items-start gap-2"><MapPin className="w-4 h-4 text-gray-400 mt-1" /><p className="text-gray-600">{location.address}</p></div>
-                  <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-gray-400" /><p className="text-gray-600">{location.phone}</p></div>
+                  <div className="flex items-start gap-2"><MapPin className="w-4 h-4 text-gray-400 mt-1" /><p className="text-gray-600"><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address)}`} target="_blank" rel="noopener noreferrer" className="hover:underline">{location.address}</a></p></div>
+                  <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-gray-400" /><p className="text-gray-600"><a href={`tel:${location.phone.replace(/[^\d+]/g, '')}`} className="hover:underline">{location.phone}</a></p></div>
                   <div className="flex items-start gap-2">
                     <Clock className="w-4 h-4 text-gray-400 mt-1" />
                     <div className="text-gray-600">
@@ -217,26 +217,35 @@ export default async function HomePage() {
             <div>
               <h3 className="font-semibold mb-4">Services</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>Weight Loss</li>
-                <li>Women&apos;s Health</li>
-                <li>Men&apos;s Health</li>
-                <li>Travel Health</li>
+                {treatments.slice(0,6).map((t)=> (
+                  <li key={t.id}>
+                    <Link href={`/treatments/${t.id}`} className="hover:text-white">{t.name}</Link>
+                  </li>
+                ))}
+                <li>
+                  <Link href="/travel" className="hover:text-white">Travel Health</Link>
+                </li>
+                <li>
+                  <Link href="/nhs" className="hover:text-white">NHS Services</Link>
+                </li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Locations</h3>
               <ul className="space-y-2 text-sm text-gray-400">
                 {locations.map((l) => (
-                  <li key={l.id}>{l.name}</li>
+                  <li key={l.id}>
+                    <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.address)}`} target="_blank" rel="noopener noreferrer" className="hover:text-white">{l.name}</a>
+                  </li>
                 ))}
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Contact</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>Book Online</li>
-                <li>Call Us</li>
-                <li>Find Us</li>
+                <li><Link href="/consultation" className="hover:text-white">Book Online</Link></li>
+                <li><a href={`tel:${locations[0]?.phone?.replace(/[^\d+]/g, '') || ''}`} className="hover:text-white">Call Us</a></li>
+                <li><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locations[0]?.address || '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-white">Find Us</a></li>
               </ul>
             </div>
             <div>
