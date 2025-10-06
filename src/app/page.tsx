@@ -107,11 +107,14 @@ export default async function HomePage() {
               <p className="mt-6 mx-auto text-lg text-white/85 max-w-xl">
                 Evidence-based treatments and pharmacist-led care across our Birmingham branches.
               </p>
-              <div className="mt-8 flex items-center justify-center gap-3">
-                <a href="#services" className="inline-flex items-center rounded-full border border-[#36c3f0] bg-white text-[#36c3f0] hover:bg-[#e9f7fe] px-5 py-2 text-sm font-medium">
+              <div className="mt-8 grid grid-cols-3 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-3">
+                <a href="#services" className="inline-flex items-center justify-center rounded-full border border-[#36c3f0] bg-white text-[#36c3f0] hover:bg-[#e9f7fe] px-4 py-2 text-sm font-medium w-full">
                   View Services
                 </a>
-                <Link href="/consultation" className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-5 py-2 text-sm font-semibold hover:bg-[#2eb5e8]">
+                <Link href="/travel" className="inline-flex items-center justify-center rounded-full border border-[#36c3f0] bg-white text-[#36c3f0] hover:bg-[#e9f7fe] px-4 py-2 text-sm font-semibold w-full">
+                  Travel Clinic
+                </Link>
+                <Link href="/consultation" className="inline-flex items-center justify-center rounded-full bg-[#36c3f0] text-white px-4 py-2 text-sm font-semibold hover:bg-[#2eb5e8] w-full">
                   Get Started →
                 </Link>
               </div>
