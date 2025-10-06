@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 
 export async function GET() {
@@ -34,6 +35,13 @@ export async function POST(req: Request) {
         data: body.locationIds.map((id: string) => ({ treatmentId: treatment.id, locationId: id })),
       })
     }
+
+    // Revalidate pages affected by treatment listings
+    try {
+      revalidatePath("/")
+      revalidatePath("/travel")
+      revalidatePath("/nhs")
+    } catch {}
 
     return NextResponse.json(treatment, { status: 201 })
   } catch (e) {

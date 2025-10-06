@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server"
+import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
@@ -26,6 +27,12 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
       await prisma.treatmentLocation.deleteMany({ where: { treatmentId: id } })
       await prisma.treatmentLocation.createMany({ data: body.locationIds.map((lid: string) => ({ treatmentId: id, locationId: lid })) })
     }
+
+    try {
+      revalidatePath("/")
+      revalidatePath("/travel")
+      revalidatePath("/nhs")
+    } catch {}
 
     return NextResponse.json(updated)
   } catch (e) {
