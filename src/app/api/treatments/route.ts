@@ -5,8 +5,21 @@ import { resetPreparedStatements } from '@/lib/db'
 export async function GET() {
   try {
     await resetPreparedStatements()
+    const now = new Date()
     const treatments = await prisma.treatment.findMany({
-      where: { isActive: true },
+      where: {
+        isActive: true,
+        OR: [
+          { seasonStart: null },
+          { seasonEnd: null },
+          {
+            AND: [
+              { seasonStart: { lte: now } },
+              { seasonEnd: { gte: now } },
+            ],
+          },
+        ],
+      },
       orderBy: { name: 'asc' }
     })
     

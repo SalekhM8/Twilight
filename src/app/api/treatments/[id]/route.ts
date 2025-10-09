@@ -11,6 +11,9 @@ export async function GET(
       where: { id },
     })
     if (!treatment) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    // Attach seasonal availability state for clients to optionally display messaging
+    const now = new Date()
+    const inSeason = !treatment.seasonStart || !treatment.seasonEnd || (treatment.seasonStart <= now && treatment.seasonEnd >= now)
 
     const locations = await prisma.treatmentLocation.findMany({
       where: { treatmentId: id },
@@ -22,7 +25,7 @@ export async function GET(
     })
 
     return NextResponse.json({
-      treatment,
+      treatment: { ...treatment, inSeason },
       locations: locations.map((l) => l.location),
       pharmacists: pharmacists.map((p) => p.pharmacist),
     })

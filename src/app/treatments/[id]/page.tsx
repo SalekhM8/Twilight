@@ -18,6 +18,10 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
       price: true,
       duration: true,
       isActive: true,
+      // @ts-ignore seasonal fields may lag right after migration
+      seasonStart: true,
+      // @ts-ignore
+      seasonEnd: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -69,9 +73,26 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
                 <p className="mt-3 text-gray-700 leading-7">{treatment.description}</p>
               )}
               <div className="mt-8">
-                <Link href={`/consultation?treatment=${treatment.id}`} className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-6 py-3 font-semibold hover:bg-[#2eb5e8]">
-                  Book this treatment →
-                </Link>
+                {(() => {
+                  const seasonStart = (treatment as any).seasonStart
+                  const seasonEnd = (treatment as any).seasonEnd
+                  if (seasonStart && seasonEnd) {
+                    const now = new Date()
+                    const inSeason = new Date(String(seasonStart)) <= now && new Date(String(seasonEnd)) >= now
+                    if (!inSeason) {
+                      return (
+                        <div className="inline-flex items-center rounded-full bg-gray-200 text-gray-700 px-6 py-3 font-semibold cursor-not-allowed">
+                          Currently unavailable (out of season)
+                        </div>
+                      )
+                    }
+                  }
+                  return (
+                    <Link href={`/consultation?treatment=${treatment.id}`} className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-6 py-3 font-semibold hover:bg-[#2eb5e8]">
+                      Book this treatment →
+                    </Link>
+                  )
+                })()}
               </div>
             </div>
             <aside className="lg:col-span-1">

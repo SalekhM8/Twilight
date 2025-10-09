@@ -26,6 +26,8 @@ export async function POST(req: Request) {
         isNhs: body.isNhs ? true : false,
         showSlots: body.showSlots !== undefined ? Boolean(body.showSlots) : true,
         isActive: body.isActive ?? true,
+        seasonStart: body.seasonStart ? new Date(body.seasonStart) : null,
+        seasonEnd: body.seasonEnd ? new Date(body.seasonEnd) : null,
       },
     })
 

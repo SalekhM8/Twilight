@@ -3,8 +3,10 @@ import { prisma } from "@/lib/prisma"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
+export const dynamic = 'force-dynamic'
 export default async function NhsServicesPage() {
-  const treatments = await prisma.treatment.findMany({ where: { isActive: true, isNhs: true }, orderBy: { name: "asc" } })
+  const now = new Date()
+  const treatments = await prisma.treatment.findMany({ where: { isActive: true, isNhs: true, OR: [{ seasonStart: null }, { seasonEnd: null }, { AND: [{ seasonStart: { lte: now } }, { seasonEnd: { gte: now } }] }] }, orderBy: { name: "asc" } })
 
   return (
     <div className="min-h-screen bg-white">
@@ -21,6 +23,9 @@ export default async function NhsServicesPage() {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-xl font-semibold text-gray-900">{t.name}</CardTitle>
                   <CardDescription className="text-gray-600">{t.description}</CardDescription>
+                  {t.seasonStart && t.seasonEnd ? (
+                    <span className="inline-block mt-2 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">Seasonal</span>
+                  ) : null}
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between mb-5">

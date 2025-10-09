@@ -743,11 +743,11 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
 function TreatmentsManager({ treatments, locations, onReload }: { treatments: any[]; locations: any[]; onReload: ()=>void }) {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<any | null>(null)
-  const [form, setForm] = useState<any>({ name: '', summary: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, locationIds: [] as string[] })
+  const [form, setForm] = useState<any>({ name: '', summary: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, seasonStart: '', seasonEnd: '', locationIds: [] as string[] })
 
   const startNew = () => {
     setEditing(null)
-    setForm({ name: '', summary: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, locationIds: [] })
+    setForm({ name: '', summary: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, seasonStart: '', seasonEnd: '', locationIds: [] })
     setOpen(true)
   }
   const startEdit = async (t: any) => {
@@ -755,9 +755,9 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
     try {
       const detail = await fetch(`/api/treatments/${t.id}`).then(r=>r.json())
       const locIds = Array.isArray(detail.locations) ? detail.locations.map((l:any)=> l.id) : []
-      setForm({ name: t.name, summary: (detail.treatment?.summary ?? t.summary ?? ''), description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), isTravel: (detail.treatment?.isTravel ?? t.isTravel ?? false), isNhs: (detail.treatment?.isNhs ?? t.isNhs ?? false), locationIds: locIds })
+      setForm({ name: t.name, summary: (detail.treatment?.summary ?? t.summary ?? ''), description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), isTravel: (detail.treatment?.isTravel ?? t.isTravel ?? false), isNhs: (detail.treatment?.isNhs ?? t.isNhs ?? false), seasonStart: (detail.treatment?.seasonStart ? String(detail.treatment.seasonStart).slice(0,10) : ''), seasonEnd: (detail.treatment?.seasonEnd ? String(detail.treatment.seasonEnd).slice(0,10) : ''), locationIds: locIds })
     } catch {
-      setForm({ name: t.name, summary: (t.summary ?? ''), description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), isTravel: (t.isTravel ?? false), isNhs: (t.isNhs ?? false), locationIds: [] })
+      setForm({ name: t.name, summary: (t.summary ?? ''), description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), isTravel: (t.isTravel ?? false), isNhs: (t.isNhs ?? false), seasonStart: '', seasonEnd: '', locationIds: [] })
     }
     setOpen(true)
   }
@@ -786,6 +786,9 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
                 <span className="text-sm text-emerald-600">£{t.price} · {t.duration}m</span>
               </CardTitle>
               <CardDescription>{t.description}</CardDescription>
+              {t.seasonStart && t.seasonEnd ? (
+                <span className="inline-block mt-2 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">Seasonal {String(t.seasonStart).slice(0,10)}–{String(t.seasonEnd).slice(0,10)}</span>
+              ) : null}
             </CardHeader>
             <CardContent className="flex gap-2">
               <Button variant="outline" className="rounded-full" onClick={()=>startEdit(t)}>Edit</Button>
@@ -808,7 +811,7 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
             <label className="block text-sm text-gray-700">Description</label>
             <Textarea value={form.description} onChange={e=>setForm({ ...form, description: e.target.value })} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Price (£)</label>
               <Input value={form.price} onChange={e=>setForm({ ...form, price: e.target.value })} />
@@ -818,11 +821,21 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
               <Input value={form.duration} onChange={e=>setForm({ ...form, duration: e.target.value })} />
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm text-gray-700">Season starts (optional)</label>
+              <Input type="date" value={form.seasonStart} onChange={e=> setForm({ ...form, seasonStart: e.target.value })} />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700">Season ends (optional)</label>
+              <Input type="date" value={form.seasonEnd} onChange={e=> setForm({ ...form, seasonEnd: e.target.value })} />
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             <input id="showSlots" type="checkbox" checked={!!form.showSlots} onChange={(e)=> setForm({ ...form, showSlots: e.target.checked })} />
             <label htmlFor="showSlots" className="text-sm text-gray-700">Show slots to customers</label>
           </div>
-          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
             <input id="isTravel" type="checkbox" checked={!!form.isTravel} onChange={(e)=> setForm({ ...form, isTravel: e.target.checked })} />
             <label htmlFor="isTravel" className="text-sm text-gray-700">Travel service</label>
           </div>

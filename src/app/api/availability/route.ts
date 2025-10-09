@@ -30,8 +30,14 @@ export async function GET(request: Request) {
 
     const treatment = await prisma.treatment.findUnique({ where: { id: treatmentId } })
     if (!treatment) return NextResponse.json({ error: "Treatment not found" }, { status: 404 })
-
+    // Enforce seasonal window
     const jsDate = new Date(date + "T00:00:00")
+    const tAny = treatment as any
+    if (tAny.seasonStart && tAny.seasonEnd) {
+      if (!(new Date(tAny.seasonStart) <= jsDate && new Date(tAny.seasonEnd) >= jsDate)) {
+        return NextResponse.json({ slots: [] })
+      }
+    }
     const dow = jsDate.getUTCDay() // 0-6
 
     // Find eligible pharmacists (by treatment + location)

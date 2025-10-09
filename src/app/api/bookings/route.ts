@@ -29,6 +29,15 @@ export async function POST(request: Request) {
     const treatment = await prisma.treatment.findUnique({ where: { id: treatmentId } })
     if (!treatment) return NextResponse.json({ error: 'Treatment not found' }, { status: 404 })
     const requiresSlots = !!treatment.showSlots
+    // Enforce seasonal window
+    const tAny = treatment as any
+    if (tAny.seasonStart && tAny.seasonEnd) {
+      // When slots are required we expect a preferredDate; otherwise allow booking only if now is within season
+      const targetDate = requiresSlots && preferredDate ? new Date(preferredDate + 'T00:00:00') : new Date()
+      if (!(new Date(tAny.seasonStart) <= targetDate && new Date(tAny.seasonEnd) >= targetDate)) {
+        return NextResponse.json({ error: 'Treatment is out of season' }, { status: 400 })
+      }
+    }
     if (requiresSlots) {
       if (!preferredDate || !preferredTime) {
         return NextResponse.json({ error: 'Date and time are required for this treatment' }, { status: 400 })

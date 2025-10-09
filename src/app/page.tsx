@@ -38,8 +38,18 @@ const treatmentIcons = {
 
 export default async function HomePage() {
   await resetPreparedStatements()
+  const now = new Date()
   const treatments = await prisma.treatment.findMany({
-    where: { isActive: true, isTravel: false, isNhs: false },
+    where: {
+      isActive: true,
+      isTravel: false,
+      isNhs: false,
+      OR: [
+        { seasonStart: null },
+        { seasonEnd: null },
+        { AND: [{ seasonStart: { lte: now } }, { seasonEnd: { gte: now } }] },
+      ],
+    },
     orderBy: { name: 'asc' }
   })
 
@@ -146,6 +156,11 @@ export default async function HomePage() {
                     </div>
                     <CardTitle className="text-xl font-semibold text-gray-900">{treatment.name}</CardTitle>
                     <CardDescription className="text-gray-600">{treatment.summary || treatment.description}</CardDescription>
+                    {treatment.seasonStart && treatment.seasonEnd ? (
+                      <span className="inline-block mt-2 text-[11px] font-semibold text-[#36c3f0] bg-[#f3fbff] ring-1 ring-[#e9f7fe] rounded-full px-2 py-0.5">
+                        Seasonal
+                      </span>
+                    ) : null}
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between mb-5">

@@ -3,8 +3,10 @@ import { prisma } from "@/lib/prisma"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
+export const dynamic = 'force-dynamic'
 export default async function TravelServicesPage() {
-  const treatments = await prisma.treatment.findMany({ where: { isActive: true, isTravel: true }, orderBy: { name: "asc" } })
+  const now = new Date()
+  const treatments = await prisma.treatment.findMany({ where: { isActive: true, isTravel: true, OR: [{ seasonStart: null }, { seasonEnd: null }, { AND: [{ seasonStart: { lte: now } }, { seasonEnd: { gte: now } }] }] }, orderBy: { name: "asc" } })
 
   return (
     <div className="min-h-screen bg-white">
@@ -18,9 +20,12 @@ export default async function TravelServicesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {treatments.map((t) => (
               <Card key={t.id} className="border border-white/70 bg-white/80 backdrop-blur-md ring-1 ring-black/5 shadow-xl rounded-2xl">
-                <CardHeader className="pb-3">
+              <CardHeader className="pb-3">
                   <CardTitle className="text-xl font-semibold text-gray-900">{t.name}</CardTitle>
                   <CardDescription className="text-gray-600">{t.description}</CardDescription>
+                {t.seasonStart && t.seasonEnd ? (
+                  <span className="inline-block mt-2 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">Seasonal</span>
+                ) : null}
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between mb-5">

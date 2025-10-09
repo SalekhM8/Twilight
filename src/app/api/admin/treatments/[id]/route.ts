@@ -17,6 +17,8 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
       isNhs: body.isNhs !== undefined ? Boolean(body.isNhs) : undefined,
       showSlots: body.showSlots !== undefined ? Boolean(body.showSlots) : undefined,
       isActive: body.isActive,
+      seasonStart: body.seasonStart === undefined ? undefined : (body.seasonStart ? new Date(body.seasonStart) : null),
+      seasonEnd: body.seasonEnd === undefined ? undefined : (body.seasonEnd ? new Date(body.seasonEnd) : null),
     }
     const updated = await prisma.treatment.update({
       where: { id },
