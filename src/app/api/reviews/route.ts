@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getOrSetCache } from '@/lib/cache'
 
 export async function GET() {
   try {
-    const reviews = await prisma.review.findMany({
-      where: { isApproved: true },
-      orderBy: { createdAt: 'desc' },
-      take: 100,
+    const reviews = await getOrSetCache('reviews_public', 60_000, async () => {
+      return prisma.review.findMany({ where: { isApproved: true }, orderBy: { createdAt: 'desc' }, take: 100 })
     })
-    return NextResponse.json(reviews)
+    const res = NextResponse.json(reviews)
+    res.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60')
+    return res
   } catch (e) {
     return NextResponse.json({ error: 'Failed to load reviews' }, { status: 500 })
   }

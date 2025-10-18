@@ -40,10 +40,42 @@ export default function ReviewsSection({ reviews: initial }: { reviews: Review[]
   return (
     <section className="relative py-28">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
           <div className="text-left">
             <h2 className="text-4xl md:text-5xl font-extrabold text-[#36c3f0]">Reviews</h2>
-            <p className="text-lg text-gray-600 mt-3">What our customers say</p>
+            <div className="flex items-center gap-3 mt-4">
+              <div className="flex items-center gap-1">
+                {/* 4 full stars */}
+                {[1, 2, 3, 4].map((star) => (
+                  <svg
+                    key={star}
+                    className="w-6 h-6 text-[#36c3f0]"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+                {/* 1 half star */}
+                <svg
+                  className="w-6 h-6"
+                  viewBox="0 0 20 20"
+                >
+                  <defs>
+                    <linearGradient id="half-star">
+                      <stop offset="50%" stopColor="#36c3f0" />
+                      <stop offset="50%" stopColor="#d1d5db" />
+                    </linearGradient>
+                  </defs>
+                  <path fill="url(#half-star)" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold text-gray-900">4.5</span>
+                <span className="text-gray-600">from 105+ reviews</span>
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 mt-2">Based on Google Reviews</p>
           </div>
           <div>
             <Button className="rounded-full bg-[#36c3f0] hover:bg-[#2eb5e8]" onClick={()=> setOpen(true)}>Add your review</Button>

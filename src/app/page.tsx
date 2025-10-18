@@ -1,5 +1,5 @@
 import Image from 'next/image'
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 import NavServicesDropdown from '@/components/NavServicesDropdown'
 import { prisma } from '@/lib/prisma'
 import { resetPreparedStatements } from '@/lib/db'
@@ -20,6 +20,7 @@ import {
   Clock
 } from 'lucide-react'
 import Link from 'next/link'
+import { slugify } from '@/lib/utils'
 import ReviewsSection from '@/components/ReviewsSection'
 import MobileHeroHeader from '@/components/MobileHeroHeader'
 import { formatOpeningHours } from '@/lib/utils'
@@ -77,6 +78,8 @@ export default async function HomePage() {
             muted
             loop
             playsInline
+            preload="none"
+            poster="/twilightnew.png"
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/60 via-black/40 to-black/10" />
@@ -168,7 +171,7 @@ export default async function HomePage() {
                       <span className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-600">{treatment.duration} mins</span>
                     </div>
                     <div className="flex gap-2">
-                      <Link href={`/treatments/${treatment.id}`} className="w-1/2">
+                      <Link href={`/treatments/${slugify(treatment.name)}-${treatment.id}`} className="w-1/2">
                         <Button className="w-full rounded-full border border-[#36c3f0] text-[#36c3f0] bg-white hover:bg-[#e9f7fe] h-11 text-[15px]">Learn More</Button>
                       </Link>
                       <Link href={`/consultation?treatment=${treatment.id}`} className="w-1/2">
@@ -237,7 +240,7 @@ export default async function HomePage() {
               <ul className="space-y-2 text-sm text-gray-400">
                 {treatments.slice(0,6).map((t)=> (
                   <li key={t.id}>
-                    <Link href={`/treatments/${t.id}`} className="hover:text-white">{t.name}</Link>
+                    <Link href={`/treatments/${slugify(t.name)}-${t.id}`} className="hover:text-white">{t.name}</Link>
                   </li>
                 ))}
                 <li>

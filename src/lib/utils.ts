@@ -17,3 +17,14 @@ export function formatOpeningHours(openingHours: any) {
     return `${dayNames[index]}: ${hours.open} - ${hours.close}`
   })
 }
+
+// Generate a URL-friendly slug from a name/title
+export function slugify(input: string): string {
+  return String(input)
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-')
+}

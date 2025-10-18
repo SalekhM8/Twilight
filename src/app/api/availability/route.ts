@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { resetPreparedStatements } from "@/lib/db"
+import { getOrSetCache } from "@/lib/cache"
 
 function* generateSlots(start: string, end: string, minutes: number) {
   const [sh, sm] = start.split(":").map(Number)
@@ -41,17 +42,23 @@ export async function GET(request: Request) {
     const dow = jsDate.getUTCDay() // 0-6
 
     // Find eligible pharmacists (by treatment + location)
-    const eligible = await prisma.pharmacistTreatment.findMany({
-      where: { treatmentId },
-      include: {
-        pharmacist: {
+    const eligible = await getOrSetCache(
+      `eligible_${treatmentId}_${locationId}_${dow}`,
+      5_000,
+      async () => {
+        return prisma.pharmacistTreatment.findMany({
+          where: { treatmentId },
           include: {
-            locations: { where: { locationId } },
-            schedules: { where: { dayOfWeek: dow, isActive: true } },
+            pharmacist: {
+              include: {
+                locations: { where: { locationId } },
+                schedules: { where: { dayOfWeek: dow, isActive: true } },
+              },
+            },
           },
-        },
-      },
-    })
+        })
+      }
+    )
 
     let pharmacists = eligible
       .filter((pt) => pt.pharmacist.locations.length > 0 && pt.pharmacist.schedules.length > 0)
@@ -61,7 +68,7 @@ export async function GET(request: Request) {
     if (pharmacists.length === 0) return NextResponse.json({ slots: [] })
 
     // Collect booked times for the date per pharmacist
-    const bookings = await prisma.booking.findMany({
+      const bookings = await prisma.booking.findMany({
       where: {
         preferredDate: jsDate,
         locationId,
