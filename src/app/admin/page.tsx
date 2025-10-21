@@ -697,6 +697,10 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
                 <button className="text-left" onClick={()=>setDetail(b)}>
                   <p className="font-medium text-gray-900">{b.customerName}</p>
                   <p className="text-sm text-gray-600">{b.treatment.name} at {b.location.name} — {new Date(b.preferredDate).toLocaleDateString()} {b.preferredTime}</p>
+                  <p className="text-xs mt-1">
+                    <span className={`inline-block px-2 py-0.5 rounded-full ${b.paymentStatus==='paid' ? 'bg-emerald-100 text-emerald-700' : b.paymentStatus==='pending' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700'}`}>Payment: {b.paymentStatus || 'unpaid'}</span>
+                    {b.paymentAmount ? <span className="ml-2 text-gray-500">£{(b.paymentAmount/100).toFixed(2)}</span> : null}
+                  </p>
                 </button>
               </div>
               <div className="flex items-center gap-2">
@@ -720,6 +724,7 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
             <p><span className="font-medium">Date:</span> {new Date(detail.preferredDate).toLocaleDateString()} {detail.preferredTime}</p>
             {detail.pharmacist && (<p><span className="font-medium">Pharmacist:</span> {detail.pharmacist.name}</p>)}
             {detail.notes && (<p><span className="font-medium">Notes:</span> {detail.notes}</p>)}
+            <p><span className="font-medium">Payment:</span> {detail.paymentStatus || 'unpaid'} {detail.paymentAmount ? `· £${(detail.paymentAmount/100).toFixed(2)}` : ''}</p>
             <div className="pt-3">
               <label className="block text-sm font-medium mb-1">Admin comment</label>
               <Textarea placeholder="Optional note (visible internally)" onChange={(e)=> (detail._pendingComment = e.target.value)} />
@@ -743,11 +748,11 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
 function TreatmentsManager({ treatments, locations, onReload }: { treatments: any[]; locations: any[]; onReload: ()=>void }) {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<any | null>(null)
-  const [form, setForm] = useState<any>({ name: '', summary: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, seasonStart: '', seasonEnd: '', locationIds: [] as string[] })
+  const [form, setForm] = useState<any>({ name: '', summary: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, seasonal: false, seasonStart: '', seasonEnd: '', locationIds: [] as string[] })
 
   const startNew = () => {
     setEditing(null)
-    setForm({ name: '', summary: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, seasonStart: '', seasonEnd: '', locationIds: [] })
+    setForm({ name: '', summary: '', description: '', category: '', price: '', duration: '', isActive: true, showSlots: true, isTravel: false, isNhs: false, seasonal: false, seasonStart: '', seasonEnd: '', locationIds: [] })
     setOpen(true)
   }
   const startEdit = async (t: any) => {
@@ -755,19 +760,21 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
     try {
       const detail = await fetch(`/api/treatments/${t.id}`).then(r=>r.json())
       const locIds = Array.isArray(detail.locations) ? detail.locations.map((l:any)=> l.id) : []
-      setForm({ name: t.name, summary: (detail.treatment?.summary ?? t.summary ?? ''), description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), isTravel: (detail.treatment?.isTravel ?? t.isTravel ?? false), isNhs: (detail.treatment?.isNhs ?? t.isNhs ?? false), seasonStart: (detail.treatment?.seasonStart ? String(detail.treatment.seasonStart).slice(0,10) : ''), seasonEnd: (detail.treatment?.seasonEnd ? String(detail.treatment.seasonEnd).slice(0,10) : ''), locationIds: locIds })
+      setForm({ name: t.name, summary: (detail.treatment?.summary ?? t.summary ?? ''), description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (detail.treatment?.showSlots ?? t.showSlots ?? true), isTravel: (detail.treatment?.isTravel ?? t.isTravel ?? false), isNhs: (detail.treatment?.isNhs ?? t.isNhs ?? false), seasonal: !!(detail.treatment?.seasonStart && detail.treatment?.seasonEnd), seasonStart: (detail.treatment?.seasonStart ? String(detail.treatment.seasonStart).slice(0,10) : ''), seasonEnd: (detail.treatment?.seasonEnd ? String(detail.treatment.seasonEnd).slice(0,10) : ''), locationIds: locIds })
     } catch {
-      setForm({ name: t.name, summary: (t.summary ?? ''), description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), isTravel: (t.isTravel ?? false), isNhs: (t.isNhs ?? false), seasonStart: '', seasonEnd: '', locationIds: [] })
+      setForm({ name: t.name, summary: (t.summary ?? ''), description: t.description || '', category: t.category || t.name, price: String(t.price), duration: String(t.duration), isActive: t.isActive, showSlots: (t.showSlots ?? true), isTravel: (t.isTravel ?? false), isNhs: (t.isNhs ?? false), seasonal: false, seasonStart: '', seasonEnd: '', locationIds: [] })
     }
     setOpen(true)
   }
   const save = async () => {
+    const payload: any = { ...form, price: Number(form.price), duration: Number(form.duration) }
+    if (!payload.seasonal) { payload.seasonStart = ''; payload.seasonEnd = ''; }
     if (!editing) {
-      const res = await fetch('/api/admin/treatments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, price: Number(form.price), duration: Number(form.duration) }) })
+      const res = await fetch('/api/admin/treatments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
       if (res.ok) { setOpen(false); await onReload() }
       return
     }
-    const res = await fetch(`/api/admin/treatments/${editing.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, price: Number(form.price), duration: Number(form.duration) }) })
+    const res = await fetch(`/api/admin/treatments/${editing.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     if (res.ok) { setOpen(false); await onReload() }
   }
 
@@ -821,15 +828,20 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
               <Input value={form.duration} onChange={e=>setForm({ ...form, duration: e.target.value })} />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm text-gray-700">Season starts (optional)</label>
-              <Input type="date" value={form.seasonStart} onChange={e=> setForm({ ...form, seasonStart: e.target.value })} />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-700">Season ends (optional)</label>
-              <Input type="date" value={form.seasonEnd} onChange={e=> setForm({ ...form, seasonEnd: e.target.value })} />
-            </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm text-gray-700"><input type="checkbox" checked={!!form.seasonal} onChange={(e)=> setForm({ ...form, seasonal: e.target.checked })} />Seasonal availability</label>
+            {form.seasonal && (
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                <div>
+                  <label className="block text-sm text-gray-700">Season starts</label>
+                  <Input type="date" value={form.seasonStart} onChange={e=> setForm({ ...form, seasonStart: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700">Season ends</label>
+                  <Input type="date" value={form.seasonEnd} onChange={e=> setForm({ ...form, seasonEnd: e.target.value })} />
+                </div>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <input id="showSlots" type="checkbox" checked={!!form.showSlots} onChange={(e)=> setForm({ ...form, showSlots: e.target.checked })} />

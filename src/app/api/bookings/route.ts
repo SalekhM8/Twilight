@@ -49,7 +49,8 @@ export async function POST(request: Request) {
     if (!assignedPharmacistId && requiresSlots) {
       // find eligible pharmacists for treatment at location who are scheduled that day
       const jsDate = new Date(preferredDate + "T00:00:00")
-      const dow = jsDate.getUTCDay()
+      // Use local day-of-week to match how admins configure weekly schedules
+      const dow = jsDate.getDay()
       const eligible = await prisma.pharmacistTreatment.findMany({
         where: { treatmentId },
         include: {
@@ -61,23 +62,21 @@ export async function POST(request: Request) {
           },
         },
       })
-      const candidates = eligible
-        .filter((pt) => pt.pharmacist.locations.length > 0 && pt.pharmacist.schedules.length > 0)
-        .map((pt) => pt.pharmacist)
+      const atLocation = eligible.filter((pt) => pt.pharmacist.locations.length > 0).map((pt)=> pt.pharmacist)
+      const candidates = atLocation.length > 0 ? atLocation : []
 
       // filter by schedules covering the preferredTime
       const [hh, mm] = String(preferredTime).split(":").map(Number)
       const minutesOfDay = hh * 60 + mm
-      const withinSchedule = candidates.filter((p) =>
-        p.schedules.some((s) => {
-          const [sh, sm] = s.startTime.split(":").map(Number)
-          const [eh, em] = s.endTime.split(":").map(Number)
-          const start = sh * 60 + sm
-          const end = eh * 60 + em
-          return minutesOfDay >= start && minutesOfDay < end
-        })
-      )
-      if (withinSchedule.length > 0) {
+      const withinSchedule = candidates.filter((p) => p.schedules.some((s) => {
+        const [sh, sm] = s.startTime.split(":").map(Number)
+        const [eh, em] = s.endTime.split(":").map(Number)
+        const start = sh * 60 + sm
+        const end = eh * 60 + em
+        return minutesOfDay >= start && minutesOfDay < end
+      }))
+      const pool = withinSchedule.length > 0 ? withinSchedule : candidates
+      if (pool.length > 0) {
         // exclude already booked at that time
         const existing = await prisma.booking.findMany({
           where: {
@@ -85,14 +84,14 @@ export async function POST(request: Request) {
             preferredTime,
             locationId,
             treatmentId,
-            pharmacistId: { in: withinSchedule.map((p) => p.id) },
+            pharmacistId: { in: pool.map((p) => p.id) },
             status: { in: ["pending", "confirmed"] },
           },
           select: { pharmacistId: true },
         })
         const busy = new Set(existing.map((b) => b.pharmacistId || ""))
-        const free = withinSchedule.find((p) => !busy.has(p.id))
-        assignedPharmacistId = free ? free.id : withinSchedule[0].id
+        const free = pool.find((p) => !busy.has(p.id))
+        assignedPharmacistId = free ? free.id : pool[0].id
       }
     }
 
@@ -165,9 +164,19 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await resetPreparedStatements()
+    const { searchParams } = new URL(request.url)
+    const bookingId = searchParams.get('id') || searchParams.get('bookingId')
+    if (bookingId) {
+      const booking = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        include: { treatment: true, location: true, pharmacist: true },
+      })
+      if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+      return NextResponse.json(booking)
+    }
     const bookings = await prisma.booking.findMany({
       include: {
         treatment: true,
@@ -176,7 +185,6 @@ export async function GET() {
       },
       orderBy: { createdAt: 'desc' }
     })
-    
     return NextResponse.json(bookings)
   } catch (error) {
     console.error('Failed to fetch bookings:', error)

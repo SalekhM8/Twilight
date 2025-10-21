@@ -154,10 +154,33 @@ The application follows modern healthcare design principles:
 - \`GET /api/bookings\` - Admin: List all bookings
 - \`POST /api/admin/login\` - Admin authentication
 
+## ⚙️ Environment Variables
+
+Add a `.env` with at least:
+
+```
+DATABASE_URL=postgres://...
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+STRIPE_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+# optional email for confirmations
+SMTP_HOST=...
+SMTP_PORT=587
+SMTP_USER=...
+SMTP_PASS=...
+SMTP_FROM=Twilight <no-reply@twilightpharmacy.com>
+```
+
+To test webhooks locally:
+
+```
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+```
+
 ## 📈 Future Enhancements
 
 - **SMS Notifications**: Appointment reminders and confirmations
-- **Online Payments**: Secure payment processing integration
 - **Calendar Integration**: Sync with Google Calendar and Outlook
 - **Customer Portal**: Account management and booking history
 - **Advanced Reporting**: Business intelligence and analytics

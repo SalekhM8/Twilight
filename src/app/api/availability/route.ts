@@ -39,10 +39,11 @@ export async function GET(request: Request) {
         return NextResponse.json({ slots: [] })
       }
     }
-    const dow = jsDate.getUTCDay() // 0-6
+    // Use local day-of-week to match how admins define weekly schedules
+    const dow = jsDate.getDay() // 0-6
 
     // Find eligible pharmacists (by treatment + location)
-    const eligible = await getOrSetCache(
+    let eligible = await getOrSetCache(
       `eligible_${treatmentId}_${locationId}_${dow}`,
       5_000,
       async () => {
@@ -60,11 +61,27 @@ export async function GET(request: Request) {
       }
     )
 
-    let pharmacists = eligible
-      .filter((pt) => pt.pharmacist.locations.length > 0 && pt.pharmacist.schedules.length > 0)
+    // If no pharmacist is explicitly assigned to this treatment, fall back to any pharmacist at the location
+    if (!eligible || eligible.length === 0) {
+      const locationPharmacists = await prisma.pharmacistLocation.findMany({
+        where: { locationId },
+        include: { pharmacist: { include: { schedules: { where: { dayOfWeek: dow, isActive: true } } } } },
+      })
+      eligible = locationPharmacists.map((pl) => ({ pharmacist: pl.pharmacist } as any))
+    }
+
+    // pharmacists linked to location (with or without schedule for the day)
+    const pharmacistsAtLocation = eligible
+      .filter((pt) => pt.pharmacist.locations.length > 0)
       .map((pt) => pt.pharmacist)
 
+    // primary: those who have an active schedule on that day
+    let pharmacists = pharmacistsAtLocation.filter((p) => p.schedules.length > 0)
+
     if (pharmacistId) pharmacists = pharmacists.filter((p) => p.id === pharmacistId)
+    // Fallback: if nobody has schedules configured for that day, use location opening hours
+    const useOpeningHoursFallback = pharmacists.length === 0
+    if (pharmacists.length === 0) pharmacists = pharmacistsAtLocation
     if (pharmacists.length === 0) return NextResponse.json({ slots: [] })
 
     // Collect booked times for the date per pharmacist
@@ -73,7 +90,6 @@ export async function GET(request: Request) {
         preferredDate: jsDate,
         locationId,
         pharmacistId: pharmacistId || undefined,
-        treatmentId,
         status: { in: ["pending", "confirmed"] },
       },
     })
@@ -92,10 +108,27 @@ export async function GET(request: Request) {
     const dayEnd = new Date(jsDate)
     dayEnd.setDate(dayEnd.getDate() + 1)
     const blocks = await prisma.locationBlock.findMany({ where: { locationId, NOT: [{ end: { lte: dayStart } }, { start: { gte: dayEnd } }] } })
+    // If using opening-hours fallback, load location opening hours for this weekday
+    let fallbackStart = ""
+    let fallbackEnd = ""
+    if (useOpeningHoursFallback) {
+      const location = await prisma.location.findUnique({ where: { id: locationId } })
+      const dayNames = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"]
+      const key = dayNames[dow]
+      const hours: any = (location as any)?.openingHours?.[key]
+      if (!hours || hours.open === "closed") {
+        return NextResponse.json({ slots: [] })
+      }
+      fallbackStart = hours.open
+      fallbackEnd = hours.close
+    }
     const results: { time: string; pharmacistId: string }[] = []
 
     for (const p of pharmacists) {
-      for (const s of p.schedules) {
+      const scheduleSources = useOpeningHoursFallback && p.schedules.length === 0
+        ? [{ startTime: fallbackStart, endTime: fallbackEnd }]
+        : p.schedules
+      for (const s of scheduleSources) {
         for (const time of generateSlots(s.startTime, s.endTime, slotMinutes)) {
           const taken = bookedByPharm.get(p.id)?.has(time)
           if (taken) continue

@@ -53,8 +53,9 @@ export function ConsultationWizard() {
 
 	const [loading, setLoading] = useState(true)
 	const [submitting, setSubmitting] = useState(false)
+	const [paying, setPaying] = useState(false)
 	const [step, setStep] = useState(Math.max(0, Math.min(stepParam || 0, 20)))
-	const [availableSlots, setAvailableSlots] = useState<string[]>([])
+const [availableSlots, setAvailableSlots] = useState<{ time: string; count: number }[]>([])
   const selectedTreatment = useMemo(()=> treatments.find(t=> t.id === form.treatmentId), [treatments, form.treatmentId])
   const requiresSlots = !!selectedTreatment?.showSlots || selectedTreatment?.showSlots === undefined
 
@@ -122,20 +123,26 @@ export function ConsultationWizard() {
 
 	// Load available time slots when inputs change
 	useEffect(() => {
-		const fetchSlots = async () => {
-	      if (!requiresSlots || !form.treatmentId || !form.locationId || !form.preferredDate) {
-				setAvailableSlots([])
-				return
-			}
-			const url = new URL('/api/availability', window.location.origin)
-			url.searchParams.set('date', form.preferredDate)
-			url.searchParams.set('treatmentId', form.treatmentId)
-			url.searchParams.set('locationId', form.locationId)
-			const res = await fetch(url.toString())
-			const data = await res.json()
-			const slots = Array.isArray(data.slots) ? data.slots.map((s:any)=>(typeof s==='string'?s:s.time)) : []
-			setAvailableSlots(slots)
-		}
+    const fetchSlots = async () => {
+        if (!requiresSlots || !form.treatmentId || !form.locationId || !form.preferredDate) {
+        setAvailableSlots([])
+        return
+      }
+      const url = new URL('/api/availability', window.location.origin)
+      url.searchParams.set('date', form.preferredDate)
+      url.searchParams.set('treatmentId', form.treatmentId)
+      url.searchParams.set('locationId', form.locationId)
+      const res = await fetch(url.toString())
+      const data = await res.json()
+      const slots: { time: string; count: number }[] = Array.isArray(data.slots)
+        ? data.slots.map((s:any)=> (typeof s === 'string' ? { time: s, count: 1 } : { time: s.time, count: Number(s.count)||0 }))
+        : []
+      const nonZero = slots.filter(s=> s.count>0)
+      setAvailableSlots(nonZero)
+      if (form.preferredTime && !nonZero.some(s=> s.time === form.preferredTime)) {
+        setForm((p)=> ({ ...p, preferredTime: '' }))
+      }
+    }
 		fetchSlots()
 	}, [form.treatmentId, form.locationId, form.preferredDate])
 
@@ -182,6 +189,36 @@ export function ConsultationWizard() {
 			alert("There was a problem creating your booking. Please try again.")
 		} finally {
 			setSubmitting(false)
+		}
+	}
+
+	const submitAndPay = async () => {
+		setPaying(true)
+		try {
+			// 1) Create booking
+			const res = await fetch("/api/bookings", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					...form,
+					...(requiresSlots ? {} : { preferredTime: undefined, preferredDate: form.preferredDate || undefined })
+				}),
+			})
+			if (!res.ok) throw new Error("Failed to create booking")
+			const booking = await res.json()
+			// 2) Create checkout session
+			const cr = await fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bookingId: booking.id }) })
+			if (!cr.ok) throw new Error("Failed to start payment")
+			const data = await cr.json()
+			if (data.url) {
+				window.location.href = data.url
+			} else {
+				window.location.href = `/booking-confirmation/${booking.id}`
+			}
+		} catch (e) {
+			alert("There was a problem starting payment. Your booking may still be saved. You can pay in store or try again from the confirmation page.")
+		} finally {
+			setPaying(false)
 		}
 	}
 
@@ -333,8 +370,8 @@ export function ConsultationWizard() {
                                       onChange={(e) => setForm({ ...form, preferredTime: e.target.value })}
                                     >
                                       <option value="">Select time</option>
-                                      {availableSlots.map((t)=> (
-                                        <option key={t} value={t}>{t}</option>
+                                      {availableSlots.map((s)=> (
+                                        <option key={s.time} value={s.time}>{s.time}</option>
                                       ))}
                                     </select>
                                   </div>
@@ -366,11 +403,14 @@ export function ConsultationWizard() {
 									<li className="flex justify-between"><span>Date</span><span className="font-medium">{form.preferredDate}</span></li>
 									<li className="flex justify-between"><span>Time</span><span className="font-medium">{form.preferredTime}</span></li>
 								</ul>
-								<div className="mt-8">
-									<Button className="rounded-full bg-blue-600 hover:bg-blue-700" onClick={submit} disabled={submitting}>
-										{submitting ? "Booking…" : "Confirm Booking"}
-									</Button>
-								</div>
+					<div className="mt-8 flex flex-wrap gap-3">
+						<Button variant="outline" className="rounded-full border-[#36c3f0] text-[#36c3f0] hover:bg-[#e9f7fe]" onClick={submit} disabled={submitting || paying}>
+							{submitting ? "Booking…" : "Book · Pay in store"}
+						</Button>
+						<Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={submitAndPay} disabled={submitting || paying}>
+							{paying ? "Redirecting…" : "Book & Pay now"}
+						</Button>
+					</div>
 							</section>
 						</div>
 					</div>
@@ -386,6 +426,17 @@ export function ConsultationWizard() {
 					</div>
 				</div>
 			</main>
+
+			{/* Redirect overlay for Stripe */}
+			{paying && (
+				<div className="fixed inset-0 z-[100] backdrop-blur-sm bg-white/60 grid place-items-center">
+					<div className="rounded-2xl bg-white/80 ring-1 ring-black/5 shadow-xl px-8 py-6 text-center">
+						<div className="mx-auto mb-4 h-10 w-10 rounded-full border-2 border-[#36c3f0] border-t-transparent animate-spin" />
+						<p className="text-sm text-gray-700 font-medium">Redirecting to secure payment…</p>
+						<p className="mt-1 text-xs text-gray-500">This can take a couple of seconds.</p>
+					</div>
+				</div>
+			)}
 		</div>
 	)
 }

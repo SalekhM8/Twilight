@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import PaymentBadge from '@/components/PaymentBadge'
 import { Button } from '@/components/ui/button'
 import { CheckCircle, Calendar, MapPin, User, Clock, Phone, Mail } from 'lucide-react'
 import Link from 'next/link'
@@ -53,6 +54,7 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
           <p className="text-xl text-gray-600">
             Your consultation has been successfully booked. We'll be in touch soon to confirm your appointment.
           </p>
+          <div className="mt-4"><PaymentBadge bookingId={booking.id} initial={(booking as any).paymentStatus} /></div>
         </div>
 
         {/* Booking Details */}
@@ -253,6 +255,15 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
                 Book Another Consultation
               </Button>
             </Link>
+            {booking.paymentStatus !== 'paid' && (
+              <form action={`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/checkout`} method="post" className="inline">
+                <input type="hidden" name="bookingId" value={booking.id} />
+                {/* This form is progressive enhancement backup; main flow uses client POST */}
+                <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700" formAction={`/api/checkout`}>
+                  Pay now
+                </Button>
+              </form>
+            )}
           </div>
           <p className="text-sm text-gray-600">
             Booking Reference: <span className="font-mono font-semibold">{booking.id.slice(-8).toUpperCase()}</span>
