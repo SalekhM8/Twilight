@@ -24,6 +24,7 @@ import { slugify } from '@/lib/utils'
 import ReviewsSection from '@/components/ReviewsSection'
 import MobileHeroHeader from '@/components/MobileHeroHeader'
 import { formatOpeningHours } from '@/lib/utils'
+import TreatmentSearch from '@/components/TreatmentSearch'
 
 const treatmentIcons = {
   'Weight Loss': Scale,
@@ -120,6 +121,9 @@ export default async function HomePage() {
               <p className="mt-6 mx-auto text-lg text-white/85 max-w-xl">
                 Evidence-based treatments and pharmacist-led care across our Birmingham branches.
               </p>
+              <div className="mt-6">
+                <TreatmentSearch />
+              </div>
               <div className="mt-8 grid grid-cols-3 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-3">
                 <a href="#services" className="inline-flex items-center justify-center rounded-full border border-[#36c3f0] bg-white text-[#36c3f0] hover:bg-[#e9f7fe] px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium w-full">
                   View Services
