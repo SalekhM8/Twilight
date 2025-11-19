@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
+import { usePathname } from "next/navigation"
 import { MessageSquare, Send, X } from "lucide-react"
 
 type Msg = { role: "assistant" | "user"; content: string }
@@ -24,6 +25,11 @@ function TeaserBubble({ onClick }: { onClick: () => void }) {
 }
 
 export default function ChatbotWidget() {
+  const pathname = usePathname()
+  // Hide on admin and booking form
+  if (pathname?.startsWith("/admin")) return null
+  if (pathname === "/consultation" || pathname?.startsWith("/consultation")) return null
+
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)

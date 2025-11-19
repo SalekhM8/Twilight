@@ -21,8 +21,9 @@ export default function WhatsAppFab() {
     const digits = raw.replace(/[^\d]/g, "")
     return digits || "447791581674"
   }, [])
-  // Hide FAB when on admin or when number is missing/clearly invalid
+  // Hide FAB when on admin or booking form or when number is missing/clearly invalid
   if (pathname?.startsWith("/admin")) return null
+  if (pathname === "/consultation" || pathname?.startsWith("/consultation")) return null
   if (!number || number.length < 10) return null
   const link = `https://api.whatsapp.com/send?phone=${number}`
   return (
