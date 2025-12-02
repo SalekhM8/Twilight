@@ -149,6 +149,42 @@ export async function POST(request: Request) {
           subject: `Booking received: ${booking.treatment.name}`,
           html,
         })
+
+        const adminEmail = process.env.BOOKING_ALERT_EMAIL || "twilightpharmacy134@gmail.com"
+        if (adminEmail) {
+          const when =
+            booking.preferredTime === "TBD"
+              ? "Scheduling to be arranged"
+              : `${new Date(booking.preferredDate).toLocaleDateString("en-GB", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })} at ${booking.preferredTime}`
+          const adminHtml = `
+          <div style="font-family:Arial,sans-serif;line-height:1.5;color:#111">
+            <h2 style="color:#36c3f0;margin:0 0 8px">New consultation booking</h2>
+            <p>A customer just created a booking via the website:</p>
+            <table style="border-collapse:collapse;width:100%;max-width:560px">
+              <tbody>
+                <tr><td style="padding:6px 0;color:#555">Treatment</td><td style="padding:6px 0;font-weight:600">${booking.treatment.name}</td></tr>
+                <tr><td style="padding:6px 0;color:#555">Location</td><td style="padding:6px 0;font-weight:600">${booking.location.name}</td></tr>
+                <tr><td style="padding:6px 0;color:#555">When</td><td style="padding:6px 0">${when}</td></tr>
+                <tr><td style="padding:6px 0;color:#555">Customer</td><td style="padding:6px 0">${booking.customerName}</td></tr>
+                <tr><td style="padding:6px 0;color:#555">Email</td><td style="padding:6px 0">${booking.customerEmail}</td></tr>
+                <tr><td style="padding:6px 0;color:#555">Phone</td><td style="padding:6px 0">${booking.customerPhone}</td></tr>
+                <tr><td style="padding:6px 0;color:#555">Notes</td><td style="padding:6px 0">${booking.notes || "—"}</td></tr>
+                <tr><td style="padding:6px 0;color:#555">Reference</td><td style="padding:6px 0;font-family:ui-monospace,Menlo,Consolas,monospace">${booking.id.slice(-8).toUpperCase()}</td></tr>
+              </tbody>
+            </table>
+          </div>
+          `
+          await sendMail({
+            to: adminEmail,
+            subject: `New booking – ${booking.treatment.name}`,
+            html: adminHtml,
+          })
+        }
       } catch (e) {
         console.error('email send failed', e)
       }

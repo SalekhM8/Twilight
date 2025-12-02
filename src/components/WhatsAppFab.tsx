@@ -19,7 +19,7 @@ export default function WhatsAppFab() {
   const number = useMemo(() => {
     const raw = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "" // e.g. +447123456789
     const digits = raw.replace(/[^\d]/g, "")
-    return digits || "447791581674"
+    return digits || "447766784769"
   }, [])
   // Hide FAB when on admin or booking form or when number is missing/clearly invalid
   if (pathname?.startsWith("/admin")) return null
