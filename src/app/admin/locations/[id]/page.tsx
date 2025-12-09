@@ -8,7 +8,7 @@ import Modal from '@/components/ui/modal'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 
-type Booking = { id: string; preferredDate: string; preferredTime: string; treatment: { name: string; duration: number }; pharmacist?: { id: string; name: string } }
+type Booking = { id: string; preferredDate: string; preferredTime: string; treatment: { name: string; duration: number }; pharmacist?: { id: string; name: string }; paymentStatus?: string; paymentAmount?: number }
 type Block = { id: string; start: string; end: string; reason?: string }
 type Treatment = { id: string; name: string }
 type Pharmacist = { id: string; name: string }
@@ -218,6 +218,15 @@ export default function LocationTimetablePage() {
         {openDetail && (
           <div className="space-y-2 text-sm">
             <p><span className="font-medium">Status:</span> <span className="capitalize">{(openDetail as any).status}</span></p>
+            <p>
+              <span className="font-medium">Payment:</span>{" "}
+              <span className="capitalize">
+                {(openDetail as any).paymentStatus || "unpaid"}
+                {typeof (openDetail as any).paymentAmount === "number"
+                  ? ` · £${((openDetail as any).paymentAmount / 100).toFixed(2)}`
+                  : ""}
+              </span>
+            </p>
             <p><span className="font-medium">Treatment:</span> {openDetail.treatment?.name}</p>
             <p><span className="font-medium">Pharmacist:</span> {openDetail.pharmacist?.name || 'Auto-assign'}</p>
             <p><span className="font-medium">Date:</span> {new Date(openDetail.preferredDate).toLocaleDateString()} {openDetail.preferredTime}</p>
