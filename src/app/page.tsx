@@ -244,10 +244,8 @@ export default async function HomePage() {
                 rel="noopener noreferrer"
                 className="mt-4 inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-[#00CCBC] hover:bg-[#00b8aa] transition-colors text-white text-sm font-medium"
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden="true">
-                  <path d="M17.5 0h-11A6.5 6.5 0 0 0 0 6.5v11A6.5 6.5 0 0 0 6.5 24h11a6.5 6.5 0 0 0 6.5-6.5v-11A6.5 6.5 0 0 0 17.5 0zm-5.006 18.293c-.593 0-1.074-.481-1.074-1.074 0-.594.48-1.075 1.074-1.075.594 0 1.074.481 1.074 1.075 0 .593-.48 1.074-1.074 1.074zm4.713-4.106c0 .23-.187.417-.417.417h-8.58a.417.417 0 0 1-.417-.417V8.48c0-.23.187-.417.417-.417h8.58c.23 0 .417.187.417.417v5.707zm0-7.374a.417.417 0 0 1-.417.417h-8.58a.417.417 0 0 1-.417-.417V5.48c0-.23.187-.417.417-.417h8.58c.23 0 .417.187.417.417v1.333z"/>
-                </svg>
-                Order on Deliveroo
+                <img src="https://consumer-component-library.roocdn.com/30.2.0/static/images/logo-white.svg" alt="" className="h-4 w-auto" />
+                Order now
               </a>
             </div>
             <div>
