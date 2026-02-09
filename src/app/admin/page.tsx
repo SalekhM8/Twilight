@@ -16,7 +16,9 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Plus
+  Plus,
+  Menu,
+  X
 } from 'lucide-react'
 import Link from 'next/link'
 import Modal from '@/components/ui/modal'
@@ -56,6 +58,7 @@ export default function AdminDashboard() {
   const [recentBookings, setRecentBookings] = useState<RecentBooking[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   // Shared data for management tabs
   const [treatments, setTreatments] = useState<any[]>([])
   const [pharmacists, setPharmacists] = useState<any[]>([])
@@ -205,9 +208,66 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white/90 backdrop-blur rounded-3xl shadow-[0_8px_40px_rgba(54,195,240,0.12)] m-4 flex flex-col">
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Header */}
+      <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-white/90 backdrop-blur shadow-sm lg:hidden">
+        <img src="/twilightnew.png" alt="Twilight Pharmacy" className="h-8 w-auto" />
+        <div className="flex items-center gap-2">
+          <QuickAdd onSelect={(tab)=> { setActiveTab(tab); setMobileMenuOpen(false) }} />
+          <button onClick={()=> setMobileMenuOpen(true)} className="p-2 rounded-lg hover:bg-gray-100 text-[#155d7e]">
+            <Menu className="w-6 h-6" />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={()=> setMobileMenuOpen(false)} />
+          <nav className="absolute left-0 top-0 bottom-0 w-72 bg-white shadow-xl flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b">
+              <img src="/twilightnew.png" alt="Twilight Pharmacy" className="h-10 w-auto" />
+              <button onClick={()=> setMobileMenuOpen(false)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-500">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <ul className="flex-1 p-4 space-y-1 overflow-y-auto">
+              {sidebarItems.map((item) => {
+                const IconComponent = item.icon
+                return (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => { setActiveTab(item.id); setMobileMenuOpen(false) }}
+                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
+                        activeTab === item.id
+                          ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      }`}
+                    >
+                      <IconComponent className="w-5 h-5" />
+                      <span className="font-medium">{item.label}</span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+            <div className="p-4 border-t space-y-2">
+              <Link href="/">
+                <Button variant="outline" className="w-full">
+                  View Website
+                </Button>
+              </Link>
+              <Button variant="ghost" className="w-full text-red-600 hover:text-red-700 hover:bg-red-50" onClick={handleLogout}>
+                Logout
+              </Button>
+            </div>
+          </nav>
+        </div>
+      )}
+
+      <div className="lg:flex">
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:flex w-64 bg-white/90 backdrop-blur rounded-3xl shadow-[0_8px_40px_rgba(54,195,240,0.12)] m-4 flex-col">
         <div className="py-8 px-6">
           <div className="flex items-center justify-center">
             <img src="/twilightnew.png" alt="Twilight Pharmacy" className="h-24 w-auto" />
@@ -250,14 +310,14 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col m-4">
-        <div className="flex-1 rounded-3xl bg-white/70 backdrop-blur shadow-[0_8px_40px_rgba(54,195,240,0.12)] p-6">
-          <div className="flex justify-between items-center mb-6">
+      <div className="flex-1 flex flex-col p-2 lg:m-4 lg:ml-0">
+        <div className="flex-1 rounded-3xl bg-white/70 backdrop-blur shadow-[0_8px_40px_rgba(54,195,240,0.12)] p-3 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-[#155d7e] capitalize">{activeTab}</h2>
-              <p className="text-[#155d7e]">Manage your pharmacy operations</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#155d7e] capitalize">{activeTab}</h2>
+              <p className="text-[#155d7e] text-sm sm:text-base">Manage your pharmacy operations</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-4">
               <QuickAdd onSelect={(tab)=> setActiveTab(tab)} />
             </div>
           </div>
@@ -352,7 +412,7 @@ export default function AdminDashboard() {
                     {recentBookings.map((booking) => {
                       const StatusIcon = getStatusIcon(booking.status)
                       return (
-                        <button key={booking.id} className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg text-left hover:bg-gray-100"
+                        <button key={booking.id} className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 p-4 bg-gray-50 rounded-lg text-left hover:bg-gray-100"
                           onClick={()=>{ try { localStorage.setItem('open_booking_id', booking.id) } catch {} ; setActiveTab('bookings') }}>
                           <div className="flex items-center space-x-4">
                             <div className={`p-2 rounded-full ${getStatusColor(booking.status)}`}>
@@ -365,11 +425,11 @@ export default function AdminDashboard() {
                               </p>
                             </div>
                           </div>
-                          <div className="text-right">
+                          <div className="text-right pl-12 sm:pl-0">
                             <p className="text-sm font-medium text-gray-900">
                               {new Date(booking.preferredDate).toLocaleDateString()}
                             </p>
-                            <p className={`text-xs px-2 py-1 rounded-full ${getStatusColor(booking.status)}`}>
+                            <p className={`text-xs px-2 py-1 rounded-full inline-block ${getStatusColor(booking.status)}`}>
                               {booking.status}
                             </p>
                           </div>
@@ -436,6 +496,7 @@ export default function AdminDashboard() {
           )}
           </main>
         </div>
+      </div>
       </div>
     </div>
   )
@@ -556,7 +617,7 @@ function AboutManager() {
             <label className="block text-sm text-gray-700">Description</label>
             <Textarea value={certForm.description} onChange={e=>setCertForm({ ...certForm, description: e.target.value })} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Order</label>
               <Input value={certForm.order} onChange={e=>setCertForm({ ...certForm, order: Number(e.target.value)||0 })} />
@@ -575,7 +636,7 @@ function AboutManager() {
 
       <Modal open={openPerson} onClose={()=>setOpenPerson(false)} title={editingPerson? 'Edit Person':'Add Person'}>
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Name</label>
               <Input value={personForm.name} onChange={e=>setPersonForm({ ...personForm, name: e.target.value })} />
@@ -589,7 +650,7 @@ function AboutManager() {
             <label className="block text-sm text-gray-700">Bio</label>
             <Textarea value={personForm.bio} onChange={e=>setPersonForm({ ...personForm, bio: e.target.value })} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Order</label>
               <Input value={personForm.order} onChange={e=>setPersonForm({ ...personForm, order: Number(e.target.value)||0 })} />
@@ -692,18 +753,18 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
       <div className="space-y-3">
         {items.map((b)=> (
           <Card key={b.id}>
-            <CardContent className="flex items-center justify-between py-4">
-              <div>
-                <button className="text-left" onClick={()=>setDetail(b)}>
+            <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-4">
+              <div className="flex-1 min-w-0">
+                <button className="text-left w-full" onClick={()=>setDetail(b)}>
                   <p className="font-medium text-gray-900">{b.customerName}</p>
-                  <p className="text-sm text-gray-600">{b.treatment.name} at {b.location.name} — {new Date(b.preferredDate).toLocaleDateString()} {b.preferredTime}</p>
+                  <p className="text-sm text-gray-600 truncate">{b.treatment.name} at {b.location.name} — {new Date(b.preferredDate).toLocaleDateString()} {b.preferredTime}</p>
                   <p className="text-xs mt-1">
                     <span className={`inline-block px-2 py-0.5 rounded-full ${b.paymentStatus==='paid' ? 'bg-emerald-100 text-emerald-700' : b.paymentStatus==='pending' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700'}`}>Payment: {b.paymentStatus || 'unpaid'}</span>
                     {b.paymentAmount ? <span className="ml-2 text-gray-500">£{(b.paymentAmount/100).toFixed(2)}</span> : null}
                   </p>
                 </button>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 capitalize">{b.status}</span>
                 <Button variant="outline" onClick={()=>updateStatus(b.id,'confirmed')}>Confirm</Button>
                 <Button variant="outline" onClick={()=>updateStatus(b.id,'cancelled')}>Cancel</Button>
@@ -729,13 +790,15 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
               <label className="block text-sm font-medium mb-1">Admin comment</label>
               <Textarea placeholder="Optional note (visible internally)" onChange={(e)=> (detail._pendingComment = e.target.value)} />
             </div>
-            <div className="pt-3 flex items-center gap-2">
+            <div className="pt-3 flex flex-wrap items-center gap-2">
               <Button onClick={()=>{ updateStatus(detail.id,'confirmed'); setDetail(null) }}>Confirm</Button>
               <Button variant="outline" onClick={()=>{ updateStatus(detail.id,'cancelled'); setDetail(null) }}>Cancel</Button>
-              <span className="ml-auto text-xs text-gray-500">Quick contact:</span>
-              <a className="px-2 py-1 rounded-full bg-emerald-600 text-white text-xs" href={`sms:${detail.customerPhone}`} target="_blank" rel="noreferrer">SMS</a>
-              <a className="px-2 py-1 rounded-full bg-emerald-600 text-white text-xs" href={`https://wa.me/${detail.customerPhone.replace(/[^\d]/g,'')}`} target="_blank" rel="noreferrer">WhatsApp</a>
-              <a className="px-2 py-1 rounded-full bg-gray-900 text-white text-xs" href={`tel:${detail.customerPhone}`} target="_blank" rel="noreferrer">Call</a>
+              <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
+                <span className="text-xs text-gray-500">Quick contact:</span>
+                <a className="px-2 py-1 rounded-full bg-emerald-600 text-white text-xs" href={`sms:${detail.customerPhone}`} target="_blank" rel="noreferrer">SMS</a>
+                <a className="px-2 py-1 rounded-full bg-emerald-600 text-white text-xs" href={`https://wa.me/${detail.customerPhone.replace(/[^\d]/g,'')}`} target="_blank" rel="noreferrer">WhatsApp</a>
+                <a className="px-2 py-1 rounded-full bg-gray-900 text-white text-xs" href={`tel:${detail.customerPhone}`} target="_blank" rel="noreferrer">Call</a>
+              </div>
             </div>
           </div>
         )}
@@ -818,7 +881,7 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
             <label className="block text-sm text-gray-700">Description</label>
             <Textarea value={form.description} onChange={e=>setForm({ ...form, description: e.target.value })} />
           </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Price (£)</label>
               <Input value={form.price} onChange={e=>setForm({ ...form, price: e.target.value })} />
@@ -831,7 +894,7 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
           <div>
             <label className="flex items-center gap-2 text-sm text-gray-700"><input type="checkbox" checked={!!form.seasonal} onChange={(e)=> setForm({ ...form, seasonal: e.target.checked })} />Seasonal availability</label>
             {form.seasonal && (
-              <div className="grid grid-cols-2 gap-3 mt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
                 <div>
                   <label className="block text-sm text-gray-700">Season starts</label>
                   <Input type="date" value={form.seasonStart} onChange={e=> setForm({ ...form, seasonStart: e.target.value })} />
@@ -857,7 +920,7 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Available at locations</label>
-            <div className="grid grid-cols-2 gap-2 max-h-40 overflow-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-auto">
               {locations.map((l:any)=> (
                 <label key={l.id} className="flex items-center gap-2 text-sm">
                   <input type="checkbox" checked={form.locationIds.includes(l.id)} onChange={(e)=>{
@@ -942,7 +1005,7 @@ function PharmacistsManager({ pharmacists, treatments, locations, onReload }: { 
 
       <Modal open={open} onClose={()=>setOpen(false)} title={editing? 'Edit Pharmacist':'Add Pharmacist'}>
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Name</label>
               <Input value={form.name} onChange={e=>setForm({ ...form, name: e.target.value })} />
@@ -952,7 +1015,7 @@ function PharmacistsManager({ pharmacists, treatments, locations, onReload }: { 
               <Input value={form.email} onChange={e=>setForm({ ...form, email: e.target.value })} />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Phone</label>
               <Input value={form.phone} onChange={e=>setForm({ ...form, phone: e.target.value })} />
@@ -964,7 +1027,7 @@ function PharmacistsManager({ pharmacists, treatments, locations, onReload }: { 
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Treatments</label>
-            <div className="grid grid-cols-2 gap-2 max-h-40 overflow-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-auto">
               {treatments.map((t:any)=> (
                 <label key={t.id} className="flex items-center gap-2 text-sm">
                   <input type="checkbox" checked={form.treatmentIds.includes(t.id)} onChange={(e)=>{
@@ -977,7 +1040,7 @@ function PharmacistsManager({ pharmacists, treatments, locations, onReload }: { 
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Locations</label>
-            <div className="grid grid-cols-2 gap-2 max-h-40 overflow-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-auto">
               {locations.map((l:any)=> (
                 <label key={l.id} className="flex items-center gap-2 text-sm">
                   <input type="checkbox" checked={form.locationIds.includes(l.id)} onChange={(e)=>{
@@ -999,14 +1062,18 @@ function PharmacistsManager({ pharmacists, treatments, locations, onReload }: { 
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-3">
             {weekly.map((w, idx)=> (
-              <div key={idx} className="flex items-center gap-3">
-                <label className="w-24 text-sm capitalize">{['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][w.dayOfWeek]}</label>
-                <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={w.isActive} onChange={(e)=>{
-                  const v=[...weekly]; v[idx]={...w,isActive:e.target.checked}; setWeekly(v)
-                }} />Active</label>
-                <Input className="w-28" value={w.startTime} onChange={(e)=>{ const v=[...weekly]; v[idx]={...w,startTime:e.target.value}; setWeekly(v) }} />
-                <span className="text-gray-500">to</span>
-                <Input className="w-28" value={w.endTime} onChange={(e)=>{ const v=[...weekly]; v[idx]={...w,endTime:e.target.value}; setWeekly(v) }} />
+              <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 rounded-lg border sm:border-0 p-3 sm:p-0">
+                <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-3">
+                  <label className="text-sm font-medium sm:font-normal sm:w-24 capitalize">{['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][w.dayOfWeek]}</label>
+                  <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={w.isActive} onChange={(e)=>{
+                    const v=[...weekly]; v[idx]={...w,isActive:e.target.checked}; setWeekly(v)
+                  }} />Active</label>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <Input className="flex-1 sm:w-28 sm:flex-none" value={w.startTime} onChange={(e)=>{ const v=[...weekly]; v[idx]={...w,startTime:e.target.value}; setWeekly(v) }} />
+                  <span className="text-gray-500">to</span>
+                  <Input className="flex-1 sm:w-28 sm:flex-none" value={w.endTime} onChange={(e)=>{ const v=[...weekly]; v[idx]={...w,endTime:e.target.value}; setWeekly(v) }} />
+                </div>
               </div>
             ))}
           </div>
@@ -1072,7 +1139,7 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
 
       <Modal open={open} onClose={()=>setOpen(false)} title={editing? 'Edit Location':'Add Location'}>
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Name</label>
               <Input value={form.name} onChange={e=>setForm({ ...form, name: e.target.value })} />
@@ -1173,13 +1240,13 @@ function ReviewsManager() {
         {items.map((r)=> (
           <Card key={r.id}>
             <CardContent className="py-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-gray-900">{r.name} <span className="text-xs text-gray-500">({r.rating}/5)</span></p>
                   <p className="text-sm text-gray-700 whitespace-pre-line">{r.comment}</p>
                   <p className="text-xs text-gray-500 mt-1">{new Date(r.createdAt).toLocaleString()}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <Button variant="outline" className="rounded-full" onClick={()=> setApproved(r.id, !r.isApproved)}>{r.isApproved? 'Unapprove':'Approve'}</Button>
                   <Button variant="outline" className="rounded-full text-red-600" onClick={()=> del(r.id)}>Delete</Button>
                 </div>

@@ -131,40 +131,40 @@ export default function LocationTimetablePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-6 py-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <div>
-            <h1 className="text-2xl font-bold">Location Timetable</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">Location Timetable</h1>
             <p className="text-sm text-gray-600">Week starting {weekStart}</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="rounded-full" onClick={prevWeek}>Previous</Button>
-            <Button className="rounded-full" onClick={nextWeek}>Next</Button>
+            <Button variant="outline" className="rounded-full flex-1 sm:flex-none" onClick={prevWeek}>Previous</Button>
+            <Button className="rounded-full flex-1 sm:flex-none" onClick={nextWeek}>Next</Button>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-3 items-end mb-5">
-          <div className="w-56">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:items-end mb-5">
+          <div className="w-full sm:w-56">
             <label className="block text-sm text-gray-700 mb-1">Treatment</label>
             <Select value={filters.treatmentId} onChange={(e)=> setFilters((p)=> ({ ...p, treatmentId: e.target.value }))}>
               <option value="">All</option>
               {treatments.map(t=> <option key={t.id} value={t.id}>{t.name}</option>)}
             </Select>
           </div>
-          <div className="w-56">
+          <div className="w-full sm:w-56">
             <label className="block text-sm text-gray-700 mb-1">Pharmacist</label>
             <Select value={filters.pharmacistId} onChange={(e)=> setFilters((p)=> ({ ...p, pharmacistId: e.target.value }))}>
               <option value="">All</option>
               {pharmacists.map(p=> <option key={p.id} value={p.id}>{p.name}</option>)}
             </Select>
           </div>
-          <div className="ml-auto flex gap-2">
-            <Button className="rounded-full bg-emerald-600" onClick={()=> setOpenAdd(true)}>Add Booking</Button>
-            <Button variant="outline" className="rounded-full" onClick={()=> setOpenBlock(true)}>Block Day/Range</Button>
+          <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
+            <Button className="rounded-full bg-emerald-600 flex-1 sm:flex-none" onClick={()=> setOpenAdd(true)}>Add Booking</Button>
+            <Button variant="outline" className="rounded-full flex-1 sm:flex-none" onClick={()=> setOpenBlock(true)}>Block Day/Range</Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-7 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
           {days.map((d)=>{
             const key = formatDate(d)
             const dayBookings = groupedBookings.get(key) || []
@@ -248,7 +248,7 @@ export default function LocationTimetablePage() {
               {treatments.map(t=> <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Pharmacist (optional)</label>
               <select className="w-full h-10 rounded-md border px-3" value={addForm.pharmacistId} onChange={(e)=> setAddForm({ ...addForm, pharmacistId: e.target.value })}>
@@ -261,7 +261,7 @@ export default function LocationTimetablePage() {
               <Input type="date" value={addForm.date} onChange={(e)=> setAddForm({ ...addForm, date: e.target.value })} />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Time</label>
               <Input value={addForm.time} onChange={(e)=> setAddForm({ ...addForm, time: e.target.value })} placeholder="HH:MM" />
@@ -271,7 +271,7 @@ export default function LocationTimetablePage() {
               <Input value={addForm.customerPhone} onChange={(e)=> setAddForm({ ...addForm, customerPhone: e.target.value })} />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Name</label>
               <Input value={addForm.customerName} onChange={(e)=> setAddForm({ ...addForm, customerName: e.target.value })} />
@@ -290,7 +290,7 @@ export default function LocationTimetablePage() {
 
       <Modal open={openBlock} onClose={()=> setOpenBlock(false)} title="Block Day/Range">
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm text-gray-700">Start</label>
               <Input type="datetime-local" value={blockForm.start} onChange={(e)=> setBlockForm({ ...blockForm, start: e.target.value })} />

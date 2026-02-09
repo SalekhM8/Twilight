@@ -19,6 +19,8 @@ export default function AnnouncementBar() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
+    // Hide on admin pages
+    if (window.location.pathname.startsWith("/admin")) return
     try {
       const dismissed = localStorage.getItem(DISMISS_KEY)
       if (!dismissed) setVisible(true)
