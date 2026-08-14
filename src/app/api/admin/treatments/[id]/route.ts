@@ -46,9 +46,22 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
 export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await ctx.params
+    const bookingCount = await prisma.booking.count({ where: { treatmentId: id } })
+    if (bookingCount > 0) {
+      return NextResponse.json(
+        { error: `This treatment has ${bookingCount} booking${bookingCount === 1 ? "" : "s"} linked to it, so it can't be deleted. Untick "Active" in Edit instead to hide it from customers.` },
+        { status: 409 }
+      )
+    }
     await prisma.treatment.delete({ where: { id } })
+    try {
+      revalidatePath("/")
+      revalidatePath("/travel")
+      revalidatePath("/nhs")
+    } catch {}
     return NextResponse.json({ ok: true })
   } catch (e) {
+    console.error(e)
     return NextResponse.json({ error: "Failed to delete treatment" }, { status: 500 })
   }
 }

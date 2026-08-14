@@ -840,6 +840,13 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
     const res = await fetch(`/api/admin/treatments/${editing.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     if (res.ok) { setOpen(false); await onReload() }
   }
+  const remove = async (t: any) => {
+    if (!confirm(`Delete "${t.name}"? This cannot be undone.`)) return
+    const res = await fetch(`/api/admin/treatments/${t.id}`, { method: 'DELETE' })
+    if (res.ok) { await onReload(); return }
+    const data = await res.json().catch(()=> null)
+    alert(data?.error || 'Failed to delete treatment')
+  }
 
   return (
     <div className="space-y-4">
@@ -862,6 +869,7 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
             </CardHeader>
             <CardContent className="flex gap-2">
               <Button variant="outline" className="rounded-full" onClick={()=>startEdit(t)}>Edit</Button>
+              <Button variant="outline" className="rounded-full text-red-600" onClick={()=>remove(t)}>Delete</Button>
             </CardContent>
           </Card>
         ))}
