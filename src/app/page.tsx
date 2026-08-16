@@ -96,6 +96,7 @@ export default async function HomePage() {
             </div>
             <nav className="flex items-center justify-center gap-8 text-base text-white font-semibold">
               <NavServicesDropdown />
+              <a href={process.env.NEXT_PUBLIC_CLINIC_URL || "https://clinic.twilightpharmacy.co.uk"} className="hover:text-white/90">Weight Loss Clinic</a>
               <Link href="/about" className="hover:text-white/90">About Us</Link>
               <a href="#locations" className="hover:text-white/90">Locations</a>
               <a href="#contact" className="hover:text-white/90">Contact</a>
@@ -256,6 +257,9 @@ export default async function HomePage() {
                     <Link href={`/treatments/${slugify(t.name)}-${t.id}`} className="hover:text-white">{t.name}</Link>
                   </li>
                 ))}
+                <li>
+                  <a href={process.env.NEXT_PUBLIC_CLINIC_URL || "https://clinic.twilightpharmacy.co.uk"} className="hover:text-white">Weight Loss Clinic</a>
+                </li>
                 <li>
                   <Link href="/travel" className="hover:text-white">Travel Health</Link>
                 </li>

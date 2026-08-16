@@ -36,6 +36,7 @@ export default function MobileMenu({ open, onClose }: { open: boolean; onClose: 
         </div>
         <nav className="p-5 text-[#36c3f0]">
           <ul className="space-y-4 text-lg">
+            <li><a href={process.env.NEXT_PUBLIC_CLINIC_URL || "https://clinic.twilightpharmacy.co.uk"} onClick={onClose} className="block">Weight Loss Clinic</a></li>
             <li><Link href="/travel" onClick={onClose} className="block">Travel Services</Link></li>
             <li><Link href="/nhs" onClick={onClose} className="block">NHS Services</Link></li>
             <li><Link href="/about" onClick={onClose} className="block">About Us</Link></li>
