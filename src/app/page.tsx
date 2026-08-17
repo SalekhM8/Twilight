@@ -1,6 +1,5 @@
 import Image from 'next/image'
 export const revalidate = 60
-import NavServicesDropdown from '@/components/NavServicesDropdown'
 import { prisma } from '@/lib/prisma'
 import { resetPreparedStatements } from '@/lib/db'
 import { Button } from '@/components/ui/button'
@@ -22,7 +21,6 @@ import {
 import Link from 'next/link'
 import { slugify } from '@/lib/utils'
 import ReviewsSection from '@/components/ReviewsSection'
-import MobileHeroHeader from '@/components/MobileHeroHeader'
 import { formatOpeningHours } from '@/lib/utils'
 import TreatmentSearch from '@/components/TreatmentSearch'
 
@@ -67,76 +65,56 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#f3fbff]">
-      {/* HEADER moved onto hero (desktop only) */}
-
-      {/* HERO */}
-      <section id="home" className="relative mx-2 sm:mx-3 md:mx-6 mt-0 md:mt-0 rounded-2xl overflow-hidden min-h-[85vh]">
-        <MobileHeroHeader />
-        <div className="absolute inset-0 z-0">
-          <video
-            src="/main.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="none"
-            poster="/twilightnew.png"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/60 via-black/40 to-black/10" />
+      {/* HERO — clinic-style dark editorial hero */}
+      <section id="home" className="relative overflow-hidden bg-[#155d7e]">
+        {/* Subtle line-art background, matching the clinic hero */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <svg viewBox="0 0 1440 700" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
+            <g stroke="#f3fbff" fill="none" strokeLinecap="round" strokeLinejoin="round">
+              <g transform="translate(80, 60) scale(2.8)" opacity="0.16" strokeWidth="0.7">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+              </g>
+              <g transform="translate(1220, 80) scale(2.8) rotate(30)" opacity="0.15" strokeWidth="0.7">
+                <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
+                <path d="m8.5 8.5 7 7" />
+              </g>
+              <g transform="translate(50, 480) scale(2.8)" opacity="0.16" strokeWidth="0.7">
+                <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+                <path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" />
+              </g>
+              <g transform="translate(1280, 320) scale(2.8)" opacity="0.15" strokeWidth="0.7">
+                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+                <path d="M9 12h6" />
+                <path d="M12 9v6" />
+              </g>
+            </g>
+          </svg>
         </div>
 
-        {/* Desktop nav over video */}
-        <div className="hidden md:block absolute top-0 inset-x-0 z-30">
-          <div className="mx-auto max-w-7xl px-6 py-3 grid grid-cols-3 items-center">
-            <div className="justify-self-start">
-              <Link href="/" className="inline-flex items-center">
-                <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={360} height={110} className="h-32 w-auto drop-shadow-[0_3px_14px_rgba(0,0,0,0.55)]" />
-              </Link>
-            </div>
-            <nav className="flex items-center justify-center gap-8 text-base text-white font-semibold">
-              <NavServicesDropdown />
-              <a href={process.env.NEXT_PUBLIC_CLINIC_URL || "https://clinic.twilightpharmacy.co.uk"} className="hover:text-white/90">Weight Loss Clinic</a>
-              <Link href="/about" className="hover:text-white/90">About Us</Link>
-              <a href="#locations" className="hover:text-white/90">Locations</a>
-              <a href="#contact" className="hover:text-white/90">Contact</a>
-            </nav>
-            <div className="justify-self-end">
-              <Link href="/consultation" className="inline-flex items-center rounded-lg bg-[#0b1220] text-white px-5 py-2 font-semibold hover:bg-[#155d7e]">Start Consultation</Link>
-            </div>
+        <div className="relative mx-auto flex min-h-[540px] max-w-[1410px] flex-col items-center justify-center px-6 py-20 text-center md:min-h-[600px]">
+          <p className="mb-4 text-sm font-medium uppercase tracking-widest text-[#f3fbff]/70">
+            Pharmacist-Led Care &middot; Birmingham
+          </p>
+          <h1 className="mx-auto max-w-3xl text-[38px] font-medium leading-[0.95] text-[#f3fbff] md:text-[56px] lg:text-[72px]">
+            Tune out the noise. Tune into your health.
+          </h1>
+          <p className="mt-6 mx-auto max-w-xl text-lg text-[#f3fbff]/80">
+            Evidence-based treatments, NHS and travel services across our Birmingham branches.
+          </p>
+          <div className="mt-8 w-full max-w-xl">
+            <TreatmentSearch />
           </div>
-        </div>
-
-        {/* Mobile header with hamburger inside hero is replaced by sticky header above */}
-
-        
-
-        <div className="relative z-20 mx-auto max-w-7xl px-6 w-full h-full">
-          <div className="min-h-[85vh] grid place-items-center">
-            <div className="max-w-3xl text-center">
-              <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1] text-white">
-              Tune out the noise.
-              <br />
-              Tune into your health.
-              </h1>
-              <p className="mt-6 mx-auto text-lg text-white/85 max-w-xl">
-                Evidence-based treatments and pharmacist-led care across our Birmingham branches.
-              </p>
-              <div className="mt-6">
-                <TreatmentSearch />
-              </div>
-              <div className="mt-8 grid grid-cols-3 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-3">
-                <a href="#services" className="inline-flex items-center justify-center rounded-lg border border-white/70 bg-transparent text-white hover:bg-white/10 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium w-full">
-                  View Services
-                </a>
-                <Link href="/travel" className="inline-flex items-center justify-center rounded-lg border border-white/70 bg-transparent text-white hover:bg-white/10 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold w-full">
-                  Travel Clinic
-                </Link>
-                <Link href="/consultation" className="inline-flex items-center justify-center rounded-lg bg-[#0b1220] text-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold hover:bg-[#155d7e] w-full">
-                  Get Started
-                </Link>
-              </div>
-            </div>
+          <div className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
+            <a href="#services" className="inline-flex h-[56px] w-full items-center justify-center rounded-lg bg-[#0b1220] px-10 text-base font-medium capitalize text-[#f3fbff] transition-colors duration-200 hover:bg-[#0b1220]/80 sm:w-auto">
+              Pick a Service
+            </a>
+            <Link href="/travel" className="inline-flex h-[56px] w-full items-center justify-center rounded-lg border border-[#f3fbff]/40 bg-transparent px-10 text-base font-medium capitalize text-[#f3fbff] transition-colors duration-200 hover:bg-[#f3fbff] hover:text-[#155d7e] sm:w-auto">
+              Travel Clinic
+            </Link>
+            <Link href="/nhs" className="inline-flex h-[56px] w-full items-center justify-center rounded-lg border border-[#f3fbff]/40 bg-transparent px-10 text-base font-medium capitalize text-[#f3fbff] transition-colors duration-200 hover:bg-[#f3fbff] hover:text-[#155d7e] sm:w-auto">
+              NHS Services
+            </Link>
           </div>
         </div>
       </section>

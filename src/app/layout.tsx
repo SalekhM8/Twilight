@@ -5,6 +5,7 @@ import WhatsAppFab from "@/components/WhatsAppFab";
 import ClientScrollTop from "@/components/scroll/ClientScrollTop";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import AnnouncementBar from "@/components/AnnouncementBar";
+import SiteHeader from "@/components/SiteHeader";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -79,6 +80,7 @@ export default function RootLayout({
           </noscript>
         ) : null}
 				<AnnouncementBar />
+				<SiteHeader />
 				<ClientScrollTop />
 				{children}
         <ChatbotWidget />

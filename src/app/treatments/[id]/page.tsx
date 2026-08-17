@@ -3,8 +3,6 @@ import Image from "next/image"
 import { prisma } from "@/lib/prisma"
 import { resetPreparedStatements } from "@/lib/db"
 import { MapPin, Clock, Phone, AlertCircle, CheckCircle2, Info } from "lucide-react"
-import NavServicesDropdown from "@/components/NavServicesDropdown"
-import MobileHeader from "@/components/MobileHeader"
 
 export default async function TreatmentPage({ params }: { params: Promise<{ id: string }> }) {
   await resetPreparedStatements()
@@ -59,29 +57,6 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="min-h-screen bg-[#f3fbff]">
-      {/* Mobile Header */}
-      <MobileHeader />
-
-      {/* Desktop Header */}
-      <header className="hidden md:block sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-gray-100">
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center">
-              <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={280} height={85} className="h-16 w-auto" />
-            </Link>
-            <nav className="flex items-center gap-8 text-base text-gray-700 font-semibold">
-              <NavServicesDropdown />
-              <Link href="/about" className="hover:text-[#36c3f0]">About Us</Link>
-              <a href="/#locations" className="hover:text-[#36c3f0]">Locations</a>
-              <a href="/#contact" className="hover:text-[#36c3f0]">Contact</a>
-            </nav>
-            <Link href="/consultation" className="inline-flex items-center rounded-lg bg-[#0b1220] text-white px-5 py-2 font-semibold hover:bg-[#155d7e]">
-              Start Consultation
-            </Link>
-          </div>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="relative min-h-[45vh] flex items-end overflow-hidden mx-2 sm:mx-3 md:mx-6 mt-6 rounded-2xl shadow-[0_8px_40px_rgba(54,195,240,0.12)]">
         <img src={heroUrl} alt="" aria-hidden className="absolute inset-0 z-0 w-full h-full object-cover" />
