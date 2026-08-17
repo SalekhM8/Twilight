@@ -34,12 +34,12 @@ export default function PaymentBadge({ bookingId, initial }: { bookingId: string
   }, [bookingId, status])
 
   if (status === "paid") {
-    return <span className="inline-flex items-center rounded-full bg-emerald-100 text-emerald-800 px-3 py-1 text-sm font-medium">Paid</span>
+    return <span className="inline-flex items-center rounded-lg bg-emerald-100 text-emerald-800 px-3 py-1 text-sm font-medium">Paid</span>
   }
   if (status === "pending") {
-    return <span className="inline-flex items-center rounded-full bg-amber-100 text-amber-800 px-3 py-1 text-sm font-medium">Payment pending</span>
+    return <span className="inline-flex items-center rounded-lg bg-amber-100 text-amber-800 px-3 py-1 text-sm font-medium">Payment pending</span>
   }
-  return <span className="inline-flex items-center rounded-full bg-gray-100 text-gray-800 px-3 py-1 text-sm font-medium">Unpaid · Pay in store or online</span>
+  return <span className="inline-flex items-center rounded-lg bg-gray-100 text-gray-800 px-3 py-1 text-sm font-medium">Unpaid · Pay in store or online</span>
 }
 
 

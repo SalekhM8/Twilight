@@ -58,7 +58,7 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
   const heroUrl = heroImages[hash % heroImages.length]
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#f3fbff]">
       {/* Mobile Header */}
       <MobileHeader />
 
@@ -75,7 +75,7 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
               <a href="/#locations" className="hover:text-[#36c3f0]">Locations</a>
               <a href="/#contact" className="hover:text-[#36c3f0]">Contact</a>
             </nav>
-            <Link href="/consultation" className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-5 py-2 font-semibold hover:bg-[#2eb5e8]">
+            <Link href="/consultation" className="inline-flex items-center rounded-lg bg-[#0b1220] text-white px-5 py-2 font-semibold hover:bg-[#155d7e]">
               Start Consultation
             </Link>
           </div>
@@ -83,7 +83,7 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
       </header>
 
       {/* Hero */}
-      <section className="relative min-h-[45vh] flex items-end overflow-hidden mx-2 sm:mx-3 md:mx-6 mt-6 rounded-3xl shadow-[0_8px_40px_rgba(54,195,240,0.12)]">
+      <section className="relative min-h-[45vh] flex items-end overflow-hidden mx-2 sm:mx-3 md:mx-6 mt-6 rounded-2xl shadow-[0_8px_40px_rgba(54,195,240,0.12)]">
         <img src={heroUrl} alt="" aria-hidden className="absolute inset-0 z-0 w-full h-full object-cover" />
         <div className="absolute inset-0 z-10 bg-gradient-to-r from-white/70 via-white/50 to-white/20" />
         <div className="relative z-20 mx-auto max-w-6xl px-6 py-16 w-full">
@@ -91,7 +91,7 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
           {(treatment as any).summary && (
             <p className="mt-3 text-gray-800 max-w-2xl text-lg">{(treatment as any).summary}</p>
           )}
-          <div className="mt-5 inline-flex items-center rounded-full bg-[#36c3f0] text-white px-5 py-2 text-sm font-semibold">£{treatment.price} · {treatment.duration} mins</div>
+          <div className="mt-5 inline-flex items-center rounded-lg bg-[#0b1220] text-white px-5 py-2 text-sm font-semibold">£{treatment.price} · {treatment.duration} mins</div>
         </div>
       </section>
 
@@ -184,14 +184,14 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
                     const inSeason = new Date(String(seasonStart)) <= now && new Date(String(seasonEnd)) >= now
                     if (!inSeason) {
                       return (
-                        <div className="inline-flex items-center rounded-full bg-gray-200 text-gray-700 px-6 py-3 font-semibold cursor-not-allowed">
+                        <div className="inline-flex items-center rounded-lg bg-gray-200 text-gray-700 px-6 py-3 font-semibold cursor-not-allowed">
                           Currently unavailable (out of season)
                         </div>
                       )
                     }
                   }
                   return (
-                    <Link href={`/consultation?treatment=${treatment.id}`} className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-6 py-3 font-semibold hover:bg-[#2eb5e8] text-lg">
+                    <Link href={`/consultation?treatment=${treatment.id}`} className="inline-flex items-center rounded-lg bg-[#0b1220] text-white px-6 py-3 font-semibold hover:bg-[#155d7e] text-lg">
                       Book this treatment →
                     </Link>
                   )
@@ -226,7 +226,7 @@ export default async function TreatmentPage({ params }: { params: Promise<{ id: 
       {/* FOOTER */}
       <footer id="contact" className="relative text-white py-14">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(70%_70%_at_50%_0%,#0b1220,transparent_70%)]" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-gray-900 via-gray-900 to-black opacity-90" />
+        <div className="absolute inset-0 -z-10 bg-[#155d7e]" />
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>

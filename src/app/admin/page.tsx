@@ -193,8 +193,8 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-lg animate-spin"></div>
           </div>
           <p className="text-gray-600">Loading dashboard...</p>
         </div>
@@ -267,7 +267,7 @@ export default function AdminDashboard() {
 
       <div className="lg:flex">
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex w-64 bg-white/90 backdrop-blur rounded-3xl shadow-[0_8px_40px_rgba(54,195,240,0.12)] m-4 flex-col">
+      <div className="hidden lg:flex w-64 bg-white/90 backdrop-blur rounded-2xl shadow-[0_8px_40px_rgba(54,195,240,0.12)] m-4 flex-col">
         <div className="py-8 px-6">
           <div className="flex items-center justify-center">
             <img src="/twilightnew.png" alt="Twilight Pharmacy" className="h-24 w-auto" />
@@ -311,7 +311,7 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col p-2 lg:m-4 lg:ml-0">
-        <div className="flex-1 rounded-3xl bg-white/70 backdrop-blur shadow-[0_8px_40px_rgba(54,195,240,0.12)] p-3 sm:p-6">
+        <div className="flex-1 rounded-2xl bg-white/70 backdrop-blur shadow-[0_8px_40px_rgba(54,195,240,0.12)] p-3 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-[#155d7e] capitalize">{activeTab}</h2>
@@ -415,7 +415,7 @@ export default function AdminDashboard() {
                         <button key={booking.id} className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 p-4 bg-gray-50 rounded-lg text-left hover:bg-gray-100"
                           onClick={()=>{ try { localStorage.setItem('open_booking_id', booking.id) } catch {} ; setActiveTab('bookings') }}>
                           <div className="flex items-center space-x-4">
-                            <div className={`p-2 rounded-full ${getStatusColor(booking.status)}`}>
+                            <div className={`p-2 rounded-lg ${getStatusColor(booking.status)}`}>
                               <StatusIcon className="w-4 h-4" />
                             </div>
                             <div>
@@ -429,7 +429,7 @@ export default function AdminDashboard() {
                             <p className="text-sm font-medium text-gray-900">
                               {new Date(booking.preferredDate).toLocaleDateString()}
                             </p>
-                            <p className={`text-xs px-2 py-1 rounded-full inline-block ${getStatusColor(booking.status)}`}>
+                            <p className={`text-xs px-2 py-1 rounded-lg inline-block ${getStatusColor(booking.status)}`}>
                               {booking.status}
                             </p>
                           </div>
@@ -562,7 +562,7 @@ function AboutManager() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold">Certifications</h3>
-          <Button className="rounded-full" onClick={()=>{ setEditingCert(null); setCertForm({ title:'', subtitle:'', description:'', order:0, isActive:true }); setOpenCert(true) }}>Add Certification</Button>
+          <Button className="rounded-lg" onClick={()=>{ setEditingCert(null); setCertForm({ title:'', subtitle:'', description:'', order:0, isActive:true }); setOpenCert(true) }}>Add Certification</Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {certs.map((c)=> (
@@ -575,8 +575,8 @@ function AboutManager() {
                 <CardDescription>{c.subtitle}</CardDescription>
               </CardHeader>
               <CardContent className="flex gap-2">
-                <Button variant="outline" className="rounded-full" onClick={()=>{ setEditingCert(c); setCertForm({ title:c.title, subtitle:c.subtitle||'', description:c.description||'', order:c.order||0, isActive:c.isActive }); setOpenCert(true) }}>Edit</Button>
-                <Button variant="outline" className="rounded-full text-red-600" onClick={()=>deleteCert(c.id)}>Delete</Button>
+                <Button variant="outline" className="rounded-lg" onClick={()=>{ setEditingCert(c); setCertForm({ title:c.title, subtitle:c.subtitle||'', description:c.description||'', order:c.order||0, isActive:c.isActive }); setOpenCert(true) }}>Edit</Button>
+                <Button variant="outline" className="rounded-lg text-red-600" onClick={()=>deleteCert(c.id)}>Delete</Button>
               </CardContent>
             </Card>
           ))}
@@ -586,7 +586,7 @@ function AboutManager() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold">People</h3>
-          <Button className="rounded-full" onClick={()=>{ setEditingPerson(null); setPersonForm({ name:'', role:'', bio:'', order:0, isActive:true }); setOpenPerson(true) }}>Add Person</Button>
+          <Button className="rounded-lg" onClick={()=>{ setEditingPerson(null); setPersonForm({ name:'', role:'', bio:'', order:0, isActive:true }); setOpenPerson(true) }}>Add Person</Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {people.map((p)=> (
@@ -595,8 +595,8 @@ function AboutManager() {
                 <CardTitle className="flex items-center justify-between"><span>{p.name}</span><span className="text-sm text-gray-500">{p.role}</span></CardTitle>
               </CardHeader>
               <CardContent className="flex gap-2">
-                <Button variant="outline" className="rounded-full" onClick={()=>{ setEditingPerson(p); setPersonForm({ name:p.name, role:p.role, bio:p.bio||'', order:p.order||0, isActive:p.isActive }); setOpenPerson(true) }}>Edit</Button>
-                <Button variant="outline" className="rounded-full text-red-600" onClick={()=>deletePerson(p.id)}>Delete</Button>
+                <Button variant="outline" className="rounded-lg" onClick={()=>{ setEditingPerson(p); setPersonForm({ name:p.name, role:p.role, bio:p.bio||'', order:p.order||0, isActive:p.isActive }); setOpenPerson(true) }}>Edit</Button>
+                <Button variant="outline" className="rounded-lg text-red-600" onClick={()=>deletePerson(p.id)}>Delete</Button>
               </CardContent>
             </Card>
           ))}
@@ -628,8 +628,8 @@ function AboutManager() {
             <label htmlFor="cert-active" className="text-sm text-gray-700">Active</label>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=>{ setOpenCert(false); setEditingCert(null) }}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={saveCert}>Save</Button>
+            <Button variant="outline" className="rounded-lg" onClick={()=>{ setOpenCert(false); setEditingCert(null) }}>Cancel</Button>
+            <Button className="rounded-lg bg-emerald-600 hover:bg-emerald-700" onClick={saveCert}>Save</Button>
           </div>
         </div>
       </Modal>
@@ -661,8 +661,8 @@ function AboutManager() {
             <label htmlFor="person-active" className="text-sm text-gray-700">Active</label>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=>{ setOpenPerson(false); setEditingPerson(null) }}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={savePerson}>Save</Button>
+            <Button variant="outline" className="rounded-lg" onClick={()=>{ setOpenPerson(false); setEditingPerson(null) }}>Cancel</Button>
+            <Button className="rounded-lg bg-emerald-600 hover:bg-emerald-700" onClick={savePerson}>Save</Button>
           </div>
         </div>
       </Modal>
@@ -676,7 +676,7 @@ function QuickAdd({ onSelect }: { onSelect: (tab: string)=>void }) {
   const [open, setOpen] = useState(false)
   return (
     <>
-      <Button className="bg-[#36c3f0] hover:bg-[#2eb5e8] rounded-full shadow-sm text-[#155d7e]" onClick={()=>setOpen(true)}>
+      <Button className="bg-[#0b1220] hover:bg-[#155d7e] rounded-lg shadow-sm text-[#155d7e]" onClick={()=>setOpen(true)}>
         <Plus className="w-4 h-4 mr-2" />
         Quick Add
       </Button>
@@ -759,13 +759,13 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
                   <p className="font-medium text-gray-900">{b.customerName}</p>
                   <p className="text-sm text-gray-600 truncate">{b.treatment.name} at {b.location.name} — {new Date(b.preferredDate).toLocaleDateString()} {b.preferredTime}</p>
                   <p className="text-xs mt-1">
-                    <span className={`inline-block px-2 py-0.5 rounded-full ${b.paymentStatus==='paid' ? 'bg-emerald-100 text-emerald-700' : b.paymentStatus==='pending' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700'}`}>Payment: {b.paymentStatus || 'unpaid'}</span>
+                    <span className={`inline-block px-2 py-0.5 rounded-lg ${b.paymentStatus==='paid' ? 'bg-emerald-100 text-emerald-700' : b.paymentStatus==='pending' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700'}`}>Payment: {b.paymentStatus || 'unpaid'}</span>
                     {b.paymentAmount ? <span className="ml-2 text-gray-500">£{(b.paymentAmount/100).toFixed(2)}</span> : null}
                   </p>
                 </button>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 capitalize">{b.status}</span>
+                <span className="text-xs px-2 py-1 rounded-lg bg-gray-100 text-gray-700 capitalize">{b.status}</span>
                 <Button variant="outline" onClick={()=>updateStatus(b.id,'confirmed')}>Confirm</Button>
                 <Button variant="outline" onClick={()=>updateStatus(b.id,'cancelled')}>Cancel</Button>
               </div>
@@ -795,9 +795,9 @@ function BookingsManager({ onReload }: { onReload: ()=>void }) {
               <Button variant="outline" onClick={()=>{ updateStatus(detail.id,'cancelled'); setDetail(null) }}>Cancel</Button>
               <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
                 <span className="text-xs text-gray-500">Quick contact:</span>
-                <a className="px-2 py-1 rounded-full bg-emerald-600 text-white text-xs" href={`sms:${detail.customerPhone}`} target="_blank" rel="noreferrer">SMS</a>
-                <a className="px-2 py-1 rounded-full bg-emerald-600 text-white text-xs" href={`https://wa.me/${detail.customerPhone.replace(/[^\d]/g,'')}`} target="_blank" rel="noreferrer">WhatsApp</a>
-                <a className="px-2 py-1 rounded-full bg-gray-900 text-white text-xs" href={`tel:${detail.customerPhone}`} target="_blank" rel="noreferrer">Call</a>
+                <a className="px-2 py-1 rounded-lg bg-emerald-600 text-white text-xs" href={`sms:${detail.customerPhone}`} target="_blank" rel="noreferrer">SMS</a>
+                <a className="px-2 py-1 rounded-lg bg-emerald-600 text-white text-xs" href={`https://wa.me/${detail.customerPhone.replace(/[^\d]/g,'')}`} target="_blank" rel="noreferrer">WhatsApp</a>
+                <a className="px-2 py-1 rounded-lg bg-gray-900 text-white text-xs" href={`tel:${detail.customerPhone}`} target="_blank" rel="noreferrer">Call</a>
               </div>
             </div>
           </div>
@@ -852,7 +852,7 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold">Treatments</h3>
-        <Button className="rounded-full" onClick={startNew}><Plus className="w-4 h-4 mr-2"/>Add Treatment</Button>
+        <Button className="rounded-lg" onClick={startNew}><Plus className="w-4 h-4 mr-2"/>Add Treatment</Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {treatments.map((t)=> (
@@ -864,12 +864,12 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
               </CardTitle>
               <CardDescription>{t.description}</CardDescription>
               {t.seasonStart && t.seasonEnd ? (
-                <span className="inline-block mt-2 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">Seasonal {String(t.seasonStart).slice(0,10)}–{String(t.seasonEnd).slice(0,10)}</span>
+                <span className="inline-block mt-2 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-0.5">Seasonal {String(t.seasonStart).slice(0,10)}–{String(t.seasonEnd).slice(0,10)}</span>
               ) : null}
             </CardHeader>
             <CardContent className="flex gap-2">
-              <Button variant="outline" className="rounded-full" onClick={()=>startEdit(t)}>Edit</Button>
-              <Button variant="outline" className="rounded-full text-red-600" onClick={()=>remove(t)}>Delete</Button>
+              <Button variant="outline" className="rounded-lg" onClick={()=>startEdit(t)}>Edit</Button>
+              <Button variant="outline" className="rounded-lg text-red-600" onClick={()=>remove(t)}>Delete</Button>
             </CardContent>
           </Card>
         ))}
@@ -940,8 +940,8 @@ function TreatmentsManager({ treatments, locations, onReload }: { treatments: an
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=>setOpen(false)}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={save}>Save</Button>
+            <Button variant="outline" className="rounded-lg" onClick={()=>setOpen(false)}>Cancel</Button>
+            <Button className="rounded-lg bg-emerald-600 hover:bg-emerald-700" onClick={save}>Save</Button>
           </div>
         </div>
       </Modal>
@@ -992,7 +992,7 @@ function PharmacistsManager({ pharmacists, treatments, locations, onReload }: { 
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold">Pharmacists</h3>
-        <Button className="rounded-full" onClick={startNew}><Plus className="w-4 h-4 mr-2"/>Add Pharmacist</Button>
+        <Button className="rounded-lg" onClick={startNew}><Plus className="w-4 h-4 mr-2"/>Add Pharmacist</Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {pharmacists.map((p)=> (
@@ -1004,8 +1004,8 @@ function PharmacistsManager({ pharmacists, treatments, locations, onReload }: { 
               </CardTitle>
             </CardHeader>
             <CardContent className="flex gap-2">
-              <Button variant="outline" className="rounded-full" onClick={()=>startEdit(p)}>Edit</Button>
-              <Button variant="outline" className="rounded-full" onClick={()=>openScheduleEditor(p)}>Schedule</Button>
+              <Button variant="outline" className="rounded-lg" onClick={()=>startEdit(p)}>Edit</Button>
+              <Button variant="outline" className="rounded-lg" onClick={()=>openScheduleEditor(p)}>Schedule</Button>
             </CardContent>
           </Card>
         ))}
@@ -1060,8 +1060,8 @@ function PharmacistsManager({ pharmacists, treatments, locations, onReload }: { 
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=>setOpen(false)}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={save}>Save</Button>
+            <Button variant="outline" className="rounded-lg" onClick={()=>setOpen(false)}>Cancel</Button>
+            <Button className="rounded-lg bg-emerald-600 hover:bg-emerald-700" onClick={save}>Save</Button>
           </div>
         </div>
       </Modal>
@@ -1086,8 +1086,8 @@ function PharmacistsManager({ pharmacists, treatments, locations, onReload }: { 
             ))}
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" className="rounded-full" onClick={()=>setOpenSchedule(false)}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={saveSchedule}>Save</Button>
+            <Button variant="outline" className="rounded-lg" onClick={()=>setOpenSchedule(false)}>Cancel</Button>
+            <Button className="rounded-lg bg-emerald-600 hover:bg-emerald-700" onClick={saveSchedule}>Save</Button>
           </div>
         </div>
       </Modal>
@@ -1125,7 +1125,7 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold">Locations</h3>
-        <Button className="rounded-full" onClick={startNew}><Plus className="w-4 h-4 mr-2"/>Add Location</Button>
+        <Button className="rounded-lg" onClick={startNew}><Plus className="w-4 h-4 mr-2"/>Add Location</Button>
       </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {locations.map((l)=> (
@@ -1138,8 +1138,8 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
                     <CardDescription>{l.address}</CardDescription>
                   </CardHeader>
                   <CardContent className="flex gap-2">
-                    <Button variant="outline" className="rounded-full" onClick={()=>startEdit(l)}>Edit</Button>
-                    <Button className="rounded-full" onClick={()=>window.location.assign(`/admin/locations/${l.id}`)}>Open Timetable</Button>
+                    <Button variant="outline" className="rounded-lg" onClick={()=>startEdit(l)}>Edit</Button>
+                    <Button className="rounded-lg" onClick={()=>window.location.assign(`/admin/locations/${l.id}`)}>Open Timetable</Button>
                   </CardContent>
                 </Card>
               ))}
@@ -1201,8 +1201,8 @@ function LocationsManager({ locations, onReload }: { locations: any[]; onReload:
             ))}
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=>setOpen(false)}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={save}>Save</Button>
+            <Button variant="outline" className="rounded-lg" onClick={()=>setOpen(false)}>Cancel</Button>
+            <Button className="rounded-lg bg-emerald-600 hover:bg-emerald-700" onClick={save}>Save</Button>
           </div>
         </div>
       </Modal>
@@ -1255,8 +1255,8 @@ function ReviewsManager() {
                   <p className="text-xs text-gray-500 mt-1">{new Date(r.createdAt).toLocaleString()}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <Button variant="outline" className="rounded-full" onClick={()=> setApproved(r.id, !r.isApproved)}>{r.isApproved? 'Unapprove':'Approve'}</Button>
-                  <Button variant="outline" className="rounded-full text-red-600" onClick={()=> del(r.id)}>Delete</Button>
+                  <Button variant="outline" className="rounded-lg" onClick={()=> setApproved(r.id, !r.isApproved)}>{r.isApproved? 'Unapprove':'Approve'}</Button>
+                  <Button variant="outline" className="rounded-lg text-red-600" onClick={()=> del(r.id)}>Delete</Button>
                 </div>
               </div>
             </CardContent>

@@ -78,7 +78,7 @@ export default function ReviewsSection({ reviews: initial }: { reviews: Review[]
             <p className="text-sm text-gray-500 mt-2">Based on Google Reviews</p>
           </div>
           <div>
-            <Button className="rounded-full bg-[#36c3f0] hover:bg-[#2eb5e8]" onClick={()=> setOpen(true)}>Add your review</Button>
+            <Button className="rounded-lg bg-[#0b1220] hover:bg-[#155d7e]" onClick={()=> setOpen(true)}>Add your review</Button>
           </div>
         </div>
 
@@ -101,12 +101,12 @@ export default function ReviewsSection({ reviews: initial }: { reviews: Review[]
           <div className="space-y-3">
             {submitted ? (
               <div className="py-6 text-center">
-                <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-emerald-100 grid place-items-center">
+                <div className="mx-auto mb-3 h-12 w-12 rounded-lg bg-emerald-100 grid place-items-center">
                   <svg viewBox="0 0 24 24" className="h-7 w-7 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
                 </div>
                 <p className="text-lg font-semibold text-gray-900">Thanks for submitting your review!</p>
                 <div className="mt-4">
-                  <Button className="rounded-full" onClick={()=> { setOpen(false); setSubmitted(false) }}>Close</Button>
+                  <Button className="rounded-lg" onClick={()=> { setOpen(false); setSubmitted(false) }}>Close</Button>
                 </div>
               </div>
             ) : (
@@ -134,8 +134,8 @@ export default function ReviewsSection({ reviews: initial }: { reviews: Review[]
               <Textarea value={form.comment} onChange={(e)=> setForm({ ...form, comment: e.target.value })} />
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" className="rounded-full" onClick={()=> setOpen(false)}>Cancel</Button>
-              <Button className="rounded-full bg-[#36c3f0] hover:bg-[#2eb5e8]" onClick={submit} disabled={submitting}>{submitting ? 'Submitting…' : 'Submit'}</Button>
+              <Button variant="outline" className="rounded-lg" onClick={()=> setOpen(false)}>Cancel</Button>
+              <Button className="rounded-lg bg-[#0b1220] hover:bg-[#155d7e]" onClick={submit} disabled={submitting}>{submitting ? 'Submitting…' : 'Submit'}</Button>
             </div>
             </>
             )}

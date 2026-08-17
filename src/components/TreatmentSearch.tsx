@@ -85,7 +85,7 @@ export default function TreatmentSearch() {
   return (
     <div className="relative z-40 w-full max-w-xl mx-auto" role="combobox" aria-expanded={open} aria-controls="treatment-search-list">
       <div
-        className="relative z-10 h-12 rounded-full px-3 flex items-center backdrop-blur bg-white/30 ring-1 ring-white/40 shadow-[0_8px_30px_rgba(54,195,240,0.25)] focus-within:ring-2 focus-within:ring-[#e9f7fe]"
+        className="relative z-10 h-12 rounded-lg px-3 flex items-center backdrop-blur bg-white/30 ring-1 ring-white/40 shadow-[0_8px_30px_rgba(54,195,240,0.25)] focus-within:ring-2 focus-within:ring-[#e9f7fe]"
         style={{ WebkitBackdropFilter: "blur(8px)" }}
       >
         <input
@@ -113,7 +113,7 @@ export default function TreatmentSearch() {
               inputRef.current?.focus()
             }
           }}
-          className="w-9 h-9 rounded-full bg-[#36c3f0] text-white flex items-center justify-center hover:bg-[#2eb5e8] focus:outline-none focus:ring-2 focus:ring-[#e9f7fe] shrink-0"
+          className="w-9 h-9 rounded-lg bg-[#0b1220] text-white flex items-center justify-center hover:bg-[#155d7e] focus:outline-none focus:ring-2 focus:ring-[#e9f7fe] shrink-0"
         >
           <Search className="w-5 h-5" />
         </button>

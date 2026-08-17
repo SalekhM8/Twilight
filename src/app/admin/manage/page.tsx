@@ -43,7 +43,7 @@ export default function AdminManage() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Treatments</h2>
-          <Button className="rounded-full" onClick={()=>setShowTreatmentModal(true)}>Add Treatment</Button>
+          <Button className="rounded-lg" onClick={()=>setShowTreatmentModal(true)}>Add Treatment</Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {treatments.map(t => (
@@ -55,8 +55,8 @@ export default function AdminManage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex gap-2">
-                <Button variant="outline" className="rounded-full">Edit</Button>
-                <Button variant="outline" className="rounded-full">Locations</Button>
+                <Button variant="outline" className="rounded-lg">Edit</Button>
+                <Button variant="outline" className="rounded-lg">Locations</Button>
               </CardContent>
             </Card>
           ))}
@@ -84,8 +84,8 @@ export default function AdminManage() {
             <textarea className="mt-1 w-full min-h-[80px] rounded-md border px-3 py-2" value={newTreatment.description} onChange={e=>setNewTreatment({...newTreatment,description:e.target.value})} />
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=>setShowTreatmentModal(false)}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={createTreatment}>Save</Button>
+            <Button variant="outline" className="rounded-lg" onClick={()=>setShowTreatmentModal(false)}>Cancel</Button>
+            <Button className="rounded-lg bg-emerald-600 hover:bg-emerald-700" onClick={createTreatment}>Save</Button>
           </div>
         </div>
       </Modal>
@@ -93,7 +93,7 @@ export default function AdminManage() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Pharmacists</h2>
-          <Button className="rounded-full">Add Pharmacist</Button>
+          <Button className="rounded-lg">Add Pharmacist</Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {pharmacists.map(p => (
@@ -102,8 +102,8 @@ export default function AdminManage() {
                 <CardTitle>{p.name}</CardTitle>
               </CardHeader>
               <CardContent className="flex gap-2">
-                <Button variant="outline" className="rounded-full">Edit</Button>
-                <Button variant="outline" className="rounded-full">Schedule</Button>
+                <Button variant="outline" className="rounded-lg">Edit</Button>
+                <Button variant="outline" className="rounded-lg">Schedule</Button>
               </CardContent>
             </Card>
           ))}

@@ -32,7 +32,7 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xl">T</span>
               </div>
               <div>
@@ -47,7 +47,7 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Success Message */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Booking Confirmed!</h1>
@@ -70,7 +70,7 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <User className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
@@ -80,7 +80,7 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
               </div>
 
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                   <Calendar className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
@@ -106,7 +106,7 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
               </div>
 
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                   <Clock className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
@@ -117,7 +117,7 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
 
               {booking.pharmacist && (
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
                     <User className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
@@ -145,7 +145,7 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
               </div>
 
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <Phone className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
@@ -221,19 +221,19 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
           <CardContent>
             <div className="space-y-3 text-blue-800">
               <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-6 h-6 bg-blue-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-xs font-bold">1</span>
                 </div>
                 <p>We'll review your booking and confirm your appointment within 24 hours</p>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-6 h-6 bg-blue-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-xs font-bold">2</span>
                 </div>
                 <p>You'll receive a confirmation email with detailed appointment information</p>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-6 h-6 bg-blue-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-xs font-bold">3</span>
                 </div>
                 <p>Arrive 10 minutes early for your appointment with any relevant medical information</p>

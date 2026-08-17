@@ -232,11 +232,11 @@ const [availableSlots, setAvailableSlots] = useState<{ time: string; count: numb
 
 	// Slide container width equals number of steps; translate by step index
 	return (
-		<div className="min-h-screen bg-white">
+		<div className="min-h-screen bg-[#f3fbff]">
 			{/* Top bar with brand to match FOH */}
 			<header className="fixed inset-x-0 top-0 z-50">
 				<div className="mx-auto max-w-4xl px-6 py-4">
-                    <div className="flex items-center justify-between rounded-full bg-white/80 backdrop-blur px-4 py-2 shadow-sm">
+                    <div className="flex items-center justify-between rounded-lg bg-white/80 backdrop-blur px-4 py-2 shadow-sm">
                         <Link href="/" className="flex items-center gap-2">
                             <Image src="/twilightnew.png" alt="Twilight Pharmacy" width={200} height={60} className="h-8 sm:h-10 w-auto" />
                         </Link>
@@ -249,7 +249,7 @@ const [availableSlots, setAvailableSlots] = useState<{ time: string; count: numb
 				<div className="mx-auto max-w-3xl px-6">
 					{/* Progress bar */}
 					<div className="mb-6">
-						<div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+						<div className="h-2 w-full bg-gray-200 rounded-lg overflow-hidden">
 							<div className="h-full bg-emerald-500 transition-all duration-500" style={{ width: `${progress}%` }} />
 						</div>
 						<p className="mt-2 text-xs text-gray-500">{progress}% complete</p>
@@ -404,10 +404,10 @@ const [availableSlots, setAvailableSlots] = useState<{ time: string; count: numb
 									<li className="flex justify-between"><span>Time</span><span className="font-medium">{form.preferredTime}</span></li>
 								</ul>
 					<div className="mt-8 flex flex-wrap gap-3">
-						<Button variant="outline" className="rounded-full border-[#36c3f0] text-[#36c3f0] hover:bg-[#e9f7fe]" onClick={submit} disabled={submitting || paying}>
+						<Button variant="outline" className="rounded-lg border-[#36c3f0] text-[#36c3f0] hover:bg-[#e9f7fe]" onClick={submit} disabled={submitting || paying}>
 							{submitting ? "Booking…" : "Book · Pay in store"}
 						</Button>
-						<Button className="rounded-full bg-emerald-600 hover:bg-emerald-700" onClick={submitAndPay} disabled={submitting || paying}>
+						<Button className="rounded-lg bg-emerald-600 hover:bg-emerald-700" onClick={submitAndPay} disabled={submitting || paying}>
 							{paying ? "Redirecting…" : "Book & Pay now"}
 						</Button>
 					</div>
@@ -417,10 +417,10 @@ const [availableSlots, setAvailableSlots] = useState<{ time: string; count: numb
 
 					{/* Controls */}
 					<div className="mt-6 sticky bottom-0 bg-white/95 backdrop-blur border-t border-gray-100 px-0 py-3 flex items-center justify-between">
-						<Button variant="outline" className="rounded-full" onClick={back} disabled={step === 0}>
+						<Button variant="outline" className="rounded-lg" onClick={back} disabled={step === 0}>
 							<ChevronLeft className="w-4 h-4 mr-2" /> Back
 						</Button>
-                        <Button className="rounded-full bg-[#36c3f0] hover:bg-[#2eb5e8]" onClick={next} disabled={!canNext() || step >= totalSteps - 1}>
+                        <Button className="rounded-lg bg-[#0b1220] hover:bg-[#155d7e]" onClick={next} disabled={!canNext() || step >= totalSteps - 1}>
 							Next <ChevronRight className="w-4 h-4 ml-2" />
 						</Button>
 					</div>
@@ -431,7 +431,7 @@ const [availableSlots, setAvailableSlots] = useState<{ time: string; count: numb
 			{paying && (
 				<div className="fixed inset-0 z-[100] backdrop-blur-sm bg-white/60 grid place-items-center">
 					<div className="rounded-2xl bg-white/80 ring-1 ring-black/5 shadow-xl px-8 py-6 text-center">
-						<div className="mx-auto mb-4 h-10 w-10 rounded-full border-2 border-[#36c3f0] border-t-transparent animate-spin" />
+						<div className="mx-auto mb-4 h-10 w-10 rounded-lg border-2 border-[#36c3f0] border-t-transparent animate-spin" />
 						<p className="text-sm text-gray-700 font-medium">Redirecting to secure payment…</p>
 						<p className="mt-1 text-xs text-gray-500">This can take a couple of seconds.</p>
 					</div>

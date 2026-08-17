@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 export default async function ReviewsPage() {
   const reviews = await prisma.review.findMany({ where: { isApproved: true }, orderBy: { createdAt: 'desc' }, take: 50 })
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#f3fbff]">
       <section className="relative py-16">
         <div className="max-w-5xl mx-auto px-6">
           <h1 className="text-4xl font-extrabold text-[#36c3f0] mb-6">Customer Reviews</h1>
@@ -46,7 +46,7 @@ export default async function ReviewsPage() {
                 </select>
               </div>
               <textarea name="comment" placeholder="Your feedback" className="min-h-[100px] w-full rounded-md border px-3 py-2" required />
-              <button type="submit" className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-6 py-2 font-semibold hover:bg-[#2eb5e8]">Submit</button>
+              <button type="submit" className="inline-flex items-center rounded-lg bg-[#0b1220] text-white px-6 py-2 font-semibold hover:bg-[#155d7e]">Submit</button>
               <p className="text-xs text-gray-500">Submitted reviews appear after approval.</p>
             </form>
           </div>

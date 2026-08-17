@@ -27,15 +27,22 @@ html { scroll-behavior: smooth; }
 }
 
 body {
-	background-color: #ffffff;
-	color: #111827;
+	background-color: #f3fbff;
+	color: #0b1220;
+	letter-spacing: -0.015em;
+	line-height: 1.6;
 }
+
+/* Roots-inspired editorial headings — tight tracking */
+h1, h2 { letter-spacing: -0.04em; }
+h3, h4, h5, h6 { letter-spacing: -0.025em; }
 
 /* Global brand overrides to replace emerald greens with brand blue */
 :root { --brand-blue: #36c3f0; --brand-blue-hover: #2eb5e8; --brand-blue-50: #f3fbff; --brand-blue-100: #e9f7fe; --brand-blue-200: #bfeafc; }
 
-.bg-emerald-600 { background-color: var(--brand-blue) !important; }
-.hover\:bg-emerald-700:hover { background-color: var(--brand-blue-hover) !important; }
+.bg-emerald-600 { background-color: #0b1220 !important; }
+.hover\:bg-emerald-700:hover { background-color: #155d7e !important; }
+.bg-emerald-500 { background-color: #0b1220 !important; }
 .text-emerald-600, .text-emerald-700, .text-emerald-900 { color: var(--brand-blue) !important; }
 .border-emerald-200 { border-color: var(--brand-blue-200) !important; }
 .ring-emerald-100 { --tw-ring-color: var(--brand-blue-100) !important; }

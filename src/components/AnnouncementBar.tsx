@@ -52,13 +52,13 @@ export default function AnnouncementBar() {
           href="https://deliveroo.co.uk/menu/birmingham/kings-heath/twilight-pharmacy-128-130-high-street"
           target="_blank"
           rel="noopener noreferrer"
-          className="ml-2 px-3 py-1 rounded-full bg-white text-[#00CCBC] text-xs font-semibold hover:bg-gray-100 transition-colors"
+          className="ml-2 px-3 py-1 rounded-lg bg-white text-[#00CCBC] text-xs font-semibold hover:bg-gray-100 transition-colors"
         >
           Order
         </a>
         <button
           onClick={dismiss}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/20 rounded-full transition-colors"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/20 rounded-lg transition-colors"
           aria-label="Dismiss"
         >
           <X className="w-4 h-4" />

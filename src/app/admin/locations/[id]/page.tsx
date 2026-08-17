@@ -138,8 +138,8 @@ export default function LocationTimetablePage() {
             <p className="text-sm text-gray-600">Week starting {weekStart}</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="rounded-full flex-1 sm:flex-none" onClick={prevWeek}>Previous</Button>
-            <Button className="rounded-full flex-1 sm:flex-none" onClick={nextWeek}>Next</Button>
+            <Button variant="outline" className="rounded-lg flex-1 sm:flex-none" onClick={prevWeek}>Previous</Button>
+            <Button className="rounded-lg flex-1 sm:flex-none" onClick={nextWeek}>Next</Button>
           </div>
         </div>
 
@@ -159,8 +159,8 @@ export default function LocationTimetablePage() {
             </Select>
           </div>
           <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
-            <Button className="rounded-full bg-emerald-600 flex-1 sm:flex-none" onClick={()=> setOpenAdd(true)}>Add Booking</Button>
-            <Button variant="outline" className="rounded-full flex-1 sm:flex-none" onClick={()=> setOpenBlock(true)}>Block Day/Range</Button>
+            <Button className="rounded-lg bg-emerald-600 flex-1 sm:flex-none" onClick={()=> setOpenAdd(true)}>Add Booking</Button>
+            <Button variant="outline" className="rounded-lg flex-1 sm:flex-none" onClick={()=> setOpenBlock(true)}>Block Day/Range</Button>
           </div>
         </div>
 
@@ -282,8 +282,8 @@ export default function LocationTimetablePage() {
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=> setOpenAdd(false)}>Cancel</Button>
-            <Button className="rounded-full bg-emerald-600" onClick={submitAdd}>Save</Button>
+            <Button variant="outline" className="rounded-lg" onClick={()=> setOpenAdd(false)}>Cancel</Button>
+            <Button className="rounded-lg bg-emerald-600" onClick={submitAdd}>Save</Button>
           </div>
         </div>
       </Modal>
@@ -305,8 +305,8 @@ export default function LocationTimetablePage() {
             <Input value={blockForm.reason} onChange={(e)=> setBlockForm({ ...blockForm, reason: e.target.value })} />
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" className="rounded-full" onClick={()=> setOpenBlock(false)}>Cancel</Button>
-            <Button className="rounded-full" onClick={submitBlock}>Save</Button>
+            <Button variant="outline" className="rounded-lg" onClick={()=> setOpenBlock(false)}>Cancel</Button>
+            <Button className="rounded-lg" onClick={submitBlock}>Save</Button>
           </div>
         </div>
       </Modal>

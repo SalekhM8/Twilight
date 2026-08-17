@@ -17,7 +17,7 @@ export default async function NhsServicesPage() {
   })
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#f3fbff]">
       {/* Mobile Header */}
       <MobileHeader />
 
@@ -34,7 +34,7 @@ export default async function NhsServicesPage() {
               <a href="/#locations" className="hover:text-[#36c3f0]">Locations</a>
               <a href="/#contact" className="hover:text-[#36c3f0]">Contact</a>
             </nav>
-            <Link href="/consultation" className="inline-flex items-center rounded-full bg-[#36c3f0] text-white px-5 py-2 font-semibold hover:bg-[#2eb5e8]">
+            <Link href="/consultation" className="inline-flex items-center rounded-lg bg-[#0b1220] text-white px-5 py-2 font-semibold hover:bg-[#155d7e]">
               Start Consultation
             </Link>
           </div>
@@ -55,16 +55,16 @@ export default async function NhsServicesPage() {
                   <CardTitle className="text-xl font-semibold text-gray-900">{t.name}</CardTitle>
                   <CardDescription className="text-gray-600">{t.description}</CardDescription>
                   {t.seasonStart && t.seasonEnd ? (
-                    <span className="inline-block mt-2 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">Seasonal</span>
+                    <span className="inline-block mt-2 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-0.5">Seasonal</span>
                   ) : null}
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-600">{t.duration} mins</span>
+                    <span className="text-xs px-3 py-1 rounded-lg bg-gray-100 text-gray-600">{t.duration} mins</span>
                   </div>
                   <div className="flex gap-2">
                     <Link href={`/treatments/${slugify(t.name)}-${t.id}`} className="w-full">
-                      <Button className="w-full rounded-full bg-emerald-600 hover:bg-emerald-700 text-white h-11 text-[15px]">Learn More</Button>
+                      <Button className="w-full rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white h-11 text-[15px]">Learn More</Button>
                     </Link>
                   </div>
                 </CardContent>
@@ -77,7 +77,7 @@ export default async function NhsServicesPage() {
       {/* FOOTER */}
       <footer id="contact" className="relative text-white py-14">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(70%_70%_at_50%_0%,#0b1220,transparent_70%)]" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-gray-900 via-gray-900 to-black opacity-90" />
+        <div className="absolute inset-0 -z-10 bg-[#155d7e]" />
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
