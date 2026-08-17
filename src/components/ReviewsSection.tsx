@@ -78,7 +78,7 @@ export default function ReviewsSection({ reviews: initial }: { reviews: Review[]
             <p className="text-sm text-gray-500 mt-2">Based on Google Reviews</p>
           </div>
           <div>
-            <Button className="rounded-lg bg-[#0b1220] hover:bg-[#155d7e]" onClick={()=> setOpen(true)}>Add your review</Button>
+            <Button className="rounded-lg bg-[#0b1220] text-[#f3fbff] hover:bg-[#155d7e]" onClick={()=> setOpen(true)}>Add your review</Button>
           </div>
         </div>
 
