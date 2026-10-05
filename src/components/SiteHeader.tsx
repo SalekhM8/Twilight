@@ -10,15 +10,16 @@ import { ShoppingBag, User, Menu, X } from 'lucide-react'
 // The pharmacy site is presented as the "Pharmacy Services" section of it.
 const CLINIC = process.env.NEXT_PUBLIC_CLINIC_URL || 'https://clinic.twilightpharmacy.co.uk'
 
+// One nav, identical on both sites. Pharmacy services first so existing
+// booking traffic is never hidden; clinic offerings sit alongside.
 const NAV_LINKS = [
-  { href: `${CLINIC}/`, label: 'Home' },
-  { href: `${CLINIC}/treatments/mounjaro`, label: 'Mounjaro' },
-  { href: `${CLINIC}/treatments/wegovy`, label: 'Wegovy' },
-  { href: `${CLINIC}/collections/weight-loss`, label: 'Weight Loss' },
+  { href: '/', label: 'Home' },
+  { href: '/#services', label: 'Services' },
+  { href: `${CLINIC}/treatments/mounjaro`, label: 'Weight Loss' },
   { href: `${CLINIC}/supplements`, label: 'Supplements' },
-  { href: `${CLINIC}/guides`, label: 'Guides' },
-  { href: '/', label: 'Pharmacy Services', local: true },
-  { href: '/about', label: 'About', local: true },
+  { href: '/#locations', label: 'Locations' },
+  { href: '/about', label: 'About' },
+  { href: '/#contact', label: 'Contact' },
 ] as const
 
 function Wordmark() {
@@ -60,6 +61,12 @@ export default function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-5">
+            <Link
+              href="/consultation"
+              className="hidden items-center rounded-full bg-[#36c3f0] px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#2eb5e8] md:inline-flex"
+            >
+              Book Appointment
+            </Link>
             <a
               href={`${CLINIC}/sign-in`}
               className="text-[#f3fbff] transition-opacity duration-200 hover:opacity-80"
@@ -104,6 +111,13 @@ export default function SiteHeader() {
               {link.label}
             </a>
           ))}
+          <Link
+            href="/consultation"
+            onClick={() => setMobileOpen(false)}
+            className="mt-6 inline-flex w-fit items-center rounded-full bg-[#36c3f0] px-6 py-3 text-base font-semibold text-white"
+          >
+            Book Appointment
+          </Link>
         </nav>
       </div>
     </>
