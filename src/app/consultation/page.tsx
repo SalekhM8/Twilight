@@ -30,7 +30,7 @@ interface Location {
 
 // Pharmacist selection removed; assignment handled server-side
 
-export function ConsultationWizard() {
+function ConsultationWizard() {
 	const searchParams = useSearchParams()
 	const preselectedTreatment = searchParams?.get("treatment") || ""
   const stepParam = Number(searchParams?.get("step") || 0)
