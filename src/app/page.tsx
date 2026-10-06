@@ -24,6 +24,8 @@ import ReviewsSection from '@/components/ReviewsSection'
 import { formatOpeningHours } from '@/lib/utils'
 import TreatmentSearch from '@/components/TreatmentSearch'
 
+const CLINIC = process.env.NEXT_PUBLIC_CLINIC_URL || 'https://clinic.twilightpharmacy.co.uk'
+
 const treatmentIcons = {
   'Weight Loss': Scale,
   'Women\'s Health': Users,
@@ -105,7 +107,22 @@ export default async function HomePage() {
           <div className="mt-8 w-full max-w-xl">
             <TreatmentSearch />
           </div>
-          <div className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
+          {/* Weight Loss Clinic — the clinic's front door on the main site */}
+          <a
+            href={`${CLINIC}/treatments/mounjaro`}
+            className="mt-10 flex w-full max-w-2xl flex-col items-center gap-3 rounded-2xl border border-[#36c3f0]/60 bg-[#f3fbff]/10 px-6 py-5 text-left backdrop-blur-sm transition-colors duration-200 hover:bg-[#f3fbff]/15 sm:flex-row sm:justify-between"
+          >
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#36c3f0]">New · Online Weight Loss Clinic</p>
+              <p className="mt-1 text-lg font-medium text-[#f3fbff]">Mounjaro &amp; Wegovy, prescribed online by our pharmacists</p>
+              <p className="text-sm text-[#f3fbff]/75">Free online consultation · Prescriber review · Delivered to your door</p>
+            </div>
+            <span className="inline-flex h-[48px] shrink-0 items-center justify-center rounded-full bg-[#36c3f0] px-6 text-sm font-semibold text-white">
+              Start Consultation
+            </span>
+          </a>
+
+          <div className="mt-6 flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
             <a href="#services" className="inline-flex h-[56px] w-full items-center justify-center rounded-lg bg-[#0b1220] px-10 text-base font-medium capitalize text-[#f3fbff] transition-colors duration-200 hover:bg-[#0b1220]/80 sm:w-auto">
               Pick a Service
             </a>
