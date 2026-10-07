@@ -5,6 +5,7 @@ import WhatsAppFab from "@/components/WhatsAppFab";
 import ClientScrollTop from "@/components/scroll/ClientScrollTop";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import SiteHeader from "@/components/SiteHeader";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -83,6 +84,7 @@ export default function RootLayout({
 				{children}
         <ChatbotWidget />
 				<WhatsAppFab />
+				<Analytics />
 			</body>
 		</html>
 	);
