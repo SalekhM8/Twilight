@@ -49,13 +49,6 @@ export default function RootLayout({
                   "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WVCJ79KS');",
               }}
             />
-            {/* Google Tag Manager — Google Ads container (added 6 Oct 2026) */}
-            <script
-              dangerouslySetInnerHTML={{
-                __html:
-                  "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KD5D8Z3S');",
-              }}
-            />
           </>
         ) : null}
 				<link rel="apple-touch-icon" href="/twilightnew.png" />
@@ -67,12 +60,6 @@ export default function RootLayout({
           <noscript>
             <iframe
               src="https://www.googletagmanager.com/ns.html?id=GTM-WVCJ79KS"
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-            />
-            <iframe
-              src="https://www.googletagmanager.com/ns.html?id=GTM-KD5D8Z3S"
               height="0"
               width="0"
               style={{ display: "none", visibility: "hidden" }}
