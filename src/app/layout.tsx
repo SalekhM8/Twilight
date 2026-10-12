@@ -56,6 +56,21 @@ export default function RootLayout({
 			</head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {isProd ? (
+          // Meta Pixel — main site (booking/marketing pages only; no health data here).
+          // Builds the retargeting audience for the clinic.
+          <>
+            <script
+              dangerouslySetInnerHTML={{
+                __html:
+                  "!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','2000246710639670');fbq('track','PageView');",
+              }}
+            />
+            <noscript>
+              <img height="1" width="1" style={{ display: "none" }} alt="" src="https://www.facebook.com/tr?id=2000246710639670&ev=PageView&noscript=1" />
+            </noscript>
+          </>
+        ) : null}
+        {isProd ? (
           // Google Tag Manager (noscript)
           <noscript>
             <iframe
