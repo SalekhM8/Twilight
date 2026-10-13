@@ -51,6 +51,7 @@ export default function RootLayout({
             />
           </>
         ) : null}
+				<meta name="trustpilot-one-time-domain-verification-id" content="4a07ab09-f0a5-4005-b5f6-341884ef1daf" />
 				<link rel="apple-touch-icon" href="/twilightnew.png" />
 				<link rel="icon" href="/twilightnew.png" />
 			</head>
