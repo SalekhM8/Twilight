@@ -279,6 +279,8 @@ export default async function HomePage() {
                 <li><Link href="/consultation" className="hover:text-white">Book Online</Link></li>
                 <li><a href={`tel:${locations[0]?.phone?.replace(/[^\d+]/g, '') || ''}`} className="hover:text-white">Call Us</a></li>
                 <li><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locations[0]?.address || '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-white">Find Us</a></li>
+                <li><a href="https://www.facebook.com/profile.php?id=1439198275936289" target="_blank" rel="noopener noreferrer" className="hover:text-white">Facebook</a></li>
+                <li><a href="https://www.instagram.com/twilightpharmacyuk" target="_blank" rel="noopener noreferrer" className="hover:text-white">Instagram</a></li>
               </ul>
             </div>
             <div>

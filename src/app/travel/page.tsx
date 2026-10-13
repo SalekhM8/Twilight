@@ -89,6 +89,8 @@ export default async function TravelServicesPage() {
                 <li><Link href="/consultation" className="hover:text-white">Book Online</Link></li>
                 <li><a href={`tel:${allLocations[0]?.phone?.replace(/[^\d+]/g, '') || ''}`} className="hover:text-white">Call Us</a></li>
                 <li><Link href="/about" className="hover:text-white">About Us</Link></li>
+                <li><a href="https://www.facebook.com/profile.php?id=1439198275936289" target="_blank" rel="noopener noreferrer" className="hover:text-white">Facebook</a></li>
+                <li><a href="https://www.instagram.com/twilightpharmacyuk" target="_blank" rel="noopener noreferrer" className="hover:text-white">Instagram</a></li>
               </ul>
             </div>
           </div>
