@@ -213,6 +213,21 @@ export default async function BookingConfirmationPage({ params }: BookingConfirm
           </CardContent>
         </Card>
 
+        {/* Clinic cross-sell: every booker is a warm, local, already-trusting customer. */}
+        <div className="mt-8 rounded-xl bg-[#155d7e] p-6 text-white md:p-8">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#36c3f0]">New · Online weight loss clinic</p>
+          <h2 className="mt-2 text-2xl font-bold">Thinking about weight loss treatment?</h2>
+          <p className="mt-2 max-w-2xl text-white/85">
+            Free online consultation, checked by our pharmacists. Delivered to your door, or collect when you come in for your appointment.
+          </p>
+          <a
+            href="https://clinic.twilightpharmacy.co.uk/booking"
+            className="mt-5 inline-flex items-center rounded-lg bg-[#36c3f0] px-5 py-3 font-semibold text-[#0b1220] hover:bg-[#5fd0f4]"
+          >
+            See how it works
+          </a>
+        </div>
+
         {/* Next Steps */}
         <Card className="mt-8 bg-blue-50 border-blue-200">
           <CardHeader>

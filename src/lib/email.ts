@@ -81,7 +81,11 @@ export function renderBookingEmail(params: {
     </table>
     <p style="margin-top:16px;color:#333">If you cannot attend, please ${locationPhone ? `call ${locationPhone}` : 'contact us or reply to this email'} as soon as possible.</p>
     <p style="margin-top:6px;color:#333">If we need to make any changes on our side, we will contact you.</p>
-    <p style="color:#555">Twilight Pharmacy</p>
+    <div style="margin-top:20px;padding:14px 16px;background:#f3fbff;border-left:4px solid #36c3f0;max-width:560px">
+      <p style="margin:0 0 6px;font-weight:600;color:#155d7e">One more thing</p>
+      <p style="margin:0;color:#333">We now run an online weight loss clinic. Free consultation, checked by our pharmacists, delivered to your door or collect when you come in for your appointment. <a href="https://clinic.twilightpharmacy.co.uk/email" style="color:#155d7e">clinic.twilightpharmacy.co.uk</a></p>
+    </div>
+    <p style="color:#555;margin-top:16px">Twilight Pharmacy</p>
   </div>
   `
 }
