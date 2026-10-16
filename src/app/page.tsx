@@ -121,6 +121,16 @@ export default async function HomePage() {
               Start Consultation
             </span>
           </a>
+          <a
+            href="https://www.google.com/maps/place/TWILIGHT+PHARMACY/@52.4335084,-1.8932309,17z/data=!4m8!3m7!1s0x4870bc1d8371f045:0xae349cb849cffd89!8m2!3d52.4335084!4d-1.8932309!9m1!1b1!16s%2Fg%2F1td37pff"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-1.5 text-[13px] text-[#f3fbff]"
+          >
+            <span className="text-[#FBBC05]" aria-hidden="true">★★★★★</span>
+            <span className="font-medium">236</span>
+            <span className="text-[#f3fbff]/70">five-star Google reviews</span>
+          </a>
 
           <div className="mt-6 flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
             <a href="#services" className="inline-flex h-[56px] w-full items-center justify-center rounded-lg bg-[#0b1220] px-10 text-base font-medium capitalize text-[#f3fbff] transition-colors duration-200 hover:bg-[#0b1220]/80 sm:w-auto">
