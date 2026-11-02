@@ -6,6 +6,7 @@ import ClientScrollTop from "@/components/scroll/ClientScrollTop";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import SiteHeader from "@/components/SiteHeader";
 import { Analytics } from "@vercel/analytics/next";
+import { PostHogBootstrap } from "@/components/PostHogBootstrap";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -73,6 +74,7 @@ export default function RootLayout({
         <ChatbotWidget />
 				<WhatsAppFab />
 				<Analytics />
+				<PostHogBootstrap />
 			</body>
 		</html>
 	);

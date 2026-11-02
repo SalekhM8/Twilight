@@ -109,7 +109,7 @@ export default async function HomePage() {
           </div>
           {/* Weight Loss Clinic — the clinic's front door on the main site */}
           <a
-            href={`${CLINIC}/treatments/mounjaro`}
+            href={`${CLINIC}/treatments/mounjaro?utm_source=main-site&utm_medium=referral&utm_content=home-hero`}
             className="mt-10 flex w-full max-w-2xl flex-col items-center gap-3 rounded-2xl border border-[#36c3f0]/60 bg-[#f3fbff]/10 px-6 py-5 text-left backdrop-blur-sm transition-colors duration-200 hover:bg-[#f3fbff]/15 sm:flex-row sm:justify-between"
           >
             <div>
@@ -263,7 +263,7 @@ export default async function HomePage() {
                   </li>
                 ))}
                 <li>
-                  <a href={process.env.NEXT_PUBLIC_CLINIC_URL || "https://clinic.twilightpharmacy.co.uk"} className="hover:text-white">Weight Loss Clinic</a>
+                  <a href={`${CLINIC}/?utm_source=main-site&utm_medium=referral&utm_content=footer`} className="hover:text-white">Weight Loss Clinic</a>
                 </li>
                 <li>
                   <Link href="/travel" className="hover:text-white">Travel Health</Link>

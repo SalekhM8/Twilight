@@ -15,8 +15,8 @@ const CLINIC = process.env.NEXT_PUBLIC_CLINIC_URL || 'https://clinic.twilightpha
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/#services', label: 'Services' },
-  { href: `${CLINIC}/treatments/mounjaro`, label: 'Weight Loss' },
-  { href: `${CLINIC}/supplements`, label: 'Supplements' },
+  { href: `${CLINIC}/treatments/mounjaro?utm_source=main-site&utm_medium=referral&utm_content=header-weight-loss`, label: 'Weight Loss' },
+  { href: `${CLINIC}/supplements?utm_source=main-site&utm_medium=referral&utm_content=header-supplements`, label: 'Supplements' },
   { href: '/#locations', label: 'Locations' },
   { href: '/about', label: 'About' },
   { href: '/#contact', label: 'Contact' },
